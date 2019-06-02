@@ -37,3 +37,27 @@ kubectl label po kubia-manual creation_method=manual
 kubectl get po -l creation_method=manual
 
 kubectl annotate pod kubik-manual mycompany.com/someannotation="foo bar"
+
+# services
+kubectl create -f kubik-svc.yaml
+kubectl get pods
+
+;;           <pod-name>                    <service cluster ip>
+kubectl exec kubik-n9mqr -- curl -s http://10.96.64.184
+
+kubectl delete po --all
+kubectl exec kubia-3inly env
+
+
+kubectl exec -it kubik-65spd bash
+root@kubik-65spd:/# curl http://kubik.default.svc.cluster.local
+root@kubik-65spd:/# curl http://kubik.default                  
+You've hit kubik-ct45l
+root@kubik-65spd:/# curl http://kubik        
+You've hit kubik-ct45l
+
+
+kubectl get endpoints kubik
+
+minikube addons enable ingress
+kubectl get po --all-namespaces
