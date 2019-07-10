@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void main()
+int main()
 {
   long nl = 0;
   long nt = 0;
@@ -12,5 +12,5 @@ void main()
     if (c == '\t') nt++;
     if (c == ' ') nw++;
   }
-  printf("%li\t%li\t%li\t\n", nl, nt, nw);
+  printf("%ld\t%ld\t%ld\t\n", nl, nt, nw);
 }
