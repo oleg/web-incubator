@@ -5,7 +5,7 @@ float to_celsius(float fahr) {
 }
 
 
-main() 
+int main() 
 {
   float fahr;
   int step, lower, upper;
@@ -16,7 +16,7 @@ main()
   
   fahr = lower;
   
-  while(fahr <= upper) {
+  while (fahr <= upper) {
     printf("%3.0f\t%.2f\n", fahr, to_celsius(fahr));
     fahr += step;
   }
