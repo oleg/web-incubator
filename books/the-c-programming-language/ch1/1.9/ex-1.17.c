@@ -11,7 +11,7 @@ int main()
     int len, max, i;
     char line[MAX_LINE_SIZE];
 
-    while((len = get_line(line, MAX_LINE_SIZE)) > 0) {
+    while ((len = get_line(line, MAX_LINE_SIZE)) > 0) {
         if (len >= MAX_OUT_LINE_SIZE) {
             printf("%s", line);
         }

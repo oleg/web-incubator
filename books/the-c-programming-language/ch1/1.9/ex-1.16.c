@@ -5,6 +5,9 @@
 int get_line(char line[], int limit);
 void copy_line(char to[], char from[]);
 
+/**
+ * print the length of arbitrarily long input lines, and as much as possible of the text.
+**/
 int main()
 {
     int len, max, num, i;
@@ -12,11 +15,11 @@ int main()
     char longest[MAX_LINE_SIZE];
 
     num = max = 0;
-    for(i = 0; (len = get_line(line, MAX_LINE_SIZE)) > 0; i++) {
-        if (len > max) {
+    for (i = 0; (len = get_line(line, MAX_LINE_SIZE)) > 0; i++) {
+      if (len > max) {//or >= ?
             max = len;
             num = i + 1;
-            copy_line(longest, line);
+            copy_line(line, longest);
         }
     }
 
@@ -46,9 +49,8 @@ int get_line(char line[], int limit)
     return j;
 }
 
-void copy_line(char to[],  char from[]) {
-    int i;
-    i = 0;
+void copy_line(char from[],  char to[]) {
+    int i = 0;
 
     while((to[i] = from[i]) != EOS)
         i++;
