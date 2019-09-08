@@ -27,16 +27,14 @@ int get_line(char line[], int limit)
   for (i = 0; i < limit - 1 - TAB_STOP_SIZE && (c = getchar()) != EOF && c != '\n'; ++i) {
     if (c != '\t') {
       line[i + shift] = c;
-      //printf("%d %d '%c'\n", i, shift, c);
     } else {
       for (j = 0; j < TAB_STOP_SIZE; j++, shift++) {
         line[i + shift] = ' ';
-  	//printf("%d %d '%c'\n", i, shift, c);
       }
       shift--;
     }
   }
-  //printf("%d %d '%c'\n", i, shift, c);
+  
   if (c == '\n') {
     line[i + shift] = c;
     ++i;
