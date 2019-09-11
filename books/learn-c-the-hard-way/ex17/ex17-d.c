@@ -65,31 +65,39 @@ void Connection_openFile(struct Connection *conn, const char *filename, const ch
     die("Failed to open the file.");
 }
 
-struct Connection *Database_open(const char *filename, char mode)
+struct Connection *Database_create(const char *filename, int max_rows)
 {
   struct Connection *conn = Connection_create();
-  if (mode == 'c') {
-    Connection_openFile(conn, filename, "w");
-    conn->db = malloc(Database_size());
-    conn->db->max_rows = 100;
-    conn->db->rows = malloc(Database_rowsSize(conn->db->max_rows));
-    return conn;
-    
-  } else {
-    Connection_openFile(conn, filename, "r+");
-    conn->db = malloc(Database_size());
-    
-    int rc;
-    rc = fread(conn->db, Database_size(), 1, conn->file);
-    if (rc != 1)
-      die("Failed to load database.");
-
-    conn->db->rows = malloc(Database_rowsSize(conn->db->max_rows));
-    rc = fread(conn->db->rows, Database_rowsSize(conn->db->max_rows), 1, conn->file);
-    if (rc != 1)
-      die("Failed to load rows.");
-    return conn;
+  Connection_openFile(conn, filename, "w");
+  conn->db = malloc(Database_size());
+  conn->db->max_rows = max_rows;
+  conn->db->rows = malloc(Database_rowsSize(conn->db->max_rows));
+  
+  int i = 0;
+  for (i = 0; i < conn->db->max_rows; i++) {
+    struct Address addr = { .id = i, .set = 0 };
+    conn->db->rows[i] = addr;
   }
+  return conn;
+}
+
+struct Connection *Database_open(const char *filename)
+{
+  struct Connection *conn = Connection_create();
+  Connection_openFile(conn, filename, "r+");
+  conn->db = malloc(Database_size());
+    
+  int rc;
+  rc = fread(conn->db, Database_size(), 1, conn->file);
+  if (rc != 1)
+    die("Failed to load database.");
+
+  conn->db->rows = malloc(Database_rowsSize(conn->db->max_rows));
+  rc = fread(conn->db->rows, Database_rowsSize(conn->db->max_rows), 1, conn->file);
+  if (rc != 1)
+    die("Failed to load rows.");
+  return conn;
+
 }
 
 void Database_close(struct Connection *conn)
@@ -123,15 +131,6 @@ void Database_write(struct Connection *conn)
   rc = fflush(conn->file);
   if (rc == -1)
     die("Cannot flush database.");
-}
-
-void Database_create(struct Connection *conn)
-{
-  int i = 0;
-  for (i = 0; i < conn->db->max_rows; i++) {
-    struct Address addr = { .id = i, .set = 0 };
-    conn->db->rows[i] = addr;
-  }
 }
 
 void Database_set(struct Connection *conn, int id, const char *name, const char *email)
@@ -181,55 +180,63 @@ void Database_list(struct Connection *conn)
 
 int main(int argc, char *argv[])
 {
-  int max_rows = 100;//pass as parameter
   if (argc < 3)
     die("USAGE: ex17 <dbfile> <action> [action params]");
 
   char *filename = argv[1];
   char action = argv[2][0];
-
-  struct Connection *conn = Database_open(filename, action);
-  int id = 0;
-
-  if (argc > 3)
-    id = atoi(argv[3]);
-  
-  if (id >= max_rows)
-    die("There's not that many records.");
+  struct Connection *conn;
+  int id;
 
   switch(action) {
-  case 'c':
-    Database_create(conn);
+  case 'c': 
+    conn = Database_create(filename, atoi(argv[3]));
     Database_write(conn);
     break;
-    
-  case 'g':
+  
+  case 'g': 
     if (argc != 4)
       die("Need an id to get");
     
+    conn = Database_open(filename);
+    id = atoi(argv[3]);
+    if (id >= conn->db->max_rows)
+      die("There's not that many records.");
+
     Database_get(conn, id);
     break;
 
-  case 's':
+  case 's': 
     if (argc != 6)
       die("Need id, name, email to set");
     
+    conn = Database_open(filename);
+    id = atoi(argv[3]);
+    if (id >= conn->db->max_rows)
+      die("There's not that many records.");
+
     Database_set(conn, id, argv[4], argv[5]);
     Database_write(conn);
     break;
-    
-  case 'd':
+  
+  case 'd': 
     if (argc != 4)
       die("Need id to delete");
+
+    conn = Database_open(filename);
+    id = atoi(argv[3]);
+    if (id >= conn->db->max_rows)
+      die("There's not that many records.");
 
     Database_delete(conn, id);
     Database_write(conn);
     break;
-    
-  case 'l':
+  
+  case 'l': 
+    conn = Database_open(filename);
     Database_list(conn);
     break;
-    
+
   default:
     die("Invalid action: c=create, g=get, s=set, d=delete, l=list");
   }
