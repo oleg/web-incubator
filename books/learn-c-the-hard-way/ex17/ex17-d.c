@@ -240,6 +240,18 @@ void Database_list(struct Connection *conn)
   }
 }
 
+int Database_find(struct Connection *conn, char *name, struct Address *address, int max_size)
+{
+  int i = 0;
+  int found_size = 0;
+  for (; i < conn->db->max_rows; i++) {
+    if (strcmp(conn->db->rows[i].name, name) == 0) {
+      address[found_size++] = conn->db->rows[i];
+    }
+  }
+  return found_size;
+}
+
 int main(int argc, char *argv[])
 {
   if (argc < 3)
@@ -298,9 +310,24 @@ int main(int argc, char *argv[])
     conn = Database_open(filename);
     Database_list(conn);
     break;
+    
+  case 'f': 
+    conn = Database_open(filename);
+    
+    int max_size = 10;
+    struct Address *address = malloc(sizeof(struct Address) * max_size);
+    int found_size = Database_find(conn, argv[3], address, max_size);
+    int i = 0;
+    for (; i < found_size; i++) {
+      Address_print(&address[i]);
+    }
+    if (found_size == 0) {
+      printf("Not found\n");
+    }
+    break;
 
   default:
-    die("Invalid action: c=create, g=get, s=set, d=delete, l=list");
+    die("Invalid action: c=create, g=get, s=set, d=delete, l=list, f=find");
   }
   
   Database_close(conn);
