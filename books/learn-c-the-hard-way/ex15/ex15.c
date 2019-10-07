@@ -11,10 +11,10 @@ int main(int argc, char *argv[])
 
   //safely get the size of ages
   int count = sizeof(ages) / sizeof(int);
-  int i = 0;
+  //int i = 0;
 
   //first way using indexing
-  for (i = 0; i < count; i++) {
+  for (int i = 0; i < count; i++) {
     printf("%s has %d years alive.\n", names[i], ages[i]);
   }
   printf("---\n");
@@ -24,13 +24,13 @@ int main(int argc, char *argv[])
   char **cur_name = names;
 
   //second way using pointers
-  for (i = 0; i < count; i++) {
+  for (int i = 0; i < count; i++) {
     printf("%s is %d years old.\n", *(cur_name + i), *(cur_age + i));
   }
   printf("---\n");
 
   //third way, pointers are just arrays
-  for (i = 0; i < count; i++) {
+  for (int i = 0; i < count; i++) {
     printf("%s is %d year old again.\n", cur_name[i], cur_age[i]);
   }
   printf("---\n");
