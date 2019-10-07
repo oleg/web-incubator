@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {Container, Nav, NavItem, NavLink} from 'reactstrap';
 import GoalsPage from './components/GoalsPage'
-import {connect} from 'react-redux';
-import {createGoal} from './actions';
+import {createGoal, fetchGoals} from './actions';
 
 class App extends Component {
+    componentDidMount() {
+        this.props.dispatch(fetchGoals())
+    }
 
     onCreateGoal = ({goalName, percentComplete}) => {
         this.props.dispatch(createGoal({goalName, percentComplete}));
@@ -14,9 +17,9 @@ class App extends Component {
         return (
             <Container>
                 <Nav>
-                    <NavItem><NavLink href="#">домашняя страница</NavLink></NavItem>
-                    <NavItem><NavLink href="#">другая страница</NavLink></NavItem>
-                    <NavItem><NavLink href="#">страница номер 3</NavLink></NavItem>
+                    <NavItem><NavLink href="#">page1</NavLink></NavItem>
+                    <NavItem><NavLink href="#">page2</NavLink></NavItem>
+                    <NavItem><NavLink href="#">page3</NavLink></NavItem>
                 </Nav>
                 <GoalsPage goals={this.props.goals} onCreateGoal={this.onCreateGoal}/>
             </Container>
