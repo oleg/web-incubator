@@ -40,7 +40,7 @@ char *test_push()
   return NULL;
 }
 
-char *test_count()
+char *test_count_push()
 {
   List *list = List_create();
 
@@ -55,20 +55,6 @@ char *test_count()
   List_push(list, "333");
   mu_assert(List_count(list) == 3, "Wrong count 3 elements");
 
-  puts("1");
-  char *val;
-  val = List_pop(list);
-  mu_assert(List_count(list) == 2, "Wrong count on first pop");
-
-  puts("2");
-  val = List_pop(list);
-  mu_assert(List_count(list) == 1, "Wrong count on second pop");
-
-  puts("1");
-  val = List_pop(list);
-  mu_assert(List_count(list) == 0, "Wrong count on third pop");
-
-  puts("0");
   return NULL;
 }
 
@@ -108,6 +94,67 @@ char *test_pop()
   return NULL;
 }
 
+char *test_count_pop()
+{
+  List *list = List_create();
+
+  mu_assert(List_count(list) == 0, "Wrong count empty list");
+
+  List_push(list, "1");
+  List_push(list, "22");
+  List_push(list, "333");
+
+  char *val;
+  val = List_pop(list);
+  mu_assert(List_count(list) == 2, "Wrong count on first pop");
+
+  val = List_pop(list);
+  mu_assert(List_count(list) == 1, "Wrong count on second pop");
+
+  val = List_pop(list);
+  mu_assert(List_count(list) == 0, "Wrong count on third pop");
+
+  return NULL;
+}
+
+char *test_unshift()
+{
+  char *test1 = "test 1 data";
+  char *test2 = "test 2 data";
+  char *test3 = "test 3 data";
+
+  List *list = List_create();
+
+  List_unshift(list, test1);
+  mu_assert(List_first(list) == test1, "Wrong first value on unshift 1");
+
+  List_unshift(list, test2);
+  mu_assert(List_first(list) == test2, "Wrong first value on unshift 2");
+
+  List_unshift(list, test3);
+  mu_assert(List_first(list) == test3, "Wrong first value on unshift 3");
+
+  return NULL;
+}
+
+char *test_count_unshift()
+{
+  List *list = List_create();
+
+  mu_assert(List_count(list) == 0, "Wrong count empty list");
+
+  List_unshift(list, "1");
+  mu_assert(List_count(list) == 1, "Wrong count on unshift 1 element");
+
+  List_unshift(list, "22");
+  mu_assert(List_count(list) == 2, "Wrong count on unshift 2 elements");
+
+  List_unshift(list, "333");
+  mu_assert(List_count(list) == 3, "Wrong count on unshift 3 elements");
+
+  return NULL;
+}
+
 
 char *all_tests()
 {
@@ -115,9 +162,12 @@ char *all_tests()
   mu_run_test(test_create);
   mu_run_test(test_destroy);
   mu_run_test(test_push);
-  mu_run_test(test_count);
+  mu_run_test(test_count_push);
   mu_run_test(test_pop_empty);
   mu_run_test(test_pop);
+  mu_run_test(test_count_pop);
+  mu_run_test(test_unshift);
+  mu_run_test(test_count_unshift);
   return NULL;
 }
 
