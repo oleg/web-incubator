@@ -43,17 +43,31 @@ void List_push(List *list, void *value)
     node->prev = list->last;
     list->last = node;
   }
-  
+
   list->count++;
-  
+
  error:
   return;
 }
 
 void *List_pop(List *list)
 {
-  check(List_count(list) > 0, "Can't pop empty list");
-  return NULL;
+  int size = List_count(list);
+  check(size > 0, "Can't pop empty list");
+
+  void *result = list->last->value;
+
+  if (size == 1) {
+    list->first = NULL;
+    list->last = NULL;
+  } else {
+    list->last = list->last->prev;
+    list->last->next = NULL;
+  }
+  list->count--;
+
+  return result;
+
  error:
   return NULL;
 }
