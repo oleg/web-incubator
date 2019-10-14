@@ -214,6 +214,49 @@ char *test_shift()
   return NULL;
 }
 
+char *test_count_remove()
+{
+  List *list = List_create();
+
+  mu_assert(List_count(list) == 0, "Wrong count empty list");
+
+  List_push(list, "1");
+  List_push(list, "22");
+  List_push(list, "333");
+
+  List_remove(list, list->first->next);
+  mu_assert(List_count(list) == 2, "Wrong count on remove of the middle");
+
+  List_remove(list, list->last);
+  mu_assert(List_count(list) == 1, "Wrong count on remove of the last");
+
+  List_remove(list, list->first);
+  mu_assert(List_count(list) == 0, "Wrong count on remove of the first");
+
+  return NULL;
+}
+
+char *test_remove()
+{
+  char *test1 = "test1 data";
+  char *test2 = "test2 data";
+  char *test3 = "test3 data";
+
+  List *list = List_create();
+
+  List_push(list, test1);
+  List_push(list, test2);
+  List_push(list, test3);
+
+  char *val = List_remove(list, list->first->next);
+  mu_assert(val == test2, "Wrong removed element.");
+  mu_assert(List_count(list) == 2, "Wrong count after remove.");
+  mu_assert(List_first(list) == test3, "Wrong first after remove.");
+  mu_assert(List_last(list) == test1, "Wrong last after remove.");
+
+  return NULL;
+}
+
 char *all_tests()
 {
   mu_suite_start();
@@ -229,6 +272,8 @@ char *all_tests()
   mu_run_test(test_shift_empty);
   mu_run_test(test_count_shift);
   mu_run_test(test_shift);
+  mu_run_test(test_count_remove);
+  mu_run_test(test_remove);
   return NULL;
 }
 

@@ -35,9 +35,7 @@ void List_unshift(List *list, void *value);
 
 void *List_shift(List *list);
 
-/*
 void *List_remove(List *list, ListNode *node);
-*/
 
 #define List_count(A) ((A)->count)
 

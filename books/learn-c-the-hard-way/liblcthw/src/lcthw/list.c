@@ -116,7 +116,12 @@ void *List_shift(List *list)
  error:
   return NULL;
 }
-/*
 
-void *List_remove(List *list, ListNode *node);
-*/
+void *List_remove(List *list, ListNode *node)
+{
+  
+  return NULL;
+ error:
+  return NULL;
+}
+
