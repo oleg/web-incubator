@@ -94,7 +94,29 @@ void List_unshift(List *list, void *value)
   return;
 }
 
+void *List_shift(List *list)
+{
+  int size = List_count(list);
+  check(size > 0, "Can't shift empty list");
+
+  void *result = list->first->value;
+
+  if (size == 1) {
+    list->first = NULL;
+    list->last = NULL;
+  } else {
+    ListNode *new_first = list->first->next;
+    new_first->prev = NULL;
+    list->first = new_first;
+  }
+  
+  list->count--;
+  
+  return result;
+ error:
+  return NULL;
+}
 /*
-void *List_shift(List *list);
+
 void *List_remove(List *list, ListNode *node);
 */
