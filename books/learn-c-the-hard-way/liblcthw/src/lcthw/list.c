@@ -120,6 +120,7 @@ void *List_shift(List *list)
 void *List_remove(List *list, ListNode *node)
 {
   //todo what if node doesn't belong to a list?
+  check(List_count(list) > 0, "Can't shift empty list");
   
   void *result = node->value;
 
