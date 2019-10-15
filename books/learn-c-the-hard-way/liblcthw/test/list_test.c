@@ -251,8 +251,8 @@ char *test_remove()
   char *val = List_remove(list, list->first->next);
   mu_assert(val == test2, "Wrong removed element.");
   mu_assert(List_count(list) == 2, "Wrong count after remove.");
-  mu_assert(List_first(list) == test3, "Wrong first after remove.");
-  mu_assert(List_last(list) == test1, "Wrong last after remove.");
+  mu_assert(List_first(list) == test1, "Wrong first after remove.");
+  mu_assert(List_last(list) == test3, "Wrong last after remove.");
 
   return NULL;
 }

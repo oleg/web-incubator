@@ -119,8 +119,31 @@ void *List_shift(List *list)
 
 void *List_remove(List *list, ListNode *node)
 {
+  //todo what if node doesn't belong to a list?
   
-  return NULL;
+  void *result = node->value;
+
+  if (list->first == node || list->last == node) {
+    //first or last
+    if (list->first == node) {
+      list->first = node->next;
+    }
+    if (list->last == node) {
+      list->last = node->prev;
+    }
+  } else  {
+    //middle
+    ListNode *prev = node->prev;
+    ListNode *next = node->next;
+    prev->next = next;
+    next->prev = prev;
+  }
+  
+  free(node);
+  list->count--;
+  
+  return result;
+  
  error:
   return NULL;
 }
