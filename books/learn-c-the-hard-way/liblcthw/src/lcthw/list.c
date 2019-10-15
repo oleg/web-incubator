@@ -43,44 +43,108 @@ void List_push(List *list, void *value)
     node->prev = list->last;
     list->last = node;
   }
-  
+
   list->count++;
-  
+
  error:
   return;
 }
 
 void *List_pop(List *list)
 {
-  check(List_count(list) > 0, "Can't pop empty list");
-  return NULL;
+  int size = List_count(list);
+  check(size > 0, "Can't pop empty list");
+
+  void *result = list->last->value;
+
+  if (size == 1) {
+    list->first = NULL;
+    list->last = NULL;
+  } else {
+    list->last = list->last->prev;
+    list->last->next = NULL;
+  }
+  list->count--;
+
+  return result;
+
  error:
   return NULL;
 }
 
+void List_unshift(List *list, void *value)
+{
+  ListNode *node = calloc(1, sizeof(ListNode));
+  check_mem(node);
 
-/*
+  node->value = value;
 
+  if (list->first == NULL) {
+    list->first = node;
+    list->last = node;
+  } else {
+    list->first->prev = node;
+    node->next = list->first;
+    list->first = node;
+  }
 
+  list->count++;
 
-void List_unshift(List *list, void *value);
+ error:
+  return;
+}
 
-void *List_shift(List *list);
+void *List_shift(List *list)
+{
+  int size = List_count(list);
+  check(size > 0, "Can't shift empty list");
 
-void *List_remove(List *list, ListNode *node);
+  void *result = list->first->value;
 
+  if (size == 1) {
+    list->first = NULL;
+    list->last = NULL;
+  } else {
+    ListNode *new_first = list->first->next;
+    new_first->prev = NULL;
+    list->first = new_first;
+  }
+  
+  list->count--;
+  
+  return result;
+ error:
+  return NULL;
+}
 
+void *List_remove(List *list, ListNode *node)
+{
+  //todo what if node doesn't belong to a list?
+  
+  void *result = node->value;
 
-//do not impoement me
-#define List_count(A) ((A)->count)
+  if (list->first == node || list->last == node) {
+    //first or last
+    if (list->first == node) {
+      list->first = node->next;
+    }
+    if (list->last == node) {
+      list->last = node->prev;
+    }
+  } else  {
+    //middle
+    ListNode *prev = node->prev;
+    ListNode *next = node->next;
+    prev->next = next;
+    next->prev = prev;
+  }
+  
+  free(node);
+  list->count--;
+  
+  return result;
+  
+ error:
+  return NULL;
+}
 
-#define List_first(A) ((A)->first != NULL ? (A)->first->value : NULL)
-
-#define List_last(A) ((A)->last != NULL > (A)->last->value : NULL)
-
-#define LIST_FOREACH(L, S, M, V) \
-  ListNode *_node = NULL;        \
-  ListNode *V = NULL; \
-  for (V = _node = L->S; _node != NULL; V = _node, _node->M)
-
-*/
