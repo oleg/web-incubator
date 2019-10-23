@@ -1,5 +1,5 @@
 #include "minunit.h"
-#include <lcthw/list_algos.h>
+#include <lcthw/list_merge_sort.h>
 #include <assert.h>
 #include <string.h>
 
@@ -29,36 +29,6 @@ int is_sorted(List *words)
   return 1;
 }
 
-char *test_bubble_sort()
-{
-  List *words = create_words();
-
-  int rc;
-  
-  //should work on a list that needs sorting
-  rc = List_bubble_sort(words, (List_compare) strcmp);
-  mu_assert(rc == 0, "Bubble sort failed.");
-  mu_assert(is_sorted(words), "Words are not sorted after bubble sort.");
-
-  //should work on already sorted list
-  rc = List_bubble_sort(words, (List_compare) strcmp);
-  mu_assert(rc == 0, "Bubble sort or already sorted failed.");
-  mu_assert(is_sorted(words), "Words should be sorted if already bubble sorted.");
-  
-  List_destroy(words);
-
-  //should work on an empty list
-  words = List_create(words);
-  
-  rc = List_bubble_sort(words, (List_compare) strcmp);
-  mu_assert(rc == 0, "Bubble sort failed on empty list.");
-  mu_assert(is_sorted(words), "Words should be sorted if empty.");
-
-  List_destroy(words);
-  
-  return NULL;
-}
-
 char *test_merge_sort()
 {
   List *words = create_words();
@@ -80,7 +50,6 @@ char *all_tests()
 {
   mu_suite_start();
 
-  mu_run_test(test_bubble_sort);
   mu_run_test(test_merge_sort);
   
   return NULL;
