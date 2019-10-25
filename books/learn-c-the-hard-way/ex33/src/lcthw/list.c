@@ -150,3 +150,22 @@ void *List_remove(List *list, ListNode *node)
   return NULL;
 }
 
+int List_equal(List *a, List *b, List_compare cmp)
+{
+  puts("list equal::enter");
+  if (List_count(a) != List_count(b)) {
+    puts("list equal::exit not equal size");
+    return 0;
+  }
+  ListNode *an = a->first;
+  ListNode *bn = b->first;
+  for (; an != NULL; an = an->next, bn = bn->next) {
+    if (cmp(an->value, bn->value) != 0) {
+      puts("list equal::exit not equal value");
+      return 0;
+    }
+  }
+  
+  puts("list equal::exit equals");
+  return 1;
+}

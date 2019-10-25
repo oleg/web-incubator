@@ -1,5 +1,6 @@
 #include "minunit.h"
 #include <lcthw/list.h>
+#include <string.h>
 #include <assert.h>
 
 
@@ -257,6 +258,33 @@ char *test_remove()
   return NULL;
 }
 
+char *test_equal()
+{
+  List *a = List_create();
+  List_push(a, "1");
+  List_push(a, "3");
+  List_push(a, "5");
+  List_push(a, "4");
+  List_push(a, "2");
+
+  List *b = List_create();
+  List_push(b, "1");
+  List_push(b, "3");
+  List_push(b, "5");
+  List_push(b, "4");
+
+  mu_assert(List_equal(a, b, (List_compare) strcmp) == 0, "equals when size is different");
+
+  List_push(b, "2");
+
+  mu_assert(List_equal(a, b, (List_compare) strcmp) == 1, "not equals when size and values are the same");
+
+  List_pop(b);
+  List_push(b, "xxx");
+  mu_assert(List_equal(a, b, (List_compare) strcmp) == 0, "not equals when size is the same but values are different");
+  return NULL;
+}
+
 char *all_tests()
 {
   mu_suite_start();
@@ -274,6 +302,7 @@ char *all_tests()
   mu_run_test(test_shift);
   mu_run_test(test_count_remove);
   mu_run_test(test_remove);
+  mu_run_test(test_equal);
   return NULL;
 }
 

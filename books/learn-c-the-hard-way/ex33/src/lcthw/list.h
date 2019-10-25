@@ -19,6 +19,8 @@ typedef struct List {
   ListNode *last;
 } List;
 
+typedef int (*List_compare) (const void *a, const void *b);
+
 List *List_create();
 
 void List_destroy(List *list);
@@ -36,6 +38,8 @@ void List_unshift(List *list, void *value);
 void *List_shift(List *list);
 
 void *List_remove(List *list, ListNode *node);
+
+int List_equal(List *a, List *b, List_compare cmp);
 
 #define List_count(A) ((A)->count)
 
