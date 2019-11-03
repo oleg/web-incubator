@@ -1,11 +1,13 @@
 package algoclass.graph;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import static algoclass.graph.GraphBuilder.graph;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItems;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GraphTest {
 
@@ -63,11 +65,14 @@ public class GraphTest {
     assertThat(merged.get(3), is(hasItems(1)));
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void incorrect_1() throws Exception {
-    graph()
-        .vertex(1, 3)
-        .vertex(2, 1).build();
+    assertThrows(IllegalStateException.class, () -> {
+      graph()
+              .vertex(1, 3)
+              .vertex(2, 1).build();
+
+    });
   }
 }
 

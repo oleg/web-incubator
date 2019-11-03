@@ -1,11 +1,9 @@
 package algoclass;
 
-import sort.IntSorter;
 import util.Arr;
 
-public class QuickSort implements IntSorter {
+public class QuickSort {
 
-  @Override
   public int[] sort(int[] input) {
     if (input == null) {
       return input;

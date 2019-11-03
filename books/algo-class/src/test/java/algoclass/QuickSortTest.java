@@ -1,23 +1,21 @@
 package algoclass;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import sort.IntSorter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import util.PathUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import static algoclass.QuickSortAssignment.PivotStrategy.FINAL;
-import static algoclass.QuickSortAssignment.PivotStrategy.FIRST;
-import static algoclass.QuickSortAssignment.PivotStrategy.MEDIAN;
+import static algoclass.QuickSortAssignment.PivotStrategy.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class QuickSortTest extends Assert {
-  private IntSorter sorter;
+public class QuickSortTest {
+  private QuickSortAssignment sorter;
 
-  @Before
+  @BeforeEach
   public void setup() {
     sorter = new QuickSortAssignment(MEDIAN);
   }

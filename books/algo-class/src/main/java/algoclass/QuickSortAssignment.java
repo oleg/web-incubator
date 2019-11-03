@@ -1,11 +1,10 @@
 package algoclass;
 
-import sort.IntSorter;
 import util.Arr;
 
 import static java.lang.Math.max;
 
-public class QuickSortAssignment implements IntSorter {
+public class QuickSortAssignment {
   private long comparisonCount;
   private final PivotStrategy pivotStrategy;
 
@@ -13,7 +12,6 @@ public class QuickSortAssignment implements IntSorter {
     this.pivotStrategy = pivotStrategy;
   }
 
-  @Override
   public int[] sort(int[] input) {
     if (input == null) {
       return input;

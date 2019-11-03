@@ -1,13 +1,14 @@
 package algoclass.graph;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import util.PathUtil;
 
 import java.nio.file.Paths;
 
 import static algoclass.graph.GraphBuilder.graph;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MinCutTest {
 

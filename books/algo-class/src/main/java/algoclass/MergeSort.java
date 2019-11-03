@@ -1,12 +1,9 @@
 package algoclass;
 
-import sort.IntSorter;
-
 import java.util.Arrays;
 
-public class MergeSort implements IntSorter {
+public class MergeSort {
 
-  @Override
   public int[] sort(int[] input) {
     if (input == null || input.length <= 1) {
       return input;
