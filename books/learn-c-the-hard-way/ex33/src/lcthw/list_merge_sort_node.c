@@ -1,36 +1,37 @@
 #include <lcthw/list_merge_sort_node.h>
 #include <lcthw/dbg.h>
 
-inline void ListNode_swap(ListNode * a, ListNode * b)
+ListNode* ListNode_insert_before(ListNode *a, ListNode *b)
 {
-  void *temp = a->value;
-  a->value = b->value;
-  b->value = temp;
-}
 
-ListNode* ListNode_insert_after(ListNode *a2, ListNode *b2) {
-  printf("insert after:: %s -> %s \n", a2->value, b2->value);
-  //  ListNode *a1 = a2->prev;
-  ListNode *a3 = a2->next;
-  
-  //  ListNode *b1 = b2->prev;
-  ListNode *b3 = b2->next;
+  if (b->prev != NULL) {
+    //todo fail
+  }
+  ListNode *b_next = b->next;
+  ListNode *a_prev = a->prev;
+  if (a_prev != NULL) {
+    a_prev->next = b;
+    b->prev = a_prev;
+  }
 
-  a2->next = b2;
-  b2->prev = a2;
-  
-  b2->next = a3;
-  if (a3 != NULL) {
-    a3->prev = b2;
+  b->next = a;
+  a->prev = b;
+
+  if (b_next != NULL) {
+    b_next->prev = NULL;
   }
   
-  /* puts("exit insert after"); */
-  return b3;
+  return b_next;
 }
 
-//todo:oleg do I need to copy this node pointer?
-ListNode *ListNode_find_nth(ListNode *node, int n) {
-  //  puts("find nth");
+void ListNode_replace_tail(ListNode *last, ListNode *b)
+{
+  last->next = b;
+  b->prev = last;
+}
+
+ListNode *ListNode_find_nth(ListNode *node, int n)
+{
   while (n > 0) {
     node = node->next;
     n--;
@@ -38,79 +39,41 @@ ListNode *ListNode_find_nth(ListNode *node, int n) {
   return node;
 }
 
-ListNode *ListNode_merge(ListNode *head, int head_size,
-                         ListNode *middle, int middle_size,
+ListNode *ListNode_find_last(ListNode *node)
+{
+  ListNode *last = NULL;
+  while (node != NULL) {
+    last = node;
+    node = node->next;
+  }
+  return last;
+}
+
+ListNode *ListNode_merge(ListNode *a, 
+                         ListNode *b,
                          List_compare cmp)
 {
-  printf("merge:: head %s(%d), middle %s(%d) \n", head->value, head_size, middle->value, middle_size);
+  ListNode *first = cmp(a->value, b->value) <= 0 ? a : b;
+  ListNode *last = NULL;
 
-
-  ListNode *last;
-  if (cmp(head->value, middle->value) <= 0) {
-    last = head;
-    head = head->next;
-  } else {
-    last = middle;
-    middle = middle->next;
-  }
-  ListNode *first = last;
-
-  //  while (h < head_size && m < middle_size) {  
-  while (head != NULL && middle != NULL) {
-    if (cmp(head->value, middle->value) <= 0) {
-      last = head;
-      head = head->next;
-      /* h++; */
-      
+  while (a != NULL && b != NULL) {
+    last = a;
+    if (cmp(a->value, b->value) <= 0) {
+      a = a->next;
     } else {
-      ListNode *temp = ListNode_insert_after(last, middle);
-      last = middle;
-      middle = temp;
-      //middle = middle->next;
-      /* m++; */
+      b = ListNode_insert_before(a, b);
     }
   }
-  
-  /* while (head != NULL) {
-   *   head = head->next;
-   * } */
 
-  while (head != NULL) {
-    ListNode *tmp = ListNode_insert_after(last, head);
-    last = head;
-    head = tmp;
-    //      last = middle;
-    //m++;
+  if (b != NULL) {
+    ListNode_replace_tail(last, b);
   }
 
-  while (middle != NULL) {
-    ListNode *tmp = ListNode_insert_after(last, middle);
-    last = middle;
-    middle = tmp;
-    //      last = middle;
-    //m++;
-  }
-
-  puts("after merges:");
-  ListNode *temp = first;
-  for(int i = 0; i < 10 && temp != NULL; i++, temp = temp->next) {
-    printf("       --> %s \n", temp->value);
-  }
-  
-  //head->next = NULL;
-  printf("exit merge: %s \n", first->value);
-  first->prev = NULL;
-  last->next = NULL;
   return first;
 }
 
 ListNode *ListNode_sort(ListNode *head, int size, List_compare cmp)
 {
-  if (head == NULL) {
-    printf("sort head: NULL (%d))\n", size);        
-  } else {
-    printf("sort head: %s(%d)\n", head->value, size);        
-  }
   if (size <= 1) {
     return head;
   }
@@ -122,31 +85,16 @@ ListNode *ListNode_sort(ListNode *head, int size, List_compare cmp)
   middle->prev->next = NULL;
   middle->prev = NULL;
 
-  head =ListNode_sort(head, head_size, cmp);
+  head = ListNode_sort(head, head_size, cmp);
   middle = ListNode_sort(middle, middle_size, cmp);
   
-  return ListNode_merge(head, head_size, middle, middle_size, cmp);
+  return ListNode_merge(head, middle, cmp);
 }
 
 void List_merge_sort_node(List *list, List_compare cmp)
 {
-  puts("before list sort");
   ListNode* head = ListNode_sort(list->first, list->count, cmp);
-  puts("after list sort");
-  
 
   list->first = head;
-
-  while (head != NULL) {
-    /* printf("next value is %s \n", head->value); */
-    head = head->next;
-    //    puts("find end");
-  }
-  puts("just before end");
-  list->last = head;
-  puts("returning reult");
-
-  LIST_FOREACH(list, first, next, cur) {
-    printf("%s \n", cur->value);
-  }
+  list->last = ListNode_find_last(head);
 }

@@ -32,6 +32,7 @@ char *test_sort_two_sorted()
   List *list = List_create();
   List_push(list, "a");
   List_push(list, "b");
+  
   List_merge_sort_node(list, cmp);
   
   List *expected = List_create();
@@ -185,7 +186,7 @@ char *all_tests()
   mu_run_test(test_sort_three_reversed);
   mu_run_test(test_sort_five_reversed);
   mu_run_test(test_sort_unsorted);  
-  //mu_run_test(test_merge_sort_node);
+  mu_run_test(test_merge_sort_node);
   
   return NULL;
 }
