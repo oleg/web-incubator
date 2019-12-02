@@ -3,6 +3,11 @@ package algoclass;
 import org.junit.jupiter.api.Test;
 import util.PathUtil;
 
+import java.io.*;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static algoclass.Inversions.count;
@@ -35,7 +40,7 @@ public class InversionsTest {
 
   @Test
   public void from_file() throws Exception {
-    int[] ints = PathUtil.readAllInts(Paths.get("test/IntegerArray.txt"));
+    int[] ints = PathUtil.readAllInts("IntegerArray.txt");
     assertThat(count(ints), is(2407905288L));
   }
 

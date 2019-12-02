@@ -13,12 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QuickSortTest {
-  private QuickSortAssignment sorter;
-
-  @BeforeEach
-  public void setup() {
-    sorter = new QuickSortAssignment(MEDIAN);
-  }
+  private QuickSortAssignment sorter = new QuickSortAssignment(MEDIAN);
 
   @Test
   public void if_empty() throws Exception {

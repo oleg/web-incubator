@@ -1,17 +1,11 @@
 package algoclass;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class MergeSortTest {
-  private MergeSort sorter;
-
-  @BeforeEach
-  public void setup() {
-    sorter = new MergeSort();
-  }
+  private MergeSort sorter = new MergeSort();
 
   @Test
   public void if_empty() throws Exception {

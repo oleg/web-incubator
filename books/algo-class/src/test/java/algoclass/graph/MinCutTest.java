@@ -51,7 +51,7 @@ public class MinCutTest {
 
   @Test
   public void test_3() throws Exception {
-    Graph graph = PathUtil.readGraph(Paths.get("test/kargerMinCut.txt"));
+    Graph graph = PathUtil.readGraph(PathUtil.getPath("kargerMinCut.txt"));
     assertThat(graph.calculateMinCut(), is(17));
   }
 }

@@ -45,7 +45,7 @@ public class MergeInversionsTest {
 
   @Test
   public void from_file() throws Exception {
-    int[] ints = PathUtil.readAllInts(Paths.get("test/IntegerArray.txt"));
+    int[] ints = PathUtil.readAllInts("IntegerArray.txt");
     assertThat(count(ints), is(2407905288L));
   }
 

@@ -4,15 +4,27 @@ import algoclass.graph.Graph;
 import algoclass.graph.GraphBuilder;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class PathUtil {
+
+  public static Path getPath(String resource) throws URISyntaxException {
+    URI uri = ClassLoader.getSystemClassLoader().getResource(resource).toURI();
+    return Paths.get(uri);
+  }
+
+  public static int[] readAllInts(String resource) throws Exception {
+    return readAllInts(getPath(resource));
+  }
 
   public static int[] readAllInts(Path path) throws IOException {
     final List<String> lines = Files.readAllLines(path, UTF_8);
