@@ -14,6 +14,22 @@ class Number < Struct.new(:value)
   
 end
 
+class Boolean < Struct.new(:value)
+  
+  def to_s
+    value.to_s
+  end
+  
+  def inspect
+    "«#{self}»"
+  end
+
+  def reducible?
+    false
+  end
+  
+end
+
 class Add < Struct.new(:left, :right)
   
   def to_s
@@ -62,6 +78,32 @@ class Multiply < Struct.new(:left, :right)
       Multiply.new(left, right.reduce)
     else
       Number.new(left.value * right.value)
+    end
+  end
+
+end
+
+class LessThan < Struct.new(:left, :right)
+  
+  def to_s
+    "#{left} < #{right}"
+  end
+  
+  def inspect
+    "«#{self}»"
+  end
+
+  def reducible?
+    true
+  end
+  
+  def reduce
+    if left.reducible?
+      LessThan.new(left.reduce, right)
+    elsif right.reducible?
+      LessThan.new(left, right.reduce)
+    else
+      Boolean.new(left.value < right.value)
     end
   end
 
@@ -276,7 +318,7 @@ end
 
 class MachineTest < Test::Unit::TestCase
 
-  def test_machine1
+  def test_machine_add
     machine = Machine.new(Add.new(Number.new(1),
                                   Add.new(Number.new(2),
                                           Add.new(Number.new(3),
@@ -293,12 +335,96 @@ eos
     assert_equal Number.new(10), machine.expression
   end
 
+  def test_machine_less_than
+    machine = Machine.new(LessThan.new(Add.new(Number.new(1), Number.new(2)),
+                                       Add.new(Number.new(3), Number.new(4))))
+
+    out = capture_output { machine.run }[0]
+    expected = <<-eos
+1 + 2 < 3 + 4
+3 < 3 + 4
+3 < 7
+true
+eos
+    assert_equal expected, out
+    assert_equal Boolean.new(true), machine.expression
+  end
+  
 end
 
 
 class BooleanTest < Test::Unit::TestCase
-  def test_
+ 
+  def test_new_true
+    assert_equal true, Boolean.new(true).value
   end
+  
+  def test_new_false
+    assert_equal false, Boolean.new(false).value
+  end
+
+  def test_to_s
+    assert_equal "true", Boolean.new(true).to_s
+    assert_equal "false", Boolean.new(false).to_s
+  end
+
+  def test_inspect
+    assert_equal "«true»", Boolean.new(true).inspect
+    assert_equal "«false»", Boolean.new(false).inspect    
+  end
+  
+  def test_number
+    assert_false Boolean.new(true).reducible?
+    assert_false Boolean.new(false).reducible?
+  end
+  
+end
+
+
+class LessThanTest < Test::Unit::TestCase
+
+  def test_less_than_new
+    lt = LessThan.new(Number.new(7), Number.new(9))
+    assert_equal Number.new(7), lt.left
+    assert_equal Number.new(9), lt.right
+  end
+
+  def test_to_s
+    assert_equal "2 < 4", LessThan.new(Number.new(2), Number.new(4)).to_s
+    assert_equal "3 < 1", LessThan.new(Number.new(3), Number.new(1)).to_s
+  end
+
+  def test_inspect
+    assert_equal "«2 < 4»", LessThan.new(Number.new(2), Number.new(4)).inspect
+    assert_equal "«3 < 1»", LessThan.new(Number.new(3), Number.new(1)).inspect
+  end
+
+  def test_reducible
+    lt = LessThan.new(Add.new(Number.new(1), Number.new(1)),
+                      Add.new(Number.new(2), Number.new(2)))
+    
+    assert_true lt.reducible?
+  end
+
+  def test_reduce_true
+    lt = LessThan.new(Add.new(Number.new(1), Number.new(1)),
+                      Add.new(Number.new(2), Number.new(2)))
+
+    lt_1 = lt.reduce
+    assert_equal LessThan.new(Number.new(2),
+                             Add.new(Number.new(2), Number.new(2))), lt_1
+
+    lt_2 = lt_1.reduce
+    assert_equal LessThan.new(Number.new(2), Number.new(4)), lt_2
+
+    lt_3 = lt_2.reduce
+    assert_equal Boolean.new(true), lt_3
+  end
+
+  def test_reduce_false
+    assert_equal Boolean.new(false), LessThan.new(Number.new(5), Number.new(1)).reduce
+  end
+
 end
 
 
