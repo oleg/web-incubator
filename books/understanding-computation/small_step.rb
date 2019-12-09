@@ -44,18 +44,17 @@ class Add < Struct.new(:left, :right)
     true
   end
   
-  def reduce
+  def reduce environment
     if left.reducible?
-      Add.new(left.reduce, right)
+      Add.new(left.reduce(environment), right)
     elsif right.reducible?
-      Add.new(left, right.reduce)
+      Add.new(left, right.reduce(environment))
     else
       Number.new(left.value + right.value)
     end  
   end
 
 end
-
 
 class Multiply < Struct.new(:left, :right)
   
@@ -71,11 +70,11 @@ class Multiply < Struct.new(:left, :right)
     true
   end
   
-  def reduce
+  def reduce environment
     if left.reducible?
-      Multiply.new(left.reduce, right)
+      Multiply.new(left.reduce(environment), right)
     elsif right.reducible?
-      Multiply.new(left, right.reduce)
+      Multiply.new(left, right.reduce(environment))
     else
       Number.new(left.value * right.value)
     end
@@ -84,7 +83,7 @@ class Multiply < Struct.new(:left, :right)
 end
 
 class LessThan < Struct.new(:left, :right)
-  
+
   def to_s
     "#{left} < #{right}"
   end
@@ -97,11 +96,11 @@ class LessThan < Struct.new(:left, :right)
     true
   end
   
-  def reduce
+  def reduce environment
     if left.reducible?
-      LessThan.new(left.reduce, right)
+      LessThan.new(left.reduce(environment), right)
     elsif right.reducible?
-      LessThan.new(left, right.reduce)
+      LessThan.new(left, right.reduce(environment))
     else
       Boolean.new(left.value < right.value)
     end
@@ -109,8 +108,72 @@ class LessThan < Struct.new(:left, :right)
 
 end
 
+class Variable < Struct.new(:name)
 
-class Machine < Struct.new(:expression)
+  def to_s
+    "#{name}"
+  end
+  
+  def inspect
+    "«#{self}»"
+  end
+
+  def reducible?
+    true
+  end
+  
+  def reduce environment
+    environment[name]
+  end
+
+end
+
+class DoNothing
+  
+  def ==(other)
+    other.instance_of?(DoNothing)
+  end
+  
+  def to_s
+    "do-nothing"
+  end
+  
+  def inspect
+    "«#{self}»"
+  end
+
+  def reducible?
+    false
+  end
+  
+end
+
+class Assign < Struct.new(:name, :expression)
+
+  def to_s
+    "#{name} = #{expression}"
+  end
+
+  def inspect
+    "«#{self}»"
+  end
+
+  def reducible?
+    true
+  end
+
+  def reduce environment
+    if expression.reducible?
+      Assign.new(name, expression.reduce(environment))
+    else
+      DoNothing.new
+    end
+  end
+
+end
+
+
+class Machine < Struct.new(:expression, :environment)
 
   def run
     while expression.reducible?
@@ -121,11 +184,10 @@ class Machine < Struct.new(:expression)
   end
 
   def step
-    self.expression = expression.reduce
+    self.expression = expression.reduce(environment)
   end
 
 end
-
 
 
 require "test/unit"
@@ -182,17 +244,17 @@ class AddTest < Test::Unit::TestCase
   def test_add_reduce_no
     add = Add.new(Number.new(1),
                   Number.new(2))
-    assert_equal Number.new(3), add.reduce
+    assert_equal Number.new(3), add.reduce({})
   end
 
   def test_add_reduce_left
     add = Add.new(Add.new(Number.new(4), Number.new(2)),
                   Number.new(1))
     
-    add_1 = add.reduce
+    add_1 = add.reduce({})
     assert_equal Add.new(Number.new(6), Number.new(1)), add_1
     
-    add_2 = add_1.reduce
+    add_2 = add_1.reduce({})
     assert_equal Number.new(7), add_2
   end
   
@@ -200,10 +262,10 @@ class AddTest < Test::Unit::TestCase
     add = Add.new(Number.new(7),
                   Add.new(Number.new(3), Number.new(1)))
 
-    add_1 = add.reduce
+    add_1 = add.reduce({})
     assert_equal Add.new(Number.new(7), Number.new(4)), add_1
 
-    add_2 = add_1.reduce
+    add_2 = add_1.reduce({})
     assert_equal Number.new(11), add_2
   end
   
@@ -211,13 +273,13 @@ class AddTest < Test::Unit::TestCase
     add = Add.new(Add.new(Number.new(1), Number.new(2)),
                   Add.new(Number.new(3), Number.new(4)))
 
-    add_1 = add.reduce
+    add_1 = add.reduce({})
     assert_equal Add.new(Number.new(3), Add.new(Number.new(3), Number.new(4))), add_1
 
-    add_2 = add_1.reduce
+    add_2 = add_1.reduce({})
     assert_equal Add.new(Number.new(3), Number.new(7)), add_2
 
-    add_3 = add_2.reduce
+    add_3 = add_2.reduce({})
     assert_equal Number.new(10), add_3
   end
 
@@ -225,13 +287,13 @@ class AddTest < Test::Unit::TestCase
     add = Add.new(Add.new(Number.new(1), Number.new(2)),
                   Multiply.new(Number.new(3), Number.new(4)))
     
-    add_1 = add.reduce
+    add_1 = add.reduce({})
     assert_equal Add.new(Number.new(3), Multiply.new(Number.new(3), Number.new(4))), add_1
     
-    add_2 = add_1.reduce
+    add_2 = add_1.reduce({})
     assert_equal Add.new(Number.new(3), Number.new(12)), add_2
 
-    add_3 = add_2.reduce
+    add_3 = add_2.reduce({})
     assert_equal Number.new(15), add_3
   end  
 end
@@ -260,17 +322,17 @@ class MultiplyTest < Test::Unit::TestCase
   def test_multiply_reduce_no
     multiply = Multiply.new(Number.new(1), Number.new(2))
     
-    assert_equal Number.new(2), multiply.reduce
+    assert_equal Number.new(2), multiply.reduce({})
   end
 
   def test_multiply_reduce_left
     multiply = Multiply.new(Multiply.new(Number.new(4), Number.new(2)),
                             Number.new(1))
 
-    multiply_1 = multiply.reduce
+    multiply_1 = multiply.reduce({})
     assert_equal Multiply.new(Number.new(8), Number.new(1)), multiply_1
 
-    multiply_2 = multiply_1.reduce
+    multiply_2 = multiply_1.reduce({})
     assert_equal Number.new(8), multiply_2
   end
   
@@ -278,10 +340,10 @@ class MultiplyTest < Test::Unit::TestCase
     multiply = Multiply.new(Number.new(7),
                             Multiply.new(Number.new(3), Number.new(1)))
 
-    multiply_1 = multiply.reduce
+    multiply_1 = multiply.reduce({})
     assert_equal Multiply.new(Number.new(7), Number.new(3)), multiply_1
 
-    multiply_2 = multiply_1.reduce
+    multiply_2 = multiply_1.reduce({})
     assert_equal Number.new(21), multiply_2
   end
 
@@ -289,13 +351,13 @@ class MultiplyTest < Test::Unit::TestCase
     multiply = Multiply.new(Multiply.new(Number.new(1), Number.new(2)),
                             Multiply.new(Number.new(3), Number.new(4)))
 
-    multiply_1 = multiply.reduce
+    multiply_1 = multiply.reduce({})
     assert_equal Multiply.new(Number.new(2), Multiply.new(Number.new(3), Number.new(4))), multiply_1
 
-    multiply_2 = multiply_1.reduce
+    multiply_2 = multiply_1.reduce({})
     assert_equal Multiply.new(Number.new(2), Number.new(12)), multiply_2
 
-    multiply_3 = multiply_2.reduce    
+    multiply_3 = multiply_2.reduce({})
     assert_equal Number.new(24), multiply_3
   end
 
@@ -303,14 +365,14 @@ class MultiplyTest < Test::Unit::TestCase
     multiply = Multiply.new(Add.new(Number.new(1), Number.new(2)),
                             Multiply.new(Number.new(3), Number.new(4)))
 
-    multiply_1 = multiply.reduce
+    multiply_1 = multiply.reduce({})
     assert_equal Multiply.new(Number.new(3),
                               Multiply.new(Number.new(3), Number.new(4))), multiply_1
 
-    multiply_2 = multiply_1.reduce
+    multiply_2 = multiply_1.reduce({})
     assert_equal Multiply.new(Number.new(3), Number.new(12)), multiply_2
     
-    multiply_3 = multiply_2.reduce
+    multiply_3 = multiply_2.reduce({})
     assert_equal Number.new(36), multiply_3
   end
   
@@ -318,11 +380,12 @@ end
 
 class MachineTest < Test::Unit::TestCase
 
-  def test_machine_add
+  def test_add
     machine = Machine.new(Add.new(Number.new(1),
                                   Add.new(Number.new(2),
                                           Add.new(Number.new(3),
-                                                  Number.new(4)))))
+                                                  Number.new(4)))),
+                          {})
 
     out = capture_output { machine.run }[0]
     expected = <<-eos
@@ -335,9 +398,10 @@ eos
     assert_equal Number.new(10), machine.expression
   end
 
-  def test_machine_less_than
+  def test_less_than
     machine = Machine.new(LessThan.new(Add.new(Number.new(1), Number.new(2)),
-                                       Add.new(Number.new(3), Number.new(4))))
+                                       Add.new(Number.new(3), Number.new(4))),
+                          {})
 
     out = capture_output { machine.run }[0]
     expected = <<-eos
@@ -349,7 +413,50 @@ eos
     assert_equal expected, out
     assert_equal Boolean.new(true), machine.expression
   end
-  
+
+  def test_variable
+    machine = Machine.new(Variable.new(:x),
+                          {x: Number.new(100)})
+
+    out = capture_output { machine.run }[0]
+    expected = <<-eos
+x
+100
+eos
+    assert_equal expected, out
+    assert_equal Number.new(100), machine.expression
+  end
+
+  def test_add_variables
+    machine = Machine.new(Add.new(Variable.new(:x), Variable.new(:y)),
+                          {x: Number.new(100), y: Number.new(200)})
+
+    out = capture_output { machine.run }[0]
+    expected = <<-eos
+x + y
+100 + y
+100 + 200
+300
+eos
+    assert_equal expected, out
+    assert_equal Number.new(300), machine.expression
+  end
+
+  def test_assign
+    machine = Machine.new(Assign.new(:x, Add.new(Variable.new(:y), Number.new(10))),
+                          {y: Number.new(1)})
+
+    out = capture_output { machine.run }[0]
+    expected = <<-eos
+x = y + 10
+x = 1 + 10
+x = 11
+do-nothing
+eos
+    assert_equal expected, out
+    assert_equal DoNothing.new, machine.expression
+  end
+
 end
 
 
@@ -410,19 +517,110 @@ class LessThanTest < Test::Unit::TestCase
     lt = LessThan.new(Add.new(Number.new(1), Number.new(1)),
                       Add.new(Number.new(2), Number.new(2)))
 
-    lt_1 = lt.reduce
+    lt_1 = lt.reduce({})
     assert_equal LessThan.new(Number.new(2),
                              Add.new(Number.new(2), Number.new(2))), lt_1
 
-    lt_2 = lt_1.reduce
+    lt_2 = lt_1.reduce({})
     assert_equal LessThan.new(Number.new(2), Number.new(4)), lt_2
 
-    lt_3 = lt_2.reduce
+    lt_3 = lt_2.reduce({})
     assert_equal Boolean.new(true), lt_3
   end
 
   def test_reduce_false
-    assert_equal Boolean.new(false), LessThan.new(Number.new(5), Number.new(1)).reduce
+    assert_equal Boolean.new(false), LessThan.new(Number.new(5), Number.new(1)).reduce({})
+  end
+
+end
+
+class VariableTest < Test::Unit::TestCase
+  def test_new
+    v = Variable.new :x
+    assert_equal :x, v.name
+  end
+
+  def test_to_s
+    assert_equal "yy", Variable.new(:yy).to_s
+  end
+
+  def test_inspect
+    assert_equal "«zzz»", Variable.new(:zzz).inspect
+  end
+  
+  def test_reducible
+    assert_true Variable.new(:xyz).reducible?
+  end
+  
+  def test_reduce
+    assert_equal Number.new(100), Variable.new(:y).reduce({y: Number.new(100)})
+    assert_equal Number.new(200), Variable.new(:y).reduce({y: Number.new(200)})
+    assert_equal Boolean.new(true), Variable.new(:z).reduce({z: Boolean.new(true)})
+  end
+
+end
+
+
+class DoNothingTest < Test::Unit::TestCase
+  def test_new
+    dn = DoNothing.new
+    assert_equal DoNothing.new, dn
+  end
+
+  def test_to_s
+    assert_equal "do-nothing", DoNothing.new.to_s
+  end
+
+  def test_inspect
+    assert_equal "«do-nothing»", DoNothing.new.inspect
+  end
+  
+  def test_reducible
+    assert_false DoNothing.new.reducible?
+  end
+
+end
+
+class AssignTest < Test::Unit::TestCase
+  
+  def test_new
+    assign = Assign.new(:x, Number.new(100))
+    assert_equal :x, assign.name
+    assert_equal Number.new(100), assign.expression
+  end
+
+  def test_simle_to_s
+    assert_equal "y = 200", Assign.new(:y, Number.new(200)).to_s
+  end
+  
+  def test_Add_to_s
+    assert_equal "e = 9 + 3", Assign.new(:e, Add.new(Number.new(9), Number.new(3))).to_s
+  end
+
+  def test_inspect
+    assert_equal "«f = 1 + 1»", Assign.new(:f, Add.new(Number.new(1), Number.new(1))).inspect
+  end
+  
+  def test_reducible
+    assert_true Assign.new(:a, Number.new(1)).reducible?
+  end
+
+  def test_reducible_complex
+    assert_true Assign.new(:b, LessThan.new(Number.new(2), Number.new(1))).reducible?
+  end
+
+  def test_reduce_simple
+    assert_equal DoNothing.new, Assign.new(:b, Number.new(123)).reduce({})
+  end
+
+  def test_reduce_complex
+    assign = Assign.new(:c, Add.new(Number.new(123), Number.new(321)))
+    
+    assign_1 = assign.reduce({})
+    assert_equal Assign.new(:c, Number.new(444)), assign_1
+
+    assign_2 = assign_1.reduce({})
+    assert_equal DoNothing.new, assign_2
   end
 
 end
