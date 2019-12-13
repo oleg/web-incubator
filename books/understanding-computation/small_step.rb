@@ -164,33 +164,92 @@ class Assign < Struct.new(:name, :expression)
 
   def reduce environment
     if expression.reducible?
-      Assign.new(name, expression.reduce(environment))
+      [Assign.new(name, expression.reduce(environment)), environment]
     else
-      DoNothing.new
+      [DoNothing.new, environment.merge(name => expression)]
     end
   end
 
 end
 
+class Evaluate < Struct.new(:expression)
+  def to_s
+    "eval(#{expression})"
+  end
+  
+  def inspect
+    "«#{self}»"    
+  end
 
-class Machine < Struct.new(:expression, :environment)
+  def reducible?
+    true
+  end
+
+  def reduce environment
+    if expression.reducible?
+      [Evaluate.new(expression.reduce(environment)), environment]
+    else
+      [DoNothing.new, environment]
+    end
+  end
+end
+
+
+class Sequence < Struct.new(:first, :second)
+
+  def to_s
+    "#{first}; #{second}"
+  end
+
+  def inspect
+    "«#{self}»"
+  end
+
+  def reducible?
+    true
+  end
+
+  def reduce environment
+    case first
+    when DoNothing.new
+      [second, environment]
+    else
+      st, env = first.reduce(environment)
+      [Sequence.new(st, second), env]
+    end
+  end
+
+end
+
+class Machine < Struct.new(:statement, :environment)
 
   def run
-    while expression.reducible?
-      puts expression
+    while statement.reducible?
+      log
       step
     end
-    puts expression
+    log
   end
 
   def step
-    self.expression = expression.reduce(environment)
+    self.statement, self.environment = statement.reduce(environment)
   end
+
+  def log
+    puts self
+  end
+
+  def to_s
+    "#{statement}, #{environment}"
+  end
+  
 
 end
 
 
 require "test/unit"
+require "test/unit/assertions"
+Test::Unit::Assertions.use_pp = false
 
 
 class NumberTest < Test::Unit::TestCase
@@ -229,7 +288,7 @@ class AddTest < Test::Unit::TestCase
     assert_equal 1, a.left.value
     assert_equal 2, a.right.value
   end
-    
+  
   def test_add_multiply
     a = Add.new(Multiply.new(Number.new(1), Number.new(2)),
                 Multiply.new(Number.new(3), Number.new(4)))
@@ -381,65 +440,69 @@ end
 class MachineTest < Test::Unit::TestCase
 
   def test_add
-    machine = Machine.new(Add.new(Number.new(1),
+    machine = Machine.new(Evaluate.new(Add.new(Number.new(1),
                                   Add.new(Number.new(2),
                                           Add.new(Number.new(3),
-                                                  Number.new(4)))),
+                                                  Number.new(4))))),
                           {})
 
     out = capture_output { machine.run }[0]
     expected = <<-eos
-1 + 2 + 3 + 4
-1 + 2 + 7
-1 + 9
-10
+eval(1 + 2 + 3 + 4), {}
+eval(1 + 2 + 7), {}
+eval(1 + 9), {}
+eval(10), {}
+do-nothing, {}
 eos
     assert_equal expected, out
-    assert_equal Number.new(10), machine.expression
+    assert_equal DoNothing.new, machine.statement
   end
 
   def test_less_than
-    machine = Machine.new(LessThan.new(Add.new(Number.new(1), Number.new(2)),
-                                       Add.new(Number.new(3), Number.new(4))),
+    machine = Machine.new(Evaluate.new(LessThan.new(Add.new(Number.new(1), Number.new(2)),
+                                       Add.new(Number.new(3), Number.new(4)))),
                           {})
 
     out = capture_output { machine.run }[0]
     expected = <<-eos
-1 + 2 < 3 + 4
-3 < 3 + 4
-3 < 7
-true
+eval(1 + 2 < 3 + 4), {}
+eval(3 < 3 + 4), {}
+eval(3 < 7), {}
+eval(true), {}
+do-nothing, {}
 eos
     assert_equal expected, out
-    assert_equal Boolean.new(true), machine.expression
+    assert_equal DoNothing.new, machine.statement
   end
 
   def test_variable
-    machine = Machine.new(Variable.new(:x),
+    machine = Machine.new(Evaluate.new(Variable.new(:x)),
                           {x: Number.new(100)})
 
     out = capture_output { machine.run }[0]
     expected = <<-eos
-x
-100
+eval(x), {:x=>«100»}
+eval(100), {:x=>«100»}
+do-nothing, {:x=>«100»}
 eos
     assert_equal expected, out
-    assert_equal Number.new(100), machine.expression
+    assert_equal DoNothing.new, machine.statement
   end
 
   def test_add_variables
-    machine = Machine.new(Add.new(Variable.new(:x), Variable.new(:y)),
+    machine = Machine.new(Evaluate.new(Add.new(Variable.new(:x), Variable.new(:y))),
                           {x: Number.new(100), y: Number.new(200)})
 
     out = capture_output { machine.run }[0]
     expected = <<-eos
-x + y
-100 + y
-100 + 200
-300
+eval(x + y), {:x=>«100», :y=>«200»}
+eval(100 + y), {:x=>«100», :y=>«200»}
+eval(100 + 200), {:x=>«100», :y=>«200»}
+eval(300), {:x=>«100», :y=>«200»}
+do-nothing, {:x=>«100», :y=>«200»}
 eos
     assert_equal expected, out
-    assert_equal Number.new(300), machine.expression
+    assert_equal DoNothing.new, machine.statement
   end
 
   def test_assign
@@ -448,20 +511,39 @@ eos
 
     out = capture_output { machine.run }[0]
     expected = <<-eos
-x = y + 10
-x = 1 + 10
-x = 11
-do-nothing
+x = y + 10, {:y=>«1»}
+x = 1 + 10, {:y=>«1»}
+x = 11, {:y=>«1»}
+do-nothing, {:y=>«1», :x=>«11»}
 eos
     assert_equal expected, out
-    assert_equal DoNothing.new, machine.expression
+    assert_equal DoNothing.new, machine.statement
   end
 
+  def test_sequence_complex
+    machine = Machine.new(Sequence.new(Assign.new(:x, Add.new(Number.new(1), Number.new(1))),
+                                       Assign.new(:y, Add.new(Variable.new(:x), Number.new(3)))),
+                          {})
+
+    out = capture_output { machine.run }[0]
+    expected = <<-eos
+x = 1 + 1; y = x + 3, {}
+x = 2; y = x + 3, {}
+do-nothing; y = x + 3, {:x=>«2»}
+y = x + 3, {:x=>«2»}
+y = 2 + 3, {:x=>«2»}
+y = 5, {:x=>«2»}
+do-nothing, {:x=>«2», :y=>«5»}
+eos
+    assert_equal expected, out
+    assert_equal DoNothing.new, machine.statement
+
+  end
 end
 
 
 class BooleanTest < Test::Unit::TestCase
- 
+  
   def test_new_true
     assert_equal true, Boolean.new(true).value
   end
@@ -519,7 +601,7 @@ class LessThanTest < Test::Unit::TestCase
 
     lt_1 = lt.reduce({})
     assert_equal LessThan.new(Number.new(2),
-                             Add.new(Number.new(2), Number.new(2))), lt_1
+                              Add.new(Number.new(2), Number.new(2))), lt_1
 
     lt_2 = lt_1.reduce({})
     assert_equal LessThan.new(Number.new(2), Number.new(4)), lt_2
@@ -589,7 +671,7 @@ class AssignTest < Test::Unit::TestCase
     assert_equal Number.new(100), assign.expression
   end
 
-  def test_simle_to_s
+  def test_simple_to_s
     assert_equal "y = 200", Assign.new(:y, Number.new(200)).to_s
   end
   
@@ -610,20 +692,125 @@ class AssignTest < Test::Unit::TestCase
   end
 
   def test_reduce_simple
-    assert_equal DoNothing.new, Assign.new(:b, Number.new(123)).reduce({})
+    statement, env = Assign.new(:b, Number.new(123)).reduce({})
+    assert_equal DoNothing.new, statement
+    assert_equal Hash[b: Number.new(123)], env 
   end
 
   def test_reduce_complex
     assign = Assign.new(:c, Add.new(Number.new(123), Number.new(321)))
+    env = {}
     
-    assign_1 = assign.reduce({})
+    assign_1, env_1 = assign.reduce(env)
     assert_equal Assign.new(:c, Number.new(444)), assign_1
+    assert_equal({}, env_1)
 
-    assign_2 = assign_1.reduce({})
+    assign_2, env_2 = assign_1.reduce(env_1)
     assert_equal DoNothing.new, assign_2
+    assert_equal Hash[c: Number.new(444)], env_2
+  end
+  
+  def test_assign_returns_updated_environment
+    statement = Assign.new(:x, Add.new(Variable.new(:x), Number.new(1)))
+    environment = {x: Number.new(2)}
+    
+    assert_true statement.reducible?
+    
+    statement, environment = statement.reduce(environment)
+    assert_equal Assign.new(:x, Add.new(Number.new(2), Number.new(1))), statement
+    assert_equal({ x: Number.new(2) }, environment)
+    
+    statement, environment = statement.reduce(environment)
+    assert_equal Assign.new(:x, Number.new(3)), statement
+    assert_equal({ x: Number.new(2) }, environment)
+    
+    statement, environment = statement.reduce(environment)
+    assert_equal DoNothing.new, statement
+    assert_equal({ x: Number.new(3) }, environment)
   end
 
 end
+
+class SequenceTest < Test::Unit::TestCase
+  
+  def test_new
+    seq = Sequence.new(Assign.new(:x, Number.new(10)),
+                       Assign.new(:y, Number.new(11)))
+    assert_equal Assign.new(:x, Number.new(10)), seq.first
+    assert_equal Assign.new(:y, Number.new(11)), seq.second
+  end
+
+  def test_to_s
+    assert_equal "b = 1; a = 2", Sequence.new(Assign.new(:b, Number.new(1)),
+                                              Assign.new(:a, Number.new(2))).to_s
+  end
+
+  def test_inspect
+    assert_equal "«a = 10; b = 20»", Sequence.new(Assign.new(:a, Number.new(10)),
+                                                  Assign.new(:b, Number.new(20))).inspect
+  end
+  
+  def test_reducible
+    assert_true Sequence.new(Assign.new(:a, Number.new(10)),
+                             Assign.new(:b, Number.new(20))).reducible?
+  end
+
+  def test_always_reducible
+    assert_true Sequence.new(DoNothing.new, DoNothing.new).reducible?
+  end
+
+  def test_reduce
+    seq = Sequence.new(Assign.new(:x, Add.new(Number.new(1), Number.new(1))),
+                       Assign.new(:y, Add.new(Variable.new(:x), Number.new(3))))
+    env = {}
+    seq_1, env_1 = seq.reduce(env)
+    assert_equal Sequence.new(Assign.new(:x, Number.new(2)),
+                              Assign.new(:y, Add.new(Variable.new(:x), Number.new(3)))), seq_1
+    
+    seq_2, env_2 = seq_1.reduce(env_1)
+    assert_equal Sequence.new(DoNothing.new,
+                              Assign.new(:y, Add.new(Variable.new(:x), Number.new(3)))), seq_2
+
+    seq_3, env_3 = seq_2.reduce(env_2)
+    assert_equal Assign.new(:y, Add.new(Variable.new(:x), Number.new(3))), seq_3
+  end
+  
+
+end
+
+class EvaluateTest < Test::Unit::TestCase
+  
+  def test_new
+    evaluate = Evaluate.new(Add.new(Number.new(1), Number.new(100)))
+    assert_equal Add.new(Number.new(1), Number.new(100)), evaluate.expression
+  end
+
+  def test_simple_to_s
+    assert_equal "eval(200 + 22)", Evaluate.new(Add.new(Number.new(200), Number.new(22))).to_s
+  end
+
+  def test_inspect
+    assert_equal "«eval(10 < 100)»", Evaluate.new(LessThan.new(Number.new(10), Number.new(100))).inspect
+  end
+  
+  def test_reducible
+    assert_true Evaluate.new(Number.new(1)).reducible?
+  end
+
+  def test_reduce_no_change_env
+    statement = Evaluate.new(Add.new(Number.new(200), Number.new(22)))
+    env = {}
+    
+    statement_1, env_1 = statement.reduce(env)
+    assert_equal Hash[], env_1
+    assert_equal Evaluate.new(Number.new(222)), statement_1
+        
+    statement_2, env_2 = statement_1.reduce(env)
+    assert_equal Hash[], env_2
+    assert_equal DoNothing.new, statement_2
+  end
+
+end  
 
 
 _q = "«»"
