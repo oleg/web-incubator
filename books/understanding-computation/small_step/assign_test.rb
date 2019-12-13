@@ -5,9 +5,7 @@ require './number'
 require './variable'
 require './less_than'
 
-require "test/unit"
-require "test/unit/assertions"
-Test::Unit::Assertions.use_pp = false
+require './test_setup'
 
 
 class AssignTest < Test::Unit::TestCase

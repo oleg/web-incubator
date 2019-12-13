@@ -2,9 +2,7 @@ require './variable'
 require './number'
 require './boolean'
 
-require "test/unit"
-require "test/unit/assertions"
-Test::Unit::Assertions.use_pp = false
+require './test_setup'
 
 class VariableTest < Test::Unit::TestCase
   def test_new

@@ -1,8 +1,6 @@
 require './boolean'
 
-require "test/unit"
-require "test/unit/assertions"
-Test::Unit::Assertions.use_pp = false
+require './test_setup'
 
 
 class BooleanTest < Test::Unit::TestCase

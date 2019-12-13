@@ -2,9 +2,7 @@ require './multiply'
 require './add'
 require "./number"
 
-require "test/unit"
-require "test/unit/assertions"
-Test::Unit::Assertions.use_pp = false
+require './test_setup'
 
 
 class MultiplyTest < Test::Unit::TestCase

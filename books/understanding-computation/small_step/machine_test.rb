@@ -9,10 +9,7 @@ require "./assign"
 require "./boolean"
 require './do_nothing'
 
-
-require "test/unit"
-require "test/unit/assertions"
-Test::Unit::Assertions.use_pp = false
+require './test_setup'
 
 class MachineTest < Test::Unit::TestCase
 
