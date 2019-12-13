@@ -8,6 +8,7 @@ require "./sequence"
 require "./assign"
 require "./boolean"
 require './do_nothing'
+require './iff'
 
 require './test_setup'
 
@@ -15,9 +16,9 @@ class MachineTest < Test::Unit::TestCase
 
   def test_add
     machine = Machine.new(Evaluate.new(Add.new(Number.new(1),
-                                  Add.new(Number.new(2),
-                                          Add.new(Number.new(3),
-                                                  Number.new(4))))),
+                                               Add.new(Number.new(2),
+                                                       Add.new(Number.new(3),
+                                                               Number.new(4))))),
                           {})
 
     out = capture_output { machine.run }[0]
@@ -34,7 +35,7 @@ eos
 
   def test_less_than
     machine = Machine.new(Evaluate.new(LessThan.new(Add.new(Number.new(1), Number.new(2)),
-                                       Add.new(Number.new(3), Number.new(4)))),
+                                                    Add.new(Number.new(3), Number.new(4)))),
                           {})
 
     out = capture_output { machine.run }[0]
@@ -113,4 +114,37 @@ eos
     assert_equal DoNothing.new, machine.statement
 
   end
+
+  def test_iff_true
+    machine = Machine.new(If.new(Variable.new(:x),
+                                 Assign.new(:y, Number.new(1)),
+                                 Assign.new(:y, Number.new(2))),
+                          {x: Boolean.new(true)})
+
+    out = capture_output { machine.run }[0]
+    expected = <<-eos
+if (x) { y = 1 } else { y = 2 }, {:x=>«true»}
+if (true) { y = 1 } else { y = 2 }, {:x=>«true»}
+y = 1, {:x=>«true»}
+do-nothing, {:x=>«true», :y=>«1»}
+eos
+    assert_equal expected, out
+    assert_equal DoNothing.new, machine.statement
+  end
+  
+
+  def test_iff_false
+    machine = Machine.new(If.new(Variable.new(:x), Assign.new(:y, Number.new(1)), DoNothing.new),
+                          {x: Boolean.new(false)})
+    
+    out = capture_output { machine.run }[0]
+    expected = <<-eos
+if (x) { y = 1 } else { do-nothing }, {:x=>«false»}
+if (false) { y = 1 } else { do-nothing }, {:x=>«false»}
+do-nothing, {:x=>«false»}
+eos
+    assert_equal expected, out
+    assert_equal DoNothing.new, machine.statement
+  end
+  
 end

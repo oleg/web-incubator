@@ -1,4 +1,4 @@
-class Iff < Struct.new(:condition, :consequence, :alternative)
+class If < Struct.new(:condition, :consequence, :alternative)
   
   def to_s
     "if (#{condition}) { #{consequence} } else { #{alternative} }"
@@ -15,7 +15,7 @@ class Iff < Struct.new(:condition, :consequence, :alternative)
   def reduce environment
     if condition.reducible?
       reduced = condition.reduce(environment)
-      [Iff.new(reduced, consequence, alternative), environment]
+      [If.new(reduced, consequence, alternative), environment]
     else
       case condition
       when Boolean.new(true)
