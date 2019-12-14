@@ -13,7 +13,7 @@ class While < Struct.new(:condition, :body)
   end
 
   def reduce environment
-    [If.new(condition, Sequence.new(body, While.new(condition, body)), DoNothing.new),
+    [If.new(condition, Sequence.new(body, self), DoNothing.new),
      environment]
   end
   

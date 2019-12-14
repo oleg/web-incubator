@@ -9,6 +9,8 @@ require "./assign"
 require "./boolean"
 require './do_nothing'
 require './iff'
+require './whilee'
+require './multiply'
 
 require './test_setup'
 
@@ -115,7 +117,7 @@ eos
 
   end
 
-  def test_iff_true
+  def test_if_true
     machine = Machine.new(If.new(Variable.new(:x),
                                  Assign.new(:y, Number.new(1)),
                                  Assign.new(:y, Number.new(2))),
@@ -133,7 +135,7 @@ eos
   end
   
 
-  def test_iff_false
+  def test_if_false
     machine = Machine.new(If.new(Variable.new(:x), Assign.new(:y, Number.new(1)), DoNothing.new),
                           {x: Boolean.new(false)})
     
@@ -142,6 +144,40 @@ eos
 if (x) { y = 1 } else { do-nothing }, {:x=>«false»}
 if (false) { y = 1 } else { do-nothing }, {:x=>«false»}
 do-nothing, {:x=>«false»}
+eos
+    assert_equal expected, out
+    assert_equal DoNothing.new, machine.statement
+  end
+
+
+  def test_while
+    machine = Machine.new(While.new(LessThan.new(Variable.new(:x), Number.new(5)),
+                                    Assign.new(:x, Multiply.new(Variable.new(:x), Number.new(3)))),
+                          { x: Number.new(1) })
+    
+    out = capture_output { machine.run }[0]
+    expected = <<-eos
+while (x < 5) { x = x * 3 }, {:x=>«1»}
+if (x < 5) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«1»}
+if (1 < 5) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«1»}
+if (true) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«1»}
+x = x * 3; while (x < 5) { x = x * 3 }, {:x=>«1»}
+x = 1 * 3; while (x < 5) { x = x * 3 }, {:x=>«1»}
+x = 3; while (x < 5) { x = x * 3 }, {:x=>«1»}
+do-nothing; while (x < 5) { x = x * 3 }, {:x=>«3»}
+while (x < 5) { x = x * 3 }, {:x=>«3»}
+if (x < 5) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«3»}
+if (3 < 5) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«3»}
+if (true) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«3»}
+x = x * 3; while (x < 5) { x = x * 3 }, {:x=>«3»}
+x = 3 * 3; while (x < 5) { x = x * 3 }, {:x=>«3»}
+x = 9; while (x < 5) { x = x * 3 }, {:x=>«3»}
+do-nothing; while (x < 5) { x = x * 3 }, {:x=>«9»}
+while (x < 5) { x = x * 3 }, {:x=>«9»}
+if (x < 5) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«9»}
+if (9 < 5) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«9»}
+if (false) { x = x * 3; while (x < 5) { x = x * 3 } } else { do-nothing }, {:x=>«9»}
+do-nothing, {:x=>«9»}
 eos
     assert_equal expected, out
     assert_equal DoNothing.new, machine.statement
