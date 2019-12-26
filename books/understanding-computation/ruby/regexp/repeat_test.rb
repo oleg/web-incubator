@@ -28,4 +28,13 @@ class RepeatTest < Test::Unit::TestCase
     assert_equal '/d*/', Repeat.new(Literal.new('d')).inspect
   end
 
+  def test_matches
+    pattern = Repeat.new(Literal.new('a'))
+    
+    assert_true pattern.matches?('')
+    assert_true pattern.matches?('a')
+    assert_true pattern.matches?('aaaa')
+    assert_false pattern.matches?('b')
+  end
+  
 end

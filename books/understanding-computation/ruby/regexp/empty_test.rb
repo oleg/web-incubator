@@ -12,5 +12,15 @@ class EmptyTest < Test::Unit::TestCase
     assert_equal '//', Empty.new.inspect
   end
 
-end
+  def test_nfa_design
+    d = Empty.new.to_nfa_design
+    assert_true d.accepts?('')
+    assert_false d.accepts?('a')
+  end
 
+  def test_matches
+    assert_true Empty.new.matches?('')
+    assert_false Empty.new.matches?('a')
+  end
+
+end

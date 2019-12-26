@@ -28,4 +28,20 @@ class ConcatenateTest < Test::Unit::TestCase
                                          Concatenate.new(Literal.new('g'), Literal.new('s'))).to_s
   end
 
+  def test_concatenate
+    pattern = Concatenate.new(Literal.new('a'), Literal.new('b'))
+
+    assert_false pattern.matches?('a')
+    assert_true pattern.matches?('ab')
+    assert_false pattern.matches?('abc')
+  end
+
+  def test_concatenate_recursive
+    pattern = Concatenate.new(Literal.new('a'), Concatenate.new(Literal.new('b'), Literal.new('c')))
+    
+    assert_false pattern.matches?('a')
+    assert_false pattern.matches?('ab')
+    assert_true pattern.matches?('abc')
+  end
+  
 end

@@ -42,3 +42,26 @@ class NFARulebookFreeMovesTest < Test::Unit::TestCase
     assert_equal Set[1, 2, 4], @rulebook.follow_free_moves(Set[1])
   end
 end
+
+class NFARulebookOperatorTest < Test::Unit::TestCase
+  
+  def test_plus
+    a = NFARulebook.new([1, 2, 3])
+    b = NFARulebook.new([4, 5, 6])
+    assert_equal [1, 2, 3, 4, 5, 6], (a + b).rules
+  end
+  
+  def test_plus_position
+    a = NFARulebook.new([1, 2, 3])
+    b = NFARulebook.new([4, 5, 6])
+    assert_equal [4, 5, 6, 1, 2, 3], (b + a).rules
+  end
+
+  def test_create
+    a = NFARulebook.new([1, 2, 3])
+    b = NFARulebook.new([4, 5, 6])
+    assert_not_equal a, (a + b)
+    assert_not_equal b, (a + b)
+  end
+
+end

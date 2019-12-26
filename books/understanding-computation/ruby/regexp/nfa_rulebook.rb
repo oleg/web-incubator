@@ -17,5 +17,9 @@ class NFARulebook < Struct.new(:rules)
   def rules_for(state, character)
     rules.select { |rule| rule.applies_to?(state, character)}
   end
-  
+
+  def + other
+    NFARulebook.new(self.rules + other.rules)
+  end
+
 end

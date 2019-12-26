@@ -10,4 +10,9 @@ module Pattern
   def inspect
     "/#{self}/"
   end
+
+  def matches? str
+    to_nfa_design.accepts? str
+  end
+  
 end

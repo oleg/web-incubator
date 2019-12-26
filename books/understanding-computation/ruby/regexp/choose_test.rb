@@ -30,4 +30,12 @@ class ChooseTest < Test::Unit::TestCase
                                      Literal.new('z')).to_s
   end
 
+  def test_matches
+    pattern = Choose.new(Literal.new('a'), Literal.new('b'))
+
+    assert_true pattern.matches?('a')
+    assert_true pattern.matches?('b')
+    assert_false pattern.matches?('c')
+  end
+  
 end

@@ -13,4 +13,18 @@ class LiteralTest < Test::Unit::TestCase
     assert_equal '/d/', Literal.new('d').inspect
   end
 
+  def test_to_nfa_design
+    d = Literal.new('a').to_nfa_design
+    
+    assert_false d.accepts?('')
+    assert_true d.accepts?('a')
+    assert_false d.accepts?('b')
+  end
+
+  def test_matches
+    assert_false Literal.new('a').matches?('')
+    assert_true Literal.new('b').matches?('b')
+    assert_false Literal.new('b').matches?('a')    
+  end
+  
 end
