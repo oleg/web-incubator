@@ -65,3 +65,20 @@ class NFARulebookOperatorTest < Test::Unit::TestCase
   end
 
 end
+
+
+class NFARulebookSimulationTest < Test::Unit::TestCase
+
+  def setup
+    @rulebook = NFARulebook.new([
+      FARule.new(1, 'a', 1), FARule.new(1, 'a', 2), FARule.new(1, nil, 2),
+      FARule.new(2, 'b', 3),
+      FARule.new(3, 'b', 1), FARule.new(3, nil, 2)
+    ])
+  end
+
+  def test_alphabet
+    assert_equal ['a', 'b'], @rulebook.alphabet
+  end
+ 
+end
