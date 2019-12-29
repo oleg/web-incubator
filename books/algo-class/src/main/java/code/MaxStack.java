@@ -27,76 +27,55 @@ public class MaxStack {
         if (max == null) {
             max = node;
         } else {
-            ListNode tmp = max;
-            ListNode prev = null;
-            while (tmp != null && tmp.value > node.value) {
-                prev = tmp;
-                tmp = tmp.next;
-            }
+            ListNode prev = findGreater(node);
+
+            ListNode tmp;
             if (prev == null) {
-                ListNode ttt = max;
+                tmp = max;
                 max = node;
-                node.prev = null;
-                node.next = ttt;
-                ttt.prev = node;
             } else {
-                ListNode ttt = prev.next;
+                tmp = prev.next;
                 prev.next = node;
-                node.prev = prev;
-                node.next = ttt;
-                if (ttt != null) {
-                    ttt.prev = node;
-                }
+            }
+            node.next = tmp;
+
+            node.prev = prev;
+            if (tmp != null) {
+                tmp.prev = node;
             }
         }
     }
 
+    private ListNode findGreater(ListNode node) {
+        ListNode prev = null;
+        ListNode tmp = max;
+        while (tmp != null && tmp.value > node.value) {
+            prev = tmp;
+            tmp = tmp.next;
+        }
+        return prev;
+    }
 
     public int pop() {
-        int result = head.value;
-        ListNode sibling = head.sibling;
+        int value = head.value;
+        ListNode node = head.sibling;
         head = head.next;
         if (head != null) {
             head.prev = null;
         }
-        //remove sibling
-        if (sibling.prev == null) {
-            //sibling is a max
-            max = sibling.next;
-            if (sibling.next != null) {
-                sibling.next.prev = null;
-            }
-        } else {
-            sibling.prev.next = sibling.next;
-            if (sibling.next != null) {
-                sibling.next.prev = sibling.prev;
-            }
-        }
-        return result;
+        max = insertNode(node, max);
+        return value;
     }
 
     public int popMax() {
-        int result = max.value;
-        ListNode sibling = max.sibling;
+        int value = max.value;
+        ListNode node = max.sibling;
         max = max.next;
         if (max != null) {
             max.prev = null;
         }
-        //remove sibling
-        if (sibling.prev == null) {
-            //sibling is a max
-            head = sibling.next;
-            if (sibling.next != null) {
-                sibling.next.prev = null;
-            }
-        } else {
-            sibling.prev.next = sibling.next;
-            if (sibling.next != null) {
-                sibling.next.prev = sibling.prev;
-            }
-        }
-
-        return result;
+        head = insertNode(node, head);
+        return value;
     }
 
     public int top() {
@@ -107,21 +86,20 @@ public class MaxStack {
         return max.value;
     }
 
-    @Override
-    public String toString() {
-        return followNext("max", max) + "|" + followNext("head", head);
-    }
-
-    private StringBuilder followNext(String label, ListNode start) {
-        StringBuilder str = new StringBuilder();
-        str.append("(").append(label).append(": start->");
-        ListNode tmp = start;
-        while (tmp != null) {
-            str.append(tmp.value).append("->");
-            tmp = tmp.next;
+    private ListNode insertNode(ListNode node, ListNode oldTop) {
+        if (node.prev == null) {
+            ListNode newTop = node.next;
+            if (newTop != null) {
+                newTop.prev = null;
+            }
+            return newTop;
+        } else {
+            node.prev.next = node.next;
+            if (node.next != null) {
+                node.next.prev = node.prev;
+            }
+            return oldTop;
         }
-        str.append("end)");
-        return str;
     }
 
     private static class ListNode {

@@ -80,17 +80,17 @@ class MaxStackTest {
         assertEquals(5, stack.top());
     }
 
-    @Test
-    void test_toString() {
-        MaxStack stack = new MaxStack();
-        stack.push(3);
-        stack.push(1);
-        stack.push(2);
-        stack.push(5);
-        stack.push(4);
-
-        assertEquals("(max: start->5->4->3->2->1->end)|(head: start->4->5->2->1->3->end)", stack.toString());
-    }
+//    @Test
+//    void test_toString() {
+//        MaxStack stack = new MaxStack();
+//        stack.push(3);
+//        stack.push(1);
+//        stack.push(2);
+//        stack.push(5);
+//        stack.push(4);
+//
+//        assertEquals("(max: start->5->4->3->2->1->end)|(head: start->4->5->2->1->3->end)", stack.toString());
+//    }
 
     @Test
     void push_bigger() {
