@@ -110,12 +110,4 @@ class QueueTest {
         assertEquals("e", q.dequeue());
     }
 
-    //    @Test
-//    void cant_enqueue_a_full_queue() {
-//        var q = new Queue<String>(2);
-//        q.enqueue("a");
-//        q.enqueue("a");
-//        assertThrows(IllegalStateException.class, () -> q.enqueue("a"));
-//    }
-
 }
