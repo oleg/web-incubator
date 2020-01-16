@@ -13,6 +13,8 @@ import words.app.repository.UserRepository;
 import words.app.repository.WordRepository;
 import words.app.repository.WordsListRepository;
 
+import java.util.Optional;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -43,7 +45,7 @@ public class UserServiceTest {
     public void removeList_noUserFound() throws Exception {
         exception.expect(NotFoundException.class);
 
-        when(userRepository.findOne(USER_NAME)).thenReturn(null);
+        when(userRepository.findById(USER_NAME)).thenReturn(Optional.empty());
 
         userService.removeList(USER_NAME, "deutsch");
     }
@@ -51,8 +53,8 @@ public class UserServiceTest {
     @Test
     public void removeList_noListFound() throws Exception {
         User user = new User();
-        when(userRepository.findOne(USER_NAME))
-                .thenReturn(user);
+        when(userRepository.findById(USER_NAME))
+                .thenReturn(Optional.of(user));
 
         userService.removeList(USER_NAME, "deutsch");
 
@@ -63,8 +65,8 @@ public class UserServiceTest {
     public void removeList() throws Exception {
         User user = new User();
         user.addWordsList(buildWordsList("deutsch"));
-        when(userRepository.findOne(USER_NAME))
-                .thenReturn(user);
+        when(userRepository.findById(USER_NAME))
+                .thenReturn(Optional.of(user));
 
         userService.removeList(USER_NAME, "deutsch");
 

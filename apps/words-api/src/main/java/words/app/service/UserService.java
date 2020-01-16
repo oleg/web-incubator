@@ -29,7 +29,7 @@ public class UserService {
     }
 
     public void addWord(String userId, String list, Word word) {
-        User user = userRepository.findOne(userId);
+        User user = userRepository.findById(userId).orElse(null);
         Word foundWord = findOrCreateWord(word);
         user.addWord(list, foundWord);
         userRepository.save(user);
@@ -70,7 +70,7 @@ public class UserService {
 
 
     private User findUser(String userName) {
-        User user = userRepository.findOne(userName);
+        User user = userRepository.findById(userName).orElse(null);
         if (user == null) {
             throw new NotFoundException();
         }

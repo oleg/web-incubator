@@ -10,6 +10,8 @@ import words.app.model.User;
 import words.app.repository.UserRepository;
 import words.web.auth.AuthService;
 
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -22,7 +24,7 @@ public class AuthServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        when(userRepository.findOne("admin")).thenReturn(new User("admin", "admin"));
+        when(userRepository.findById("admin")).thenReturn(Optional.of(new User("admin", "admin")));
     }
 
     @Test

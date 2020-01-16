@@ -17,7 +17,7 @@ public class AuthService {
     }
 
     public boolean isUserExist(String login, String password) {
-        User user = userRepository.findOne(login);
+        User user = userRepository.findById(login).orElse(null);
         return user != null && user.getPassword().equals(password);
     }
 

@@ -23,7 +23,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{user}")
     public ResponseEntity<?> readUser(@PathVariable String user) {
-        User u = userRepository.findOne(user);
+        User u = userRepository.findById(user).orElse(null);
         if (u != null) {
             return ResponseEntity.ok(u);
         } else {

@@ -123,7 +123,7 @@ public class WebAppTest {
         ResponseEntity<String> entity = delete(url("user/zheka/list/study"), String.class, "zheka", "456");
 
         assertThat(entity.getStatusCode().value(), is(HttpStatus.NO_CONTENT.value()));
-        User user = userRepository.findOne("zheka");
+        User user = userRepository.findById("zheka").orElse(null);
         assertThat(user.getListsNames().size(), is(0));
     }
 
@@ -132,7 +132,7 @@ public class WebAppTest {
         ResponseEntity<String> entity = delete(url("user/zheka/list/blablalist"), String.class, "zheka", "456");
 
         assertThat(entity.getStatusCode().value(), is(HttpStatus.NO_CONTENT.value()));
-        User user = userRepository.findOne("zheka");
+        User user = userRepository.findById("zheka").orElse(null);
         assertThat(user.getListsNames().size(), is(1));
         assertThat(user.getListsNames(), not(hasItem(hasProperty("name", equalTo("blablalist")))));
     }

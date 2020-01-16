@@ -35,7 +35,7 @@ public class ToolController {
                                                        @ModelAttribute("username") String username) {
 
         log.info("text to words for user {} ignoring {}", username, wordsRequest.getIgnoreWordLists());
-        User myUser = userRepository.findOne(username);
+        User myUser = userRepository.findById(username).orElse(null);
 
         return ResponseEntity.ok(wordsService.toWords(wordsRequest, myUser));
     }

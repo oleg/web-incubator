@@ -11,6 +11,7 @@ import words.app.service.WordsService;
 import words.web.json.WordsRequest;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,7 +28,7 @@ public class ToolControllerTest {
 
     @Test
     public void should_exclude_known_words() throws Exception {
-        when(userRepository.findOne("oleg")).thenReturn(user);
+        when(userRepository.findById("oleg")).thenReturn(Optional.of(user));
 
         toolController.textToWords(new WordsRequest("hello hello a world", Collections.emptyList()), "oleg");
 

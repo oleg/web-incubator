@@ -14,6 +14,7 @@ import words.app.service.UserService;
 import words.web.json.Words;
 
 import javax.inject.Inject;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -33,14 +34,15 @@ public class WordsListController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Set<String>> readLists(@PathVariable String user) {
-        Set<String> listsNames = userRepository.findOne(user).getListsNames();
+        User byId = userRepository.findById(user).orElseThrow();
+        Set<String> listsNames = byId.getListsNames();
         return ResponseEntity.ok(listsNames);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<String> addList(@PathVariable String user,
                                           @RequestBody WordsList wordsList) {
-        User u = userRepository.findOne(user);
+        User u = userRepository.findById(user).orElse(null);
         userService.addList(u, wordsList);
         return ResponseEntity.ok("{}");
     }
@@ -55,7 +57,7 @@ public class WordsListController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{list}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Words> readOneWordsList(@PathVariable String user, @PathVariable String list) {
-        User u = userRepository.findOne(user);
+        User u = userRepository.findById(user).orElse(null);
         Words body = userService.readWordsFromList(u, list);
         return ResponseEntity.ok(body);
     }
