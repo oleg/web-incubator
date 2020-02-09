@@ -1,4 +1,4 @@
-#include <lcthw/darray.h>
+#include <darray.h>
 #include <stdio.h>
 #include <string.h>
 

@@ -30,7 +30,7 @@ TARGET1=all_tests.out
 SRC_FILES1=\
   $(UNITY_ROOT)/src/unity.c \
   $(UNITY_ROOT)/extras/fixture/src/unity_fixture.c \
-  $(wildcard src/**/*.c) \
+  $(wildcard src/*.c) \
   $(wildcard test/*_test.c) \
   $(wildcard test/*_runner.c) \
   test/all_tests.c

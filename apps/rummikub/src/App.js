@@ -39,9 +39,7 @@ class DominoView extends Component {
     }
 
     render() {
-        let color = this.state.open ? this.props.domino.suit : 'black';
-        let text = this.state.open ? this.props.domino.rank : '*';
-
+        let [color, text] = this.state.open ? [this.props.domino.suit, this.props.domino.rank] :  ['black', '*']
         return <div className="Domino" style={{color: color}} onClick={this.turn}>{text}</div>
     }
 }
