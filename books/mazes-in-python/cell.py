@@ -10,7 +10,7 @@ class Cell:
     north: Cell = field(default = None, init = False, compare = False)
     east: Cell = field(default = None, init = False, compare = False)
     south: Cell = field(default = None, init = False, compare = False)
-    west: Cell = field(default = None, init = False, compare = False) 
+    west: Cell = field(default = None, init = False, compare = False)
 
     def is_linked(self, cell: Cell) -> bool:
         return cell in self.links
