@@ -2,15 +2,19 @@ from __future__ import annotations
 from typing import Dict
 from dataclasses import dataclass, field
 
-@dataclass(unsafe_hash = True)
+@dataclass(unsafe_hash = True, repr = False)
 class Cell:
+    
     row: int = field(hash = True)
     column: int = field(hash = True)
-    links: Dict[Cell, bool] = field(default_factory = dict, init = False, compare = False)
+    
     north: Cell = field(default = None, init = False, compare = False)
     east: Cell = field(default = None, init = False, compare = False)
     south: Cell = field(default = None, init = False, compare = False)
     west: Cell = field(default = None, init = False, compare = False)
+    
+    links: Dict[Cell, bool] = field(default_factory = dict, init = False, compare = False)
+
 
     def is_linked(self, cell: Cell) -> bool:
         return cell in self.links
@@ -28,6 +32,15 @@ class Cell:
     def neighbors(self):
         return [c for c in [self.north, self.east, self.south, self.west] if c]
 
+    def __repr__(self):
+        return "Cell([{},{}] [n={}, e={}, s={}, w={}] [{}])"\
+            .format(self.row, self.column, self.north, self.east, self.south, self.west, self.__links_str__())
+
+    def __str__(self):
+        return "C({},{})".format(self.row, self.column)
+
+    def __links_str__(self):
+        return ', '.join([str(kv[0]) for kv in self.links.items() if kv[1]])
 
 def test_properties():
     c = Cell(1, 2)
@@ -99,3 +112,43 @@ def test_neighbors_all():
     m.west = w
 
     assert m.neighbors() == [n, e, s, w]
+
+def test_repr_single():
+    assert repr(Cell(0, 0)) == "Cell([0,0] [n=None, e=None, s=None, w=None] [])"
+
+def test_repr_with_neighbor():
+    w = Cell(0, 0)
+    e = Cell(0, 1)
+    w.east = e
+    e.west = w
+    assert repr(w) == "Cell([0,0] [n=None, e=C(0,1), s=None, w=None] [])"
+    assert repr(e) == "Cell([0,1] [n=None, e=None, s=None, w=C(0,0)] [])"
+
+def test_repr_with_neighbor_linked():
+    n = Cell(0, 0)
+    s = Cell(1, 0)
+    n.south = s
+    s.north = n
+    n.link(s)
+    assert repr(n) == "Cell([0,0] [n=None, e=None, s=C(1,0), w=None] [C(1,0)])"
+    assert repr(s) == "Cell([1,0] [n=C(0,0), e=None, s=None, w=None] [C(0,0)])"
+
+
+def test_str():
+    assert str(Cell(0, 0)) == "C(0,0)"
+    assert str(Cell(5, 2)) == "C(5,2)"    
+
+def test_str_with_neighbor():
+    n = Cell(0, 0)
+    e = Cell(0, 1)
+    n.east = e
+    e.north = n
+    assert str(n) == "C(0,0)"
+
+def test_str_with_neighbor_linked():
+    n = Cell(0, 0)
+    e = Cell(0, 1)
+    n.east = e
+    e.north = n
+    n.link(e)
+    assert str(n) == "C(0,0)"

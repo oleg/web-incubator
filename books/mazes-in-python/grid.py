@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List
 from cell import Cell
 
-@dataclass(init = False)
+@dataclass(init = False, repr = False)
 class Grid:
     rows: int
     columns: int
@@ -35,6 +35,8 @@ class Grid:
     def __iter__(self):
         return (self.grid[r][c] for r in range(0, self.rows) for c in range(0, self.columns))
 
+    def __str__(self):
+        return ""
 
 def test_can_create_grid():
     g = Grid(3, 3)
@@ -73,3 +75,40 @@ def test_cells_may_have_empty_n_e_s_w_attributes():
 def test_iter():
     g = Grid(2, 2)
     assert list(g) == [Cell(0, 0), Cell(0, 1), Cell(1, 0), Cell(1, 1)]
+
+def test_str():
+    assert str(Grid(2,2)) == " "
+            
+def test_show():
+    g = Grid(4, 4)
+    
+    g[0,0].link(g[0,1])
+    g[0,1].link(g[0,2])
+    g[0,2].link(g[0,3])
+    
+    g[1,0].link(g[0,0])
+    g[1,1].link(g[0,1])
+    g[1,1].link(g[1,2])
+    g[1,3].link(g[0,3])
+    
+    g[2,0].link(g[2,1])
+    g[2,1].link(g[2,2])
+    g[2,2].link(g[1,2])
+    g[2,2].link(g[2,3])
+    
+    g[3,0].link(g[2,0])
+    g[3,0].link(g[3,1])
+    g[3,2].link(g[2,2])
+    g[3,3].link(g[2,3])
+    
+    assert str(g) == """
++---+---+---+---+
+|               |
++   +   +---+   +
+|   |       |   |
++---+---+   +---+
+|               |
++   +---+   +   +
+|       |   |   |
++---+---+---+---+
+"""
