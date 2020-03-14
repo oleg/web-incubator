@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List
 from cell import Cell
 
-@dataclass(init = False, repr = False)
+@dataclass(init = False)
 class Grid:
     rows: int
     columns: int
@@ -36,7 +36,32 @@ class Grid:
         return (self.grid[r][c] for r in range(0, self.rows) for c in range(0, self.columns))
 
     def __str__(self):
-        return ""
+        if not self.columns or not self.rows:
+            return ""
+        
+        res = ""
+        for r in self.grid:
+            w = []
+            p = ["|"]
+            for c in r:
+                
+                if c.is_linked(c.north):
+                    w.append('   ')
+                else:
+                    w.append('---')
+                    
+                if c.is_linked(c.east):
+                    p.append(" ")
+                else:
+                    p.append("|")
+
+            ws = "+" + "+".join(w) + "+" + "\n"
+            ps = "   ".join(p) + "\n"
+            res += ws + ps
+
+        res += "+" + "+".join(["---"] * self.columns) + "+"
+        return "\n" + res + "\n"
+                
 
 def test_can_create_grid():
     g = Grid(3, 3)
@@ -76,10 +101,39 @@ def test_iter():
     g = Grid(2, 2)
     assert list(g) == [Cell(0, 0), Cell(0, 1), Cell(1, 0), Cell(1, 1)]
 
-def test_str():
-    assert str(Grid(2,2)) == " "
-            
-def test_show():
+def test_str_empty_0x0():
+    assert str(Grid(0,0)) == ""
+
+def test_str_empty_0x1():
+    assert str(Grid(0,1)) == ""
+
+def test_str_empty_1x0():
+    assert str(Grid(1,0)) == ""
+    
+def test_str_single_1x1():
+    assert str(Grid(1,1)) == \
+"""
++---+
+|   |
++---+
+"""
+
+    
+def test_str_complete_4x4():
+    assert str(Grid(4,4)) == \
+"""
++---+---+---+---+
+|   |   |   |   |
++---+---+---+---+
+|   |   |   |   |
++---+---+---+---+
+|   |   |   |   |
++---+---+---+---+
+|   |   |   |   |
++---+---+---+---+
+"""
+    
+def test_show_4x4_complex():
     g = Grid(4, 4)
     
     g[0,0].link(g[0,1])
@@ -101,7 +155,8 @@ def test_show():
     g[3,2].link(g[2,2])
     g[3,3].link(g[2,3])
     
-    assert str(g) == """
+    assert str(g) == \
+"""
 +---+---+---+---+
 |               |
 +   +   +---+   +
