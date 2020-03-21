@@ -1,5 +1,7 @@
 import random
+
 from grid import Grid
+
 
 def binary_tree(grid: Grid):
     for cell in grid:
