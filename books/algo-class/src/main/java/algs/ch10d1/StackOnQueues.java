@@ -26,19 +26,17 @@ public class StackOnQueues<T> {
     }
 
     public T pop() {
-        T item = null;
-        while (!main.isEmpty()) {
-            item = main.dequeue();
-
-            if (!main.isEmpty()) { //without it ????
-                temp.enqueue(item);
-            }
+        T elem;
+        for (elem = main.dequeue(); !main.isEmpty(); elem = main.dequeue()) {
+            temp.enqueue(elem);
         }
-        System.out.println(temp);
+        swapMainAndTemp();
+        return elem;
+    }
 
+    private void swapMainAndTemp() {
         Queue<T> tmp = main;
         main = temp;
         temp = tmp;
-        return item;
     }
 }
