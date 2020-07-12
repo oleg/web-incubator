@@ -1,21 +1,35 @@
 package gray
 
-type Color struct {
-	R, G, B float64 //todo: use standard color
+type Color Tuple
+
+func NewColor(R, G, B float64) Color {
+	return Color{R, G, B}
+}
+
+func (t Color) R() float64 {
+	return t.X
+}
+
+func (t Color) G() float64 {
+	return t.Y
+}
+
+func (t Color) B() float64 {
+	return t.Z
 }
 
 func (t Color) add(o Color) Color {
-	return Color{t.R + o.R, t.G + o.G, t.B + o.B}
+	return Color(Tuple(t).add(Tuple(o)))
 }
 
 func (t Color) subtract(o Color) Color {
-	return Color{t.R - o.R, t.G - o.G, t.B - o.B}
+	return Color(Tuple(t).subtract(Tuple(o)))
 }
 
 func (t Color) multiplyByScalar(scalar float64) Color {
-	return Color{t.R * scalar, t.G * scalar, t.B * scalar}
+	return Color(Tuple(t).multiplyScalar(scalar))
 }
 
 func (t Color) multiply(o Color) Color {
-	return Color{t.R * o.R, t.G * o.G, t.B * o.B}
+	return Color(Tuple(t).hadamard(Tuple(o)))
 }

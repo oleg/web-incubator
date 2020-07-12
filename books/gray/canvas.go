@@ -7,6 +7,10 @@ import (
 	"os"
 )
 
+/*
+todo:
+store color.RGBA instead of gray.Color
+*/
 type Canvas struct {
 	Width, Height int
 	Pixels        [][]Color
@@ -29,10 +33,10 @@ func (c Canvas) toPNG(filename string) error {
 	img := image.NewRGBA(image.Rect(0, 0, c.Width, c.Height))
 	for i, p := range c.Pixels {
 		for j, px := range p {
-			img.Set(i, j, color.RGBA{
-				R: uint8(px.R * 255),
-				G: uint8(px.G * 255),
-				B: uint8(px.B * 255),
+			img.Set(i, c.Height-j, color.RGBA{ //todo (Height-j)?
+				R: uint8(px.R() * 255),
+				G: uint8(px.G() * 255),
+				B: uint8(px.B() * 255),
 				A: 255})
 		}
 	}

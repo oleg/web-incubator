@@ -111,7 +111,7 @@ func Test_magnitude_of_normalized_vector(t *testing.T) {
 	assert.Equal(t, 1.0, result)
 }
 
-func Test_dot_product(t *testing.T) {
+func Test_dot_product_vector(t *testing.T) {
 	v1 := Vector{1, 2, 3}
 	v2 := Vector{2, 3, 4}
 
@@ -120,18 +120,10 @@ func Test_dot_product(t *testing.T) {
 	assert.Equal(t, 20.0, result)
 }
 
-func Test_cross_product(t *testing.T) {
+func Test_cross_product_vector(t *testing.T) {
 	v1 := Vector{1, 2, 3}
 	v2 := Vector{2, 3, 4}
 
 	assert.Equal(t, Vector{-1, 2, -1}, v1.cross(v2))
 	assert.Equal(t, Vector{1, -2, 1}, v2.cross(v1))
 }
-
-/*
-​Scenario​: The cross product of two vectors
-​ 	  ​Given​ a ← vector(1, 2, 3)
-​ 	    ​And​ b ← vector(2, 3, 4)
-​ 	  ​Then​ cross(a, b) = vector(-1, 2, -1)
-​ 	    ​And​ cross(b, a) = vector(1, -2, 1)
-*/

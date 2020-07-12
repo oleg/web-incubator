@@ -13,7 +13,7 @@ type environment struct {
 //	return p.position.addVector(p.velocity)
 //}
 
-func tick(env environment, proj projectile) projectile {
+func (proj projectile) tick(env environment) projectile {
 	position := proj.position.addVector(proj.velocity)
 	velocity := proj.velocity.addVector(env.gravity).addVector(env.wind)
 	return projectile{position, velocity}
