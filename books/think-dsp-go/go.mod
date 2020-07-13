@@ -1,0 +1,1 @@
+module "think-dsp-go"
