@@ -8,6 +8,10 @@ import (
 
 type Matrix4 [4][4]float64
 
+func (m Matrix4) multiply(o Matrix4) Matrix4 {
+	return Matrix4{}
+}
+
 //todo must?
 func NewMatrix4(str string) Matrix4 {
 	m := Matrix4{}
