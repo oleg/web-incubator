@@ -1,6 +1,7 @@
 package gray
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -9,7 +10,23 @@ import (
 type Matrix4 [4][4]float64
 
 func (m Matrix4) multiply(o Matrix4) Matrix4 {
-	return Matrix4{}
+	r := Matrix4{}
+	for i := 0; i < 4; i++ {
+		for j := 0; j < 4; j++ {
+			for k := 0; k < 4; k++ {
+				r[i][j] += m[i][k] * o[k][j]
+			}
+		}
+	}
+	return r
+}
+
+func (m Matrix4) multiplyVector(o Vector) Vector {
+	return Vector{
+		m[0][0]*o.X + m[0][1]*o.Y + m[0][2]*o.Z + m[0][3],
+		m[1][0]*o.X + m[1][1]*o.Y + m[1][2]*o.Z + m[1][3],
+		m[2][0]*o.X + m[2][1]*o.Y + m[2][2]*o.Z + m[2][3],
+	}
 }
 
 //todo must?
@@ -40,15 +57,34 @@ func trimAndParseFloat(s string) float64 {
 	return val
 }
 
-//func NewMatrix4(
-//	e00, e01, e02, e03,
-//	e10, e11, e12, e13,
-//	e20, e21, e22, e23,
-//	e30, e31, e32, e33 float64) Matrix4 {
-//	return Matrix4{
-//		[4]float64{e00, e01, e02, e03},
-//		[4]float64{e10, e11, e12, e13},
-//		[4]float64{e20, e21, e22, e23},
-//		[4]float64{e30, e31, e32, e33},
-//	}
-//}
+//how to reuse this?
+func multiply(a, b [][]float64) [][]float64 {
+	if len(a) == 0 && len(b) == 0 {
+		return nil
+	}
+
+	aw := len(a)
+	ah := len(a[0])
+
+	bw := len(b)
+	bh := len(b[0])
+
+	if ah != bw {
+		panic("not possible 2") //todo test
+	}
+	fmt.Printf("aw: %d, ah: %d, bw: %d, bh: %d\n", aw, ah, bw, bh)
+
+	c := make([][]float64, aw)
+	for i := 0; i < aw; i++ {
+		c[i] = make([]float64, bh)
+	}
+
+	for i := 0; i < aw; i++ {
+		for j := 0; j < bh; j++ {
+			for k := 0; k < ah /*&& k < bw*/ ; k++ {
+				c[i][j] += a[i][k] * b[k][j]
+			}
+		}
+	}
+	return c
+}
