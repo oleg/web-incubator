@@ -146,3 +146,27 @@ func Test_multiply_identity_matrix_by_vector(t *testing.T) {
 
 	assert.Equal(t, v, r)
 }
+
+func Test_transpose_matrix(t *testing.T) {
+	m := NewMatrix4(
+		`| 0 | 9 | 3 | 0 |
+		 | 9 | 8 | 0 | 8 |
+		 | 1 | 8 | 5 | 3 |
+		 | 0 | 0 | 5 | 8 |`)
+
+	r := m.transpose()
+	expected := NewMatrix4(
+		`| 0 | 9 | 1 | 0 |
+		 | 9 | 8 | 8 | 0 |
+		 | 3 | 0 | 5 | 5 |
+		 | 0 | 8 | 3 | 8 |`)
+
+	assert.Equal(t, expected, r)
+}
+
+func Test_transpose_identity_matrix(t *testing.T) {
+
+	m := IdentityMatrix.transpose()
+
+	assert.Equal(t, IdentityMatrix, m)
+}
