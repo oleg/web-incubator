@@ -126,3 +126,23 @@ func Test_multiply_arrays_two_three_on_three_five(t *testing.T) {
 	}
 	assert.Equal(t, expected, c)
 }
+
+func Test_multiply_matrix_by_identity_matrix(t *testing.T) {
+	m := NewMatrix4(
+		`| 0 | 1 |  2 |  4 |
+		 | 1 | 2 |  4 |  8 |
+		 | 2 | 4 |  8 | 16 |
+		 | 4 | 8 | 16 | 32 |`)
+
+	r := m.multiply(IdentityMatrix)
+
+	assert.Equal(t, m, r)
+}
+
+func Test_multiply_identity_matrix_by_vector(t *testing.T) {
+	v := Vector{1, 2, 3}
+
+	r := IdentityMatrix.multiplyVector(v)
+
+	assert.Equal(t, v, r)
+}

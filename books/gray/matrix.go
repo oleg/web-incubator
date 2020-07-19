@@ -1,13 +1,19 @@
 package gray
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
 )
 
 type Matrix4 [4][4]float64
+
+var IdentityMatrix Matrix4 = [4][4]float64{
+	{1, 0, 0, 0},
+	{0, 1, 0, 0},
+	{0, 0, 1, 0},
+	{0, 0, 0, 1},
+}
 
 func (m Matrix4) multiply(o Matrix4) Matrix4 {
 	r := Matrix4{}
@@ -72,7 +78,6 @@ func multiply(a, b [][]float64) [][]float64 {
 	if ah != bw {
 		panic("not possible 2") //todo test
 	}
-	fmt.Printf("aw: %d, ah: %d, bw: %d, bh: %d\n", aw, ah, bw, bh)
 
 	c := make([][]float64, aw)
 	for i := 0; i < aw; i++ {
