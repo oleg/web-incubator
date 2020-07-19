@@ -34,7 +34,7 @@ func NewMatrix4(str string) Matrix4 {
 	return m
 }
 
-func (m Matrix4) multiply(o Matrix4) Matrix4 {
+func (m *Matrix4) multiply(o Matrix4) Matrix4 {
 	r := Matrix4{}
 	for i := 0; i < 4; i++ {
 		for j := 0; j < 4; j++ {
@@ -46,7 +46,7 @@ func (m Matrix4) multiply(o Matrix4) Matrix4 {
 	return r
 }
 
-func (m Matrix4) multiplyVector(o Vector) Vector {
+func (m *Matrix4) multiplyVector(o Vector) Vector {
 	return Vector{
 		m[0][0]*o.X + m[0][1]*o.Y + m[0][2]*o.Z + m[0][3],
 		m[1][0]*o.X + m[1][1]*o.Y + m[1][2]*o.Z + m[1][3],
@@ -54,7 +54,7 @@ func (m Matrix4) multiplyVector(o Vector) Vector {
 	}
 }
 
-func (m Matrix4) transpose() Matrix4 {
+func (m *Matrix4) transpose() Matrix4 {
 	//todo or implement as loops?
 	return Matrix4{
 		{m[0][0], m[1][0], m[2][0], m[3][0]},
@@ -62,6 +62,12 @@ func (m Matrix4) transpose() Matrix4 {
 		{m[0][2], m[1][2], m[2][2], m[3][2]},
 		{m[0][3], m[1][3], m[2][3], m[3][3]},
 	}
+}
+
+func (m *Matrix4) determinant() float64 {
+
+
+	return 0
 }
 
 func trimAndParseFloat(s string) float64 {
@@ -73,33 +79,3 @@ func trimAndParseFloat(s string) float64 {
 	return val
 }
 
-//how to reuse this?
-func multiply(a, b [][]float64) [][]float64 {
-	if len(a) == 0 && len(b) == 0 {
-		return nil
-	}
-
-	aw := len(a)
-	ah := len(a[0])
-
-	bw := len(b)
-	bh := len(b[0])
-
-	if ah != bw {
-		panic("not possible 2") //todo test
-	}
-
-	c := make([][]float64, aw)
-	for i := 0; i < aw; i++ {
-		c[i] = make([]float64, bh)
-	}
-
-	for i := 0; i < aw; i++ {
-		for j := 0; j < bh; j++ {
-			for k := 0; k < ah /*&& k < bw*/ ; k++ {
-				c[i][j] += a[i][k] * b[k][j]
-			}
-		}
-	}
-	return c
-}
