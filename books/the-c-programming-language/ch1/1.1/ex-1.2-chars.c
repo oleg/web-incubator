@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-main()
+int main(void)
 {
   printf("\b \f \r");
+  return 0;
 }
