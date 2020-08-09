@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_insertionSort(t *testing.T) {
+func Test_InsertionSort(t *testing.T) {
 	tests := []struct {
 		name     string
 		arr      []int
@@ -24,7 +24,7 @@ func Test_insertionSort(t *testing.T) {
 	}
 }
 
-func Test_insertionSortReverse(t *testing.T) {
+func Test_InsertionSortReverse(t *testing.T) {
 	tests := []struct {
 		name     string
 		arr      []int
