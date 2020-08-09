@@ -8,8 +8,8 @@ import (
 func Test_MergeSort(t *testing.T) {
 	for _, test := range TestData {
 		t.Run(test.name, func(t *testing.T) {
-			MergeSort(test.arr)
-			assert.Equal(t, test.expected, test.arr, test.name)
+			res := MergeSort(test.arr)
+			assert.Equal(t, test.expected, res, test.name)
 		})
 	}
 }
