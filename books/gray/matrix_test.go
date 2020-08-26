@@ -130,3 +130,43 @@ func Test_transpose_identity_matrix(t *testing.T) {
 
 	assert.Equal(t, IdentityMatrix, m)
 }
+
+func Test_calculate_determinant_of_2x2_matrix(t *testing.T) {
+	m := [2][2]float64{
+		{1, 5},
+		{-3, 2}}
+
+	d := determinant2x2(m)
+
+	assert.Equal(t, 17.0, d)
+}
+
+func Test_submatrix_of_4x4_matrix_is_3x3_matrix(t *testing.T) {
+	m := NewMatrix4(
+		`| -6 | 1 |  1 | 6 |
+		 | -8 | 5 |  8 | 6 |
+		 | -1 | 0 |  8 | 2 |
+		 | -7 | 1 | -1 | 1 |`)
+
+	r := submatrix4x4(m, 2, 1)
+	expected := [3][3]float64{
+		{-6, 1, 6},
+		{-8, 8, 6},
+		{-7, -1, 1}}
+
+	assert.Equal(t, expected, r)
+}
+
+func Test_submatrix_of_3x3_matrix_is_2x2_matrix(t *testing.T) {
+	m := [3][3]float64{
+		{1, 5, 0},
+		{-3, 2, 7},
+		{0, 6, -3}}
+
+	r := submatrix3x3(m, 0, 2)
+	expected := [2][2]float64{
+		{-3, 2},
+		{-0, 6}}
+
+	assert.Equal(t, expected, r)
+}

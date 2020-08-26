@@ -65,8 +65,6 @@ func (m *Matrix4) transpose() Matrix4 {
 }
 
 func (m *Matrix4) determinant() float64 {
-
-
 	return 0
 }
 
@@ -79,3 +77,43 @@ func trimAndParseFloat(s string) float64 {
 	return val
 }
 
+func submatrix4x4(m [4][4]float64, row, column int) [3][3]float64 {
+	r := [3][3]float64{}
+	for ri, mi := 0, 0; mi < 4; mi++ {
+		if mi == row {
+			continue
+		}
+		for rj, mj := 0, 0; mj < 4; mj++ {
+			if mj == column {
+				continue
+			}
+			r[ri][rj] = m[mi][mj]
+			rj++
+		}
+		ri++
+	}
+	return r
+}
+
+//how to reuse submatrix code?
+func submatrix3x3(m [3][3]float64, row, column int) [2][2]float64 {
+	r := [2][2]float64{}
+	for ri, mi := 0, 0; mi < 3; mi++ {
+		if mi == row {
+			continue
+		}
+		for rj, mj := 0, 0; mj < 3; mj++ {
+			if mj == column {
+				continue
+			}
+			r[ri][rj] = m[mi][mj]
+			rj++
+		}
+		ri++
+	}
+	return r
+}
+
+func determinant2x2(m [2][2]float64) interface{} {
+	return m[0][0]*m[1][1] - m[0][1]*m[1][0]
+}
