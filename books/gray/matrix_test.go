@@ -147,9 +147,8 @@ func Test_submatrix_of_4x4_matrix_is_3x3_matrix(t *testing.T) {
 		 | -8 | 5 |  8 | 6 |
 		 | -1 | 0 |  8 | 2 |
 		 | -7 | 1 | -1 | 1 |`)
-	var ma [4][4]float64 = m
 
-	r := submatrix4x4(&ma, 2, 1)
+	r := submatrix4x4(&m, 2, 1)
 	expected := [3][3]float64{
 		{-6, 1, 6},
 		{-8, 8, 6},
@@ -226,8 +225,7 @@ func Test_calculating_determinant_of_4x4_matrix(t *testing.T) {
 		 |  1 |  2 | -9 |  6 |
 		 | -6 |  7 |  7 | -9 |`)
 
-	var ma [4][4]float64 = m
-	r := determinant4x4(&ma)
+	r := determinant4x4(&m)
 
 	assert.Equal(t, -4071.0, r)
 }

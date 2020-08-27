@@ -65,8 +65,7 @@ func (m *Matrix4) transpose() Matrix4 {
 }
 
 func (m *Matrix4) determinant() float64 {
-	var mm [4][4]float64 = *m
-	return determinant4x4(&mm)
+	return determinant4x4(m)
 }
 
 func trimAndParseFloat(s string) float64 {
@@ -79,7 +78,7 @@ func trimAndParseFloat(s string) float64 {
 }
 
 //is it copying?
-func determinant4x4(m *[4][4]float64) float64 {
+func determinant4x4(m *Matrix4) float64 {
 	r := 0.
 	for i, v := range m[0] {
 		r += v * cofactor4x4(m, 0, i)
@@ -88,16 +87,16 @@ func determinant4x4(m *[4][4]float64) float64 {
 }
 
 //todo:test
-func cofactor4x4(m *[4][4]float64, row, column int) float64 {
+func cofactor4x4(m *Matrix4, row, column int) float64 {
 	return minor4x4(m, row, column) * sign(row, column)
 }
 
-func minor4x4(m *[4][4]float64, row, column int) float64 {
+func minor4x4(m *Matrix4, row, column int) float64 {
 	sm := submatrix4x4(m, row, column)
 	return determinant3x3(&sm)
 }
 
-func submatrix4x4(m *[4][4]float64, row, column int) [3][3]float64 {
+func submatrix4x4(m *Matrix4, row, column int) [3][3]float64 {
 	r := [3][3]float64{}
 	for ri, mi := 0, 0; mi < 4; mi++ {
 		if mi == row {
