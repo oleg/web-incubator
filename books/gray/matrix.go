@@ -77,22 +77,27 @@ func trimAndParseFloat(s string) float64 {
 	return val
 }
 
-func submatrix4x4(m [4][4]float64, row, column int) [3][3]float64 {
-	r := [3][3]float64{}
-	for ri, mi := 0, 0; mi < 4; mi++ {
-		if mi == row {
-			continue
-		}
-		for rj, mj := 0, 0; mj < 4; mj++ {
-			if mj == column {
-				continue
-			}
-			r[ri][rj] = m[mi][mj]
-			rj++
-		}
-		ri++
+func determinant2x2(m [2][2]float64) float64 {
+	return m[0][0]*m[1][1] - m[0][1]*m[1][0]
+}
+
+func determinant3x3(m [3][3]float64) float64 {
+	return m[0][0]*cofactor3x3(m, 0, 0) +
+		m[0][1]*cofactor3x3(m, 0, 1) +
+		m[0][2]*cofactor3x3(m, 0, 2)
+}
+
+func cofactor3x3(m [3][3]float64, row, column int) float64 {
+	minor := minor3x3(m, row, column)
+	if (row+column)%2 == 0 {
+		return minor
+	} else {
+		return -minor
 	}
-	return r
+}
+
+func minor3x3(m [3][3]float64, row, column int) float64 {
+	return determinant2x2(submatrix3x3(m, row, column))
 }
 
 //how to reuse submatrix code?
@@ -114,6 +119,42 @@ func submatrix3x3(m [3][3]float64, row, column int) [2][2]float64 {
 	return r
 }
 
-func determinant2x2(m [2][2]float64) interface{} {
-	return m[0][0]*m[1][1] - m[0][1]*m[1][0]
+func determinant4x4(m [4][4]float64) float64 {
+	return m[0][0]*cofactor4x4(m, 0, 0) +
+		m[0][1]*cofactor4x4(m, 0, 1) +
+		m[0][2]*cofactor4x4(m, 0, 2) +
+		m[0][3]*cofactor4x4(m, 0, 3)
+}
+
+//todo:test
+func cofactor4x4(m [4][4]float64, row, column int) float64 {
+	minor := minor4x4(m, row, column)
+	if (row+column)%2 == 0 {
+		return minor
+	} else {
+		return -minor
+	}
+}
+
+func minor4x4(m [4][4]float64, row, column int) float64 {
+	return determinant3x3(submatrix4x4(m, row, column))
+}
+
+//how to reuse submatrix code?
+func submatrix4x4(m [4][4]float64, row, column int) [3][3]float64 {
+	r := [3][3]float64{}
+	for ri, mi := 0, 0; mi < 4; mi++ {
+		if mi == row {
+			continue
+		}
+		for rj, mj := 0, 0; mj < 4; mj++ {
+			if mj == column {
+				continue
+			}
+			r[ri][rj] = m[mi][mj]
+			rj++
+		}
+		ri++
+	}
+	return r
 }
