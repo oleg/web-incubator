@@ -6,9 +6,13 @@ import (
 	"strings"
 )
 
-type Matrix4 [4][4]float64
+//todo create packages matrix2,matrix3,matrix4
+//todo add iterate function that accept function
+const L4 = 4
 
-var IdentityMatrix Matrix4 = [4][4]float64{
+type Matrix4 [L4][L4]float64
+
+var IdentityMatrix Matrix4 = [L4][L4]float64{
 	{1, 0, 0, 0},
 	{0, 1, 0, 0},
 	{0, 0, 1, 0},
@@ -36,9 +40,9 @@ func NewMatrix4(str string) Matrix4 {
 
 func (m *Matrix4) multiply(o Matrix4) Matrix4 {
 	r := Matrix4{}
-	for i := 0; i < 4; i++ {
-		for j := 0; j < 4; j++ {
-			for k := 0; k < 4; k++ {
+	for i := 0; i < L4; i++ {
+		for j := 0; j < L4; j++ {
+			for k := 0; k < L4; k++ {
 				r[i][j] += m[i][k] * o[k][j]
 			}
 		}
@@ -64,8 +68,31 @@ func (m *Matrix4) transpose() Matrix4 {
 	}
 }
 
+func (m *Matrix4) transposeMe() {
+	//todo implement as loop?
+	m[0][1], m[1][0] = m[1][0], m[0][1]
+	m[0][2], m[2][0] = m[2][0], m[0][2]
+	m[0][3], m[3][0] = m[3][0], m[0][3]
+
+	m[1][2], m[2][1] = m[2][1], m[1][2]
+	m[1][3], m[3][1] = m[3][1], m[1][3]
+
+	m[2][3], m[3][2] = m[3][2], m[2][3]
+}
+
 func (m *Matrix4) determinant() float64 {
 	return determinant4x4(m)
+}
+
+func (m *Matrix4) inverse() Matrix4 {
+	determinant := m.determinant()
+	inverse := Matrix4{}
+	for i := 0; i < L4; i++ {
+		for j := 0; j < L4; j++ {
+			inverse[j][i] = cofactor4x4(m, i, j) / determinant
+		}
+	}
+	return inverse
 }
 
 func trimAndParseFloat(s string) float64 {
@@ -98,11 +125,11 @@ func minor4x4(m *Matrix4, row, column int) float64 {
 
 func submatrix4x4(m *Matrix4, row, column int) [3][3]float64 {
 	r := [3][3]float64{}
-	for ri, mi := 0, 0; mi < 4; mi++ {
+	for ri, mi := 0, 0; mi < L4; mi++ {
 		if mi == row {
 			continue
 		}
-		for rj, mj := 0, 0; mj < 4; mj++ {
+		for rj, mj := 0, 0; mj < L4; mj++ {
 			if mj == column {
 				continue
 			}
