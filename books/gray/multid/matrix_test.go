@@ -88,6 +88,20 @@ func Test_multiply_matrix_and_point(t *testing.T) {
 	assert.Equal(t, expected, result)
 }
 
+func Test_multiply_matrix_and_vector(t *testing.T) {
+	m := NewMatrix4(
+		`| 1 | 2 | 3 | 4 |
+	     | 2 | 4 | 4 | 2 |
+	     | 8 | 6 | 4 | 1 |
+	     | 0 | 0 | 0 | 1 |`)
+	v := oned.Vector{1, 2, 3}
+	result := m.multiplyVector(v)
+
+	expected := oned.Vector{18, 24, 33}
+
+	assert.Equal(t, expected, result)
+}
+
 func Test_multiply_matrix_by_identity_matrix(t *testing.T) {
 	m := NewMatrix4(
 		`| 0 | 1 |  2 |  4 |

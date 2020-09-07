@@ -52,7 +52,15 @@ func (m *Matrix4) multiply(o Matrix4) Matrix4 {
 }
 
 func (m *Matrix4) multiplyPoint(o oned.Point) oned.Point {
-	return oned.Point{
+	return oned.Point(m.multiplyTuple(oned.Tuple(o)))
+}
+
+//todo: remove duplication
+func (m *Matrix4) multiplyVector(o oned.Vector) oned.Vector {
+	return oned.Vector(m.multiplyTuple(oned.Tuple(o)))
+}
+func (m *Matrix4) multiplyTuple(o oned.Tuple) oned.Tuple {
+	return oned.Tuple{
 		m[0][0]*o.X + m[0][1]*o.Y + m[0][2]*o.Z + m[0][3],
 		m[1][0]*o.X + m[1][1]*o.Y + m[1][2]*o.Z + m[1][3],
 		m[2][0]*o.X + m[2][1]*o.Y + m[2][2]*o.Z + m[2][3],

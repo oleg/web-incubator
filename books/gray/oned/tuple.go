@@ -4,6 +4,7 @@ type Tuple struct {
 	X, Y, Z float64
 }
 
+//todo: use link
 func (t Tuple) add(o Tuple) Tuple {
 	return Tuple{t.X + o.X, t.Y + o.Y, t.Z + o.Z}
 }

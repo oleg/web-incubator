@@ -6,6 +6,7 @@ func NewColor(R, G, B float64) Color {
 	return Color{R, G, B}
 }
 
+//todo: use link
 func (t Color) R() float64 {
 	return t.X
 }

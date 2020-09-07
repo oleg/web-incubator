@@ -3,7 +3,7 @@ package oned
 import "math"
 
 type Vector Tuple //w = 0
-
+//todo: use link
 func (t Vector) addVector(o Vector) Vector {
 	return Vector(Tuple(t).add(Tuple(o)))
 }
