@@ -1,4 +1,4 @@
-package gray
+package multid
 
 import (
 	"github.com/stretchr/testify/assert"

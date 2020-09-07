@@ -1,4 +1,4 @@
-package gray
+package oned
 
 type Tuple struct {
 	X, Y, Z float64

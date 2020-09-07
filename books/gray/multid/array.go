@@ -1,4 +1,4 @@
-package gray
+package multid
 
 //how to reuse this?
 func multiply(a, b [][]float64) [][]float64 {

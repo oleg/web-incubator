@@ -1,6 +1,7 @@
-package gray
+package multid
 
 import (
+	"gray/oned"
 	"image"
 	"image/color"
 	"image/png"
@@ -13,13 +14,13 @@ store color.RGBA instead of gray.Color
 */
 type Canvas struct {
 	Width, Height int
-	Pixels        [][]Color
+	Pixels        [][]oned.Color
 }
 
 func NewCanvas(width, height int) Canvas {
-	pixels := make([][]Color, width)
+	pixels := make([][]oned.Color, width)
 	for i := range pixels {
-		pixels[i] = make([]Color, height)
+		pixels[i] = make([]oned.Color, height)
 	}
 	return Canvas{width, height, pixels}
 }

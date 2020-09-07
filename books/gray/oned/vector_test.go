@@ -1,4 +1,4 @@
-package gray
+package oned
 
 import (
 	"github.com/stretchr/testify/assert"

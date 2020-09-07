@@ -1,6 +1,7 @@
-package gray
+package multid
 
 import (
+	"gray/oned"
 	"log"
 	"strconv"
 	"strings"
@@ -50,8 +51,8 @@ func (m *Matrix4) multiply(o Matrix4) Matrix4 {
 	return r
 }
 
-func (m *Matrix4) multiplyVector(o Vector) Vector {
-	return Vector{
+func (m *Matrix4) multiplyVector(o oned.Vector) oned.Vector {
+	return oned.Vector{
 		m[0][0]*o.X + m[0][1]*o.Y + m[0][2]*o.Z + m[0][3],
 		m[1][0]*o.X + m[1][1]*o.Y + m[1][2]*o.Z + m[1][3],
 		m[2][0]*o.X + m[2][1]*o.Y + m[2][2]*o.Z + m[2][3],

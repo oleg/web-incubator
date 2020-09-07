@@ -1,4 +1,4 @@
-package gray
+package oned
 
 type Color Tuple
 
