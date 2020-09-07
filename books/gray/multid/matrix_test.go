@@ -74,16 +74,16 @@ func Test_multiply_matrices(t *testing.T) {
 	assert.Equal(t, expected, result)
 }
 
-func Test_multiply_matrix_and_vector(t *testing.T) {
+func Test_multiply_matrix_and_point(t *testing.T) {
 	m := NewMatrix4(
 		`| 1 | 2 | 3 | 4 |
 	     | 2 | 4 | 4 | 2 |
 	     | 8 | 6 | 4 | 1 |
 	     | 0 | 0 | 0 | 1 |`)
-	v := oned.Vector{1, 2, 3}
-	result := m.multiplyVector(v)
+	p := oned.Point{1, 2, 3}
+	result := m.multiplyPoint(p)
 
-	expected := oned.Vector{18, 24, 33}
+	expected := oned.Point{18, 24, 33}
 
 	assert.Equal(t, expected, result)
 }
@@ -100,12 +100,12 @@ func Test_multiply_matrix_by_identity_matrix(t *testing.T) {
 	assert.Equal(t, m, r)
 }
 
-func Test_multiply_identity_matrix_by_vector(t *testing.T) {
-	v := oned.Vector{1, 2, 3}
+func Test_multiply_identity_matrix_by_point(t *testing.T) {
+	p := oned.Point{1, 2, 3}
 
-	r := IdentityMatrix.multiplyVector(v)
+	r := IdentityMatrix.multiplyPoint(p)
 
-	assert.Equal(t, v, r)
+	assert.Equal(t, p, r)
 }
 
 func Test_transpose_matrix(t *testing.T) {
