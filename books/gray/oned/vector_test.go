@@ -100,7 +100,7 @@ func Test_normalizing_vector_1_2_3(t *testing.T) {
 
 	result := v.normalize()
 
-	AssertEqualInDelta(t, Vector{0.26726, 0.53452, 0.80178}, result)
+	AssertVectorEqualInDelta(t, Vector{0.26726, 0.53452, 0.80178}, result)
 }
 
 func Test_magnitude_of_normalized_vector(t *testing.T) {

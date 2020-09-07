@@ -3,6 +3,7 @@ package multid
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"gray/oned"
 	"testing"
 )
 
@@ -20,4 +21,12 @@ func matrixToMap(m Matrix4) map[string]float64 {
 		}
 	}
 	return r
+}
+
+//todo remove duplication
+func AssertPointEqualInDelta(t *testing.T, expected, actual oned.Point) {
+	assert.InDeltaMapValues(t, pointToMap(expected), pointToMap(actual), delta)
+}
+func pointToMap(p oned.Point) map[string]float64 {
+	return map[string]float64{"X": p.X, "Y": p.Y, "Z": p.Z}
 }

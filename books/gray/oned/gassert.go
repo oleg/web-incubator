@@ -9,7 +9,7 @@ import (
 const delta = 0.000009
 
 //todo move to test file?
-func AssertEqualInDelta(t *testing.T, expected, actual Vector) {
+func AssertVectorEqualInDelta(t *testing.T, expected, actual Vector) {
 	assert.InDeltaMapValues(t, vectorToMap(expected), vectorToMap(actual), delta)
 }
 func vectorToMap(v Vector) map[string]float64 {
