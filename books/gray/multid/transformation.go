@@ -27,3 +27,21 @@ func RotationX(r float64) Matrix4 {
 		{0, 0, 0, 1},
 	}
 }
+
+func RotationY(r float64) Matrix4 {
+	return Matrix4{
+		{math.Cos(r), 0, math.Sin(r), 0},
+		{0, 1, 0, 0},
+		{-math.Sin(r), 0, math.Cos(r), 0},
+		{0, 0, 0, 1},
+	}
+}
+
+func RotationZ(r float64) Matrix4 {
+	return Matrix4{
+		{math.Cos(r), -math.Sin(r), 0, 0},
+		{math.Sin(r), math.Cos(r), 0, 0},
+		{0, 0, 1, 0},
+		{0, 0, 0, 1},
+	}
+}

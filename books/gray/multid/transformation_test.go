@@ -83,6 +83,46 @@ func Test_rotating_point_around_x_axis(t *testing.T) {
 	}
 }
 
+func Test_rotating_point_around_y_axis(t *testing.T) {
+	tests := []struct {
+		name     string
+		rotation float64
+		expected oned.Point
+	}{
+		{"half quarter", math.Pi / 4, oned.Point{math.Sqrt2 / 2, 0, math.Sqrt2 / 2}},
+		{"full quarter", math.Pi / 2, oned.Point{1, 0, 0}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			tr := RotationY(test.rotation)
+
+			r := tr.multiplyPoint(oned.Point{0, 0, 1})
+
+			AssertPointEqualInDelta(t, test.expected, r)
+		})
+	}
+}
+
+func Test_rotating_point_around_z_axis(t *testing.T) {
+	tests := []struct {
+		name     string
+		rotation float64
+		expected oned.Point
+	}{
+		{"half quarter", math.Pi / 4, oned.Point{-math.Sqrt2 / 2, math.Sqrt2 / 2, 0}},
+		{"full quarter", math.Pi / 2, oned.Point{-1, 0, 0}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			tr := RotationZ(test.rotation)
+
+			r := tr.multiplyPoint(oned.Point{0, 1, 0})
+
+			AssertPointEqualInDelta(t, test.expected, r)
+		})
+	}
+}
+
 func Test_inverse_of_x_rotation_rotates_in_opposite_direction(t *testing.T) {
 	p := oned.Point{0, 1, 0}
 	halfQuarter := RotationX(math.Pi / 4)
