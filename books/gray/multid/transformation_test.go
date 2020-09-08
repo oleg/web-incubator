@@ -158,3 +158,30 @@ func Test_shearing_transformation(t *testing.T) {
 		})
 	}
 }
+
+func Test_individual_transformations_are_applied_in_sequence(t *testing.T) {
+	p := oned.Point{1, 0, 1}
+	a := RotationX(math.Pi / 2)
+	b := Scaling(5, 5, 5)
+	c := Translation(10, 5, 7)
+
+	p2 := a.multiplyPoint(p)
+	p3 := b.multiplyPoint(p2)
+	p4 := c.multiplyPoint(p3)
+
+	AssertPointEqualInDelta(t, oned.Point{1, -1, 0}, p2)
+	AssertPointEqualInDelta(t, oned.Point{5, -5, 0}, p3)
+	AssertPointEqualInDelta(t, oned.Point{15, 0, 7}, p4)
+}
+
+func Test_chained_transformations_must_be_applied_in_reverse_order(t *testing.T) {
+	p := oned.Point{1, 0, 1}
+	a := RotationX(math.Pi / 2)
+	b := Scaling(5, 5, 5)
+	c := Translation(10, 5, 7)
+	tr := c.multiply(b).multiply(a)
+
+	r := tr.multiplyPoint(p)
+
+	assert.Equal(t, oned.Point{15, 0, 7}, r)
+}

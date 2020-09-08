@@ -11,6 +11,7 @@ func Translation(x, y, z float64) Matrix4 {
 		{0, 0, 0, 1},
 	}
 }
+
 func Scaling(x, y, z float64) Matrix4 {
 	return Matrix4{
 		{x, 0, 0, 0},
@@ -19,6 +20,7 @@ func Scaling(x, y, z float64) Matrix4 {
 		{0, 0, 0, 1},
 	}
 }
+
 func RotationX(r float64) Matrix4 {
 	return Matrix4{
 		{1, 0, 0, 0},

@@ -194,7 +194,7 @@ func Test_submatrix_of_4x4_matrix_is_3x3_matrix(t *testing.T) {
 		 | -1 | 0 |  8 | 2 |
 		 | -7 | 1 | -1 | 1 |`)
 
-	r := submatrix4x4(&m, 2, 1)
+	r := submatrix4x4(m, 2, 1)
 	expected := [3][3]float64{
 		{-6, 1, 6},
 		{-8, 8, 6},
@@ -271,7 +271,7 @@ func Test_calculating_determinant_of_4x4_matrix(t *testing.T) {
 		 |  1 |  2 | -9 |  6 |
 		 | -6 |  7 |  7 | -9 |`)
 
-	r := determinant4x4(&m)
+	r := determinant4x4(m)
 
 	assert.Equal(t, -4071.0, r)
 }
@@ -363,8 +363,7 @@ func Test_multiplying_product_by_its_inverse(t *testing.T) {
 		 |  7 |  0 |  5 |  4 |
 		 |  6 | -2 |  0 |  5 |`)
 
-	mc := ma.multiply(mb)
-	r := mc.multiply(mb.inverse())
+	r := ma.multiply(mb).multiply(mb.inverse())
 
 	AssertMatrixEqualInDelta(t, ma, r)
 }

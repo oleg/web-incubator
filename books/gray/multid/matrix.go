@@ -7,13 +7,14 @@ import (
 	"strings"
 )
 
+//todo: !!! decide if I want to return a pointers or structs !!!
 //todo create packages matrix2,matrix3,matrix4
 //todo add iterate function that accept function
 const L4 = 4
 
 type Matrix4 [L4][L4]float64
 
-var IdentityMatrix Matrix4 = [L4][L4]float64{
+var IdentityMatrix = Matrix4{
 	{1, 0, 0, 0},
 	{0, 1, 0, 0},
 	{0, 0, 1, 0},
@@ -39,7 +40,7 @@ func NewMatrix4(str string) Matrix4 {
 	return m
 }
 
-func (m *Matrix4) multiply(o Matrix4) Matrix4 {
+func (m Matrix4) multiply(o Matrix4) Matrix4 {
 	r := Matrix4{}
 	for i := 0; i < L4; i++ {
 		for j := 0; j < L4; j++ {
@@ -51,15 +52,16 @@ func (m *Matrix4) multiply(o Matrix4) Matrix4 {
 	return r
 }
 
-func (m *Matrix4) multiplyPoint(o oned.Point) oned.Point {
+func (m Matrix4) multiplyPoint(o oned.Point) oned.Point {
 	return oned.Point(m.multiplyTuple(oned.Tuple(o)))
 }
 
 //todo: remove duplication
-func (m *Matrix4) multiplyVector(o oned.Vector) oned.Vector {
+func (m Matrix4) multiplyVector(o oned.Vector) oned.Vector {
 	return oned.Vector(m.multiplyTuple(oned.Tuple(o)))
 }
-func (m *Matrix4) multiplyTuple(o oned.Tuple) oned.Tuple {
+
+func (m Matrix4) multiplyTuple(o oned.Tuple) oned.Tuple {
 	return oned.Tuple{
 		m[0][0]*o.X + m[0][1]*o.Y + m[0][2]*o.Z + m[0][3],
 		m[1][0]*o.X + m[1][1]*o.Y + m[1][2]*o.Z + m[1][3],
@@ -68,7 +70,7 @@ func (m *Matrix4) multiplyTuple(o oned.Tuple) oned.Tuple {
 	}
 }
 
-func (m *Matrix4) transpose() Matrix4 {
+func (m Matrix4) transpose() Matrix4 {
 	//todo or implement as loops?
 	return Matrix4{
 		{m[0][0], m[1][0], m[2][0], m[3][0]},
@@ -90,11 +92,11 @@ func (m *Matrix4) transposeMe() {
 	m[2][3], m[3][2] = m[3][2], m[2][3]
 }
 
-func (m *Matrix4) determinant() float64 {
+func (m Matrix4) determinant() float64 {
 	return determinant4x4(m)
 }
 
-func (m *Matrix4) inverse() Matrix4 {
+func (m Matrix4) inverse() Matrix4 {
 	determinant := m.determinant()
 	inverse := Matrix4{}
 	for i := 0; i < L4; i++ {
@@ -115,7 +117,7 @@ func trimAndParseFloat(s string) float64 {
 }
 
 //is it copying?
-func determinant4x4(m *Matrix4) float64 {
+func determinant4x4(m Matrix4) float64 {
 	r := 0.
 	for i, v := range m[0] {
 		r += v * cofactor4x4(m, 0, i)
@@ -124,16 +126,16 @@ func determinant4x4(m *Matrix4) float64 {
 }
 
 //todo:test
-func cofactor4x4(m *Matrix4, row, column int) float64 {
+func cofactor4x4(m Matrix4, row, column int) float64 {
 	return minor4x4(m, row, column) * sign(row, column)
 }
 
-func minor4x4(m *Matrix4, row, column int) float64 {
+func minor4x4(m Matrix4, row, column int) float64 {
 	sm := submatrix4x4(m, row, column)
 	return determinant3x3(&sm)
 }
 
-func submatrix4x4(m *Matrix4, row, column int) [3][3]float64 {
+func submatrix4x4(m Matrix4, row, column int) [3][3]float64 {
 	r := [3][3]float64{}
 	for ri, mi := 0, 0; mi < L4; mi++ {
 		if mi == row {
