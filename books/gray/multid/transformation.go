@@ -45,3 +45,12 @@ func RotationZ(r float64) Matrix4 {
 		{0, 0, 0, 1},
 	}
 }
+
+func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix4 {
+	return Matrix4{
+		{1, xy, xz, 0},
+		{yx, 1, yz, 0},
+		{zx, zy, 1, 0},
+		{0, 0, 0, 1},
+	}
+}

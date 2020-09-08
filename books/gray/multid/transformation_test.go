@@ -133,3 +133,28 @@ func Test_inverse_of_x_rotation_rotates_in_opposite_direction(t *testing.T) {
 	expected := oned.Point{0, math.Sqrt2 / 2, -math.Sqrt2 / 2}
 	AssertPointEqualInDelta(t, expected, r)
 }
+
+func Test_shearing_transformation(t *testing.T) {
+	tests := []struct {
+		name           string
+		transformation Matrix4
+		expected       oned.Point
+	}{
+		{"x in proportion to y", Shearing(1, 0, 0, 0, 0, 0), oned.Point{5, 3, 4}},
+		{"x in proportion to z", Shearing(0, 1, 0, 0, 0, 0), oned.Point{6, 3, 4}},
+		{"y in proportion to x", Shearing(0, 0, 1, 0, 0, 0), oned.Point{2, 5, 4}},
+		{"y in proportion to z", Shearing(0, 0, 0, 1, 0, 0), oned.Point{2, 7, 4}},
+		{"z in proportion to x", Shearing(0, 0, 0, 0, 1, 0), oned.Point{2, 3, 6}},
+		{"z in proportion to y", Shearing(0, 0, 0, 0, 0, 1), oned.Point{2, 3, 7}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			tr := test.transformation
+			p := oned.Point{2, 3, 4}
+
+			r := tr.multiplyPoint(p)
+
+			assert.Equal(t, test.expected, r)
+		})
+	}
+}
