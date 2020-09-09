@@ -1,11 +1,26 @@
 package figure
 
 import (
+	"gray/multid"
 	"gray/oned"
 	"math"
 )
 
-func Intersect(sphere Shape, ray Ray) Inters {
+type Sphere struct {
+	transform multid.Matrix4
+}
+
+func MakeSphere() Sphere {
+	return Sphere{multid.IdentityMatrix}
+}
+
+func (sphere Sphere) Transform() multid.Matrix4 {
+	return sphere.transform
+}
+
+//todo or Sphere?
+func (sphere Sphere) Intersect(worldRay Ray) Inters {
+	ray := worldRay.Transform(sphere.Transform().Inverse())
 	sphereToRay := ray.Origin.SubtractPoint(oned.Point{})
 	a := ray.Direction.Dot(ray.Direction)
 	b := 2 * ray.Direction.Dot(sphereToRay)
@@ -23,8 +38,4 @@ func Intersect(sphere Shape, ray Ray) Inters {
 		Inter{t1, sphere},
 		Inter{t2, sphere},
 	}
-}
-
-func Sphere() Shape {
-	return nil
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func Test_intersection_encapsulates_distance_and_object(t *testing.T) {
-	s := Sphere()
+	s := MakeSphere()
 
 	i := Inter{3.5, s}
 
@@ -15,7 +15,7 @@ func Test_intersection_encapsulates_distance_and_object(t *testing.T) {
 }
 
 func Test_aggregating_intersections(t *testing.T) {
-	s := Sphere()
+	s := MakeSphere()
 
 	i1 := Inter{1, s}
 	i2 := Inter{2, s}
@@ -27,7 +27,7 @@ func Test_aggregating_intersections(t *testing.T) {
 }
 
 func Test_hit_when_all_intersections_have_positive_distance(t *testing.T) {
-	s := Sphere()
+	s := MakeSphere()
 
 	i1 := Inter{1, s}
 	i2 := Inter{2, s}
@@ -39,7 +39,7 @@ func Test_hit_when_all_intersections_have_positive_distance(t *testing.T) {
 }
 
 func Test_hit_intersections(t *testing.T) {
-	s := Sphere()
+	s := MakeSphere()
 	tests := []struct {
 		name                 string
 		intersections        Inters
