@@ -115,7 +115,7 @@ func Test_dot_product_vector(t *testing.T) {
 	v1 := Vector{1, 2, 3}
 	v2 := Vector{2, 3, 4}
 
-	result := v1.dot(v2)
+	result := v1.Dot(v2)
 
 	assert.Equal(t, 20.0, result)
 }

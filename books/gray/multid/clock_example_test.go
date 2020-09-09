@@ -16,7 +16,7 @@ func Test_clock_example_test(t *testing.T) {
 	points := make([]oned.Point, 12, 12)
 	points[0] = oned.Point{0, 0, 1}
 	for i := 1; i < 12; i++ {
-		points[i] = rotationY.multiplyPoint(points[i-1])
+		points[i] = rotationY.MultiplyPoint(points[i-1])
 	}
 
 	white := oned.Color{1, 1, 1}

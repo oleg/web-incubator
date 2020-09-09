@@ -2,7 +2,7 @@ package oned
 
 type Point Tuple //w = 1
 //todo: use link
-func (t Point) addVector(o Vector) Point {
+func (t Point) AddVector(o Vector) Point {
 	return Point(Tuple(t).add(Tuple(o)))
 }
 

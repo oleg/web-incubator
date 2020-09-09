@@ -81,7 +81,7 @@ func Test_multiply_matrix_and_point(t *testing.T) {
 	     | 8 | 6 | 4 | 1 |
 	     | 0 | 0 | 0 | 1 |`)
 	p := oned.Point{1, 2, 3}
-	result := m.multiplyPoint(p)
+	result := m.MultiplyPoint(p)
 
 	expected := oned.Point{18, 24, 33}
 
@@ -95,10 +95,10 @@ func Test_multiply_matrix_and_vector(t *testing.T) {
 	     | 8 | 6 | 4 | 1 |
 	     | 0 | 0 | 0 | 1 |`)
 	v := oned.Vector{1, 2, 3}
-	result := m.multiplyVector(v)
 
-	expected := oned.Vector{18, 24, 33}
+	result := m.MultiplyVector(v)
 
+	expected := oned.Vector{14, 22, 32}
 	assert.Equal(t, expected, result)
 }
 
@@ -117,7 +117,7 @@ func Test_multiply_matrix_by_identity_matrix(t *testing.T) {
 func Test_multiply_identity_matrix_by_point(t *testing.T) {
 	p := oned.Point{1, 2, 3}
 
-	r := IdentityMatrix.multiplyPoint(p)
+	r := IdentityMatrix.MultiplyPoint(p)
 
 	assert.Equal(t, p, r)
 }
@@ -150,23 +150,6 @@ func Test_transpose_does_not_change_original(t *testing.T) {
 	m.transpose()
 
 	expected := NewMatrix4(data)
-	assert.Equal(t, expected, m)
-}
-
-func Test_transpose_matrix_in_place(t *testing.T) {
-	m := NewMatrix4(
-		`| 0 | 9 | 3 | 0 |
-		 | 9 | 8 | 0 | 8 |
-		 | 1 | 8 | 5 | 3 |
-		 | 0 | 0 | 5 | 8 |`)
-
-	m.transposeMe()
-
-	expected := NewMatrix4(
-		`| 0 | 9 | 1 | 0 |
-		 | 9 | 8 | 8 | 0 |
-		 | 3 | 0 | 5 | 5 |
-		 | 0 | 8 | 3 | 8 |`)
 	assert.Equal(t, expected, m)
 }
 
@@ -307,7 +290,7 @@ func Test_calculating_inverse_of_matrix(t *testing.T) {
 		 |  7 |  7 | -6 | -7 |
 		 |  1 | -3 |  7 |  4 |`)
 
-	r := m.inverse()
+	r := m.Inverse()
 
 	expected := NewMatrix4(
 		`|  0.21805 |  0.45113 |  0.24060 | -0.04511 |
@@ -324,7 +307,7 @@ func Test_calculating_inverse_of_matrix_case_2(t *testing.T) {
 		 | -6 |  0 |  9 |  6 |
 		 | -3 |  0 | -9 | -4 |`)
 
-	r := m.inverse()
+	r := m.Inverse()
 
 	expected := NewMatrix4(
 		`| -0.15385 | -0.15385 | -0.28205 | -0.53846 |
@@ -341,7 +324,7 @@ func Test_calculating_inverse_of_matrix_case_3(t *testing.T) {
 		 | -4 |  9 |  6 |  4 |
 		 | -7 |  6 |  6 |  2 |`)
 
-	r := m.inverse()
+	r := m.Inverse()
 
 	expected := NewMatrix4(
 		`| -0.04074 | -0.07778 |  0.14444 | -0.22222 |
@@ -363,7 +346,7 @@ func Test_multiplying_product_by_its_inverse(t *testing.T) {
 		 |  7 |  0 |  5 |  4 |
 		 |  6 | -2 |  0 |  5 |`)
 
-	r := ma.multiply(mb).multiply(mb.inverse())
+	r := ma.multiply(mb).multiply(mb.Inverse())
 
 	AssertMatrixEqualInDelta(t, ma, r)
 }

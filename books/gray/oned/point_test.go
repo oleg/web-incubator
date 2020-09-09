@@ -16,7 +16,7 @@ func Test_addVector_gives_point(t *testing.T) {
 	p1 := Point{1, 2, 3}
 	v1 := Vector{2, 3, 4}
 
-	point := p1.addVector(v1)
+	point := p1.AddVector(v1)
 
 	assert.Equal(t, Point{3, 5, 7}, point)
 }

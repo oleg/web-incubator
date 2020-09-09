@@ -11,17 +11,17 @@ func Test_multiply_point_by_translation_matrix(t *testing.T) {
 	tr := Translation(5, -3, 2)
 	p := oned.Point{-3, 4, 5}
 
-	r := tr.multiplyPoint(p)
+	r := tr.MultiplyPoint(p)
 
 	assert.Equal(t, oned.Point{2, 1, 7}, r)
 }
 
 func Test_multiply_point_by_inverse_of_translation_matrix(t *testing.T) {
 	tr := Translation(5, -3, 2)
-	inv := tr.inverse()
+	inv := tr.Inverse()
 	p := oned.Point{-3, 4, 5}
 
-	r := inv.multiplyPoint(p)
+	r := inv.MultiplyPoint(p)
 
 	assert.Equal(t, oned.Point{-8, 7, 3}, r)
 }
@@ -30,7 +30,7 @@ func Test_scaling_matrix_applied_to_point(t *testing.T) {
 	tr := Scaling(2, 3, 4)
 	p := oned.Point{-4, 6, 8}
 
-	r := tr.multiplyPoint(p)
+	r := tr.MultiplyPoint(p)
 
 	assert.Equal(t, oned.Point{-8, 18, 32}, r)
 }
@@ -39,17 +39,17 @@ func Test_scaling_matrix_applied_to_vector(t *testing.T) {
 	tr := Scaling(2, 3, 4)
 	v := oned.Vector{-4, 6, 8}
 
-	r := tr.multiplyVector(v)
+	r := tr.MultiplyVector(v)
 
 	assert.Equal(t, oned.Vector{-8, 18, 32}, r)
 }
 
 func Test_multiplying_inverse_of_scaling_matrix(t *testing.T) {
 	tr := Scaling(2, 3, 4)
-	inv := tr.inverse()
+	inv := tr.Inverse()
 	v := oned.Vector{-4, 6, 8}
 
-	r := inv.multiplyVector(v)
+	r := inv.MultiplyVector(v)
 
 	assert.Equal(t, oned.Vector{-2, 2, 2}, r)
 }
@@ -58,7 +58,7 @@ func Test_reflection_is_scaling_by_negative_value(t *testing.T) {
 	tr := Scaling(-1, 1, 1)
 	p := oned.Point{2, 3, 4}
 
-	r := tr.multiplyPoint(p)
+	r := tr.MultiplyPoint(p)
 
 	assert.Equal(t, oned.Point{-2, 3, 4}, r)
 }
@@ -76,7 +76,7 @@ func Test_rotating_point_around_x_axis(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			tr := RotationX(test.rotation)
 
-			r := tr.multiplyPoint(oned.Point{0, 1, 0})
+			r := tr.MultiplyPoint(oned.Point{0, 1, 0})
 
 			AssertPointEqualInDelta(t, test.expected, r)
 		})
@@ -96,7 +96,7 @@ func Test_rotating_point_around_y_axis(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			tr := RotationY(test.rotation)
 
-			r := tr.multiplyPoint(oned.Point{0, 0, 1})
+			r := tr.MultiplyPoint(oned.Point{0, 0, 1})
 
 			AssertPointEqualInDelta(t, test.expected, r)
 		})
@@ -116,7 +116,7 @@ func Test_rotating_point_around_z_axis(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			tr := RotationZ(test.rotation)
 
-			r := tr.multiplyPoint(oned.Point{0, 1, 0})
+			r := tr.MultiplyPoint(oned.Point{0, 1, 0})
 
 			AssertPointEqualInDelta(t, test.expected, r)
 		})
@@ -126,9 +126,9 @@ func Test_rotating_point_around_z_axis(t *testing.T) {
 func Test_inverse_of_x_rotation_rotates_in_opposite_direction(t *testing.T) {
 	p := oned.Point{0, 1, 0}
 	halfQuarter := RotationX(math.Pi / 4)
-	inv := halfQuarter.inverse()
+	inv := halfQuarter.Inverse()
 
-	r := inv.multiplyPoint(p)
+	r := inv.MultiplyPoint(p)
 
 	expected := oned.Point{0, math.Sqrt2 / 2, -math.Sqrt2 / 2}
 	AssertPointEqualInDelta(t, expected, r)
@@ -152,7 +152,7 @@ func Test_shearing_transformation(t *testing.T) {
 			tr := test.transformation
 			p := oned.Point{2, 3, 4}
 
-			r := tr.multiplyPoint(p)
+			r := tr.MultiplyPoint(p)
 
 			assert.Equal(t, test.expected, r)
 		})
@@ -165,9 +165,9 @@ func Test_individual_transformations_are_applied_in_sequence(t *testing.T) {
 	b := Scaling(5, 5, 5)
 	c := Translation(10, 5, 7)
 
-	p2 := a.multiplyPoint(p)
-	p3 := b.multiplyPoint(p2)
-	p4 := c.multiplyPoint(p3)
+	p2 := a.MultiplyPoint(p)
+	p3 := b.MultiplyPoint(p2)
+	p4 := c.MultiplyPoint(p3)
 
 	AssertPointEqualInDelta(t, oned.Point{1, -1, 0}, p2)
 	AssertPointEqualInDelta(t, oned.Point{5, -5, 0}, p3)
@@ -181,7 +181,7 @@ func Test_chained_transformations_must_be_applied_in_reverse_order(t *testing.T)
 	c := Translation(10, 5, 7)
 	tr := c.multiply(b).multiply(a)
 
-	r := tr.multiplyPoint(p)
+	r := tr.MultiplyPoint(p)
 
 	assert.Equal(t, oned.Point{15, 0, 7}, r)
 }

@@ -52,22 +52,25 @@ func (m Matrix4) multiply(o Matrix4) Matrix4 {
 	return r
 }
 
-func (m Matrix4) multiplyPoint(o oned.Point) oned.Point {
-	return oned.Point(m.multiplyTuple(oned.Tuple(o)))
+func (m Matrix4) MultiplyPoint(o oned.Point) oned.Point {
+	return oned.Point(m.multiplyTuple(oned.Tuple(o), 1.))
 }
 
 //todo: remove duplication
-func (m Matrix4) multiplyVector(o oned.Vector) oned.Vector {
-	return oned.Vector(m.multiplyTuple(oned.Tuple(o)))
+func (m Matrix4) MultiplyVector(o oned.Vector) oned.Vector {
+	return oned.Vector(m.multiplyTuple(oned.Tuple(o), 0.))
 }
 
-func (m Matrix4) multiplyTuple(o oned.Tuple) oned.Tuple {
-	return oned.Tuple{
-		m[0][0]*o.X + m[0][1]*o.Y + m[0][2]*o.Z + m[0][3],
-		m[1][0]*o.X + m[1][1]*o.Y + m[1][2]*o.Z + m[1][3],
-		m[2][0]*o.X + m[2][1]*o.Y + m[2][2]*o.Z + m[2][3],
-		//todo: is it ok to drop fourth component?
+func (m Matrix4) multiplyTuple(t oned.Tuple, x float64) oned.Tuple {
+	//todo: refactor
+	r := [4]float64{}
+	o := [4]float64{t.X, t.Y, t.Z, x}
+	for i := 0; i < L4; i++ {
+		for k := 0; k < L4; k++ {
+			r[i] += m[i][k] * o[k]
+		}
 	}
+	return oned.Tuple{r[0], r[1], r[2]}
 }
 
 func (m Matrix4) transpose() Matrix4 {
@@ -80,23 +83,11 @@ func (m Matrix4) transpose() Matrix4 {
 	}
 }
 
-func (m *Matrix4) transposeMe() {
-	//todo implement as loop?
-	m[0][1], m[1][0] = m[1][0], m[0][1]
-	m[0][2], m[2][0] = m[2][0], m[0][2]
-	m[0][3], m[3][0] = m[3][0], m[0][3]
-
-	m[1][2], m[2][1] = m[2][1], m[1][2]
-	m[1][3], m[3][1] = m[3][1], m[1][3]
-
-	m[2][3], m[3][2] = m[3][2], m[2][3]
-}
-
 func (m Matrix4) determinant() float64 {
 	return determinant4x4(m)
 }
 
-func (m Matrix4) inverse() Matrix4 {
+func (m Matrix4) Inverse() Matrix4 {
 	determinant := m.determinant()
 	inverse := Matrix4{}
 	for i := 0; i < L4; i++ {

@@ -16,7 +16,7 @@ func (t Vector) negate() Vector {
 	return Vector(Tuple(t).negate())
 }
 
-func (t Vector) dot(o Vector) float64 {
+func (t Vector) Dot(o Vector) float64 {
 	return Tuple(t).dot(Tuple(o))
 }
 
@@ -24,7 +24,7 @@ func (t Vector) cross(o Vector) Vector {
 	return Vector(Tuple(t).cross(Tuple(o)))
 }
 
-func (t Vector) multiplyScalar(scalar float64) Vector {
+func (t Vector) MultiplyScalar(scalar float64) Vector {
 	return Vector(Tuple(t).multiplyScalar(scalar))
 }
 
