@@ -10,6 +10,6 @@ func (t Point) subtractVector(o Vector) Point {
 	return Point(Tuple(t).subtract(Tuple(o)))
 }
 
-func (t Point) subtractPoint(o Point) Vector {
+func (t Point) SubtractPoint(o Point) Vector {
 	return Vector(Tuple(t).subtract(Tuple(o)))
 }
