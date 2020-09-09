@@ -40,7 +40,7 @@ func NewMatrix4(str string) Matrix4 {
 	return m
 }
 
-func (m Matrix4) multiply(o Matrix4) Matrix4 {
+func (m Matrix4) Multiply(o Matrix4) Matrix4 {
 	r := Matrix4{}
 	for i := 0; i < L4; i++ {
 		for j := 0; j < L4; j++ {

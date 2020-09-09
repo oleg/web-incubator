@@ -25,7 +25,7 @@ func NewCanvas(width, height int) Canvas {
 	return Canvas{width, height, pixels}
 }
 
-func (c Canvas) toPNG(filename string) error {
+func (c Canvas) ToPNG(filename string) error {
 	fo, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -49,4 +49,11 @@ func (c Canvas) toPNG(filename string) error {
 		return err
 	}
 	return nil
+}
+
+func (c Canvas) MustToPNG(filename string) {
+	err := c.ToPNG(filename)
+	if err != nil {
+		panic(err)
+	}
 }

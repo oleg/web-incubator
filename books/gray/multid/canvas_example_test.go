@@ -23,7 +23,7 @@ func Test(t *testing.T) {
 	//	p = p.tick(e)
 	//}
 	//
-	//err := c.toPNG("canvas_example_test.png")
+	//err := c.ToPNG("canvas_example_test.png")
 	//if err != nil {
 	//	log.Panic(err)
 	//}

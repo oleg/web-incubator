@@ -63,7 +63,7 @@ func Test_multiply_matrices(t *testing.T) {
 	     |  4 | 3 | 6 |  5 |
 	     |  1 | 2 | 7 |  8 |`)
 
-	result := m1.multiply(m2)
+	result := m1.Multiply(m2)
 
 	expected := NewMatrix4(
 		`| 20|  22 |  50 |  48 |
@@ -109,7 +109,7 @@ func Test_multiply_matrix_by_identity_matrix(t *testing.T) {
 		 | 2 | 4 |  8 | 16 |
 		 | 4 | 8 | 16 | 32 |`)
 
-	r := m.multiply(IdentityMatrix)
+	r := m.Multiply(IdentityMatrix)
 
 	assert.Equal(t, m, r)
 }
@@ -346,7 +346,7 @@ func Test_multiplying_product_by_its_inverse(t *testing.T) {
 		 |  7 |  0 |  5 |  4 |
 		 |  6 | -2 |  0 |  5 |`)
 
-	r := ma.multiply(mb).multiply(mb.Inverse())
+	r := ma.Multiply(mb).Multiply(mb.Inverse())
 
 	AssertMatrixEqualInDelta(t, ma, r)
 }

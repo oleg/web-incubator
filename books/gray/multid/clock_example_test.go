@@ -26,8 +26,5 @@ func Test_clock_example_test(t *testing.T) {
 		canvas.Pixels[x][y] = white
 	}
 
-	err := canvas.toPNG("clock_example_test.png")
-	if err != nil {
-		panic(err)
-	}
+	canvas.MustToPNG("clock_example_test.png")
 }

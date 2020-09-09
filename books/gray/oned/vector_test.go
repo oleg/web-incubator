@@ -90,7 +90,7 @@ func Test_magnitude_of_m1_m2_m3(t *testing.T) {
 func Test_normalizing_vector_4_0_0(t *testing.T) {
 	v := Vector{4, 0, 0}
 
-	result := v.normalize()
+	result := v.Normalize()
 
 	assert.Equal(t, Vector{1, 0, 0}, result)
 }
@@ -98,7 +98,7 @@ func Test_normalizing_vector_4_0_0(t *testing.T) {
 func Test_normalizing_vector_1_2_3(t *testing.T) {
 	v := Vector{1, 2, 3}
 
-	result := v.normalize()
+	result := v.Normalize()
 
 	AssertVectorEqualInDelta(t, Vector{0.26726, 0.53452, 0.80178}, result)
 }
@@ -106,7 +106,7 @@ func Test_normalizing_vector_1_2_3(t *testing.T) {
 func Test_magnitude_of_normalized_vector(t *testing.T) {
 	v := Vector{1, 2, 3}
 
-	result := v.normalize().magnitude()
+	result := v.Normalize().magnitude()
 
 	assert.Equal(t, 1.0, result)
 }

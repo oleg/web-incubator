@@ -32,7 +32,7 @@ func Test_canvas_to_png(t *testing.T) {
 	c.Pixels[0][0] = oned.Color{1, 0, 0}
 	c.Pixels[0][1] = oned.Color{1, 0, 0}
 	c.Pixels[0][2] = oned.Color{1, 0, 0}
-	err := c.toPNG("img.png")
+	err := c.ToPNG("img.png")
 
 	assert.Nil(t, err)
 }

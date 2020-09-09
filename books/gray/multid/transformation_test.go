@@ -179,7 +179,7 @@ func Test_chained_transformations_must_be_applied_in_reverse_order(t *testing.T)
 	a := RotationX(math.Pi / 2)
 	b := Scaling(5, 5, 5)
 	c := Translation(10, 5, 7)
-	tr := c.multiply(b).multiply(a)
+	tr := c.Multiply(b).Multiply(a)
 
 	r := tr.MultiplyPoint(p)
 
