@@ -21,6 +21,15 @@ var IdentityMatrix = Matrix4{
 	{0, 0, 0, 1},
 }
 
+func IdentityMatrixF() Matrix4 {
+	return Matrix4{
+		{1, 0, 0, 0},
+		{0, 1, 0, 0},
+		{0, 0, 1, 0},
+		{0, 0, 0, 1},
+	}
+}
+
 //todo must?
 func NewMatrix4(str string) Matrix4 {
 	m := Matrix4{}

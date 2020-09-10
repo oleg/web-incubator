@@ -1,4 +1,4 @@
-package multid
+package samples
 
 import (
 	"testing"

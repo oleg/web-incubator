@@ -13,14 +13,15 @@ type Material struct {
 	Shininess float64
 }
 
-var DefaultMaterial = Material{
-	Color:     oned.Color{1, 1, 1},
-	Ambient:   0.1,
-	Specular:  0.9,
-	Diffuse:   0.9,
-	Shininess: 200.0,
+func DefaultMaterial() Material {
+	return Material{
+		Color:     oned.Color{1, 1, 1},
+		Ambient:   0.1,
+		Specular:  0.9,
+		Diffuse:   0.9,
+		Shininess: 200.0,
+	}
 }
-
 func Lighting(material Material, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector) oned.Color {
 	effectiveColor := material.Color.Multiply(light.Intensity)
 	lightv := light.Position.SubtractPoint(point).Normalize()

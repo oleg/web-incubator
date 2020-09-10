@@ -8,7 +8,7 @@ import (
 )
 
 func Test_default_material(t *testing.T) {
-	m := DefaultMaterial
+	m := DefaultMaterial()
 
 	assert.Equal(t, oned.Color{1, 1, 1}, m.Color)
 	assert.Equal(t, 0.1, m.Ambient)
@@ -54,7 +54,7 @@ func Test_lighting(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 
-			color := Lighting(DefaultMaterial, test.light, oned.Point{}, test.eyev, test.normalv)
+			color := Lighting(DefaultMaterial(), test.light, oned.Point{}, test.eyev, test.normalv)
 
 			oned.AssertColorEqualInDelta(t, test.expected, color)
 		})

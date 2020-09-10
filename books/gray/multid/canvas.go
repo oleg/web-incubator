@@ -17,7 +17,7 @@ type Canvas struct {
 	Pixels        [][]oned.Color
 }
 
-func NewCanvas(width, height int) Canvas {
+func MakeCanvas(width, height int) Canvas {
 	pixels := make([][]oned.Color, width)
 	for i := range pixels {
 		pixels[i] = make([]oned.Color, height)

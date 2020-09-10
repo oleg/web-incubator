@@ -8,21 +8,30 @@ import (
 
 type Sphere struct {
 	transform multid.Matrix4
-	Material  Material
+	material  Material
 }
 
 func MakeSphere() Sphere {
-	return Sphere{multid.IdentityMatrix, DefaultMaterial}
+	return Sphere{multid.IdentityMatrix, DefaultMaterial()}
 }
+
+func MakeSphereTM(transform multid.Matrix4, material Material) Sphere {
+	return Sphere{transform, material}
+}
+
 func MakeSphereT(transform multid.Matrix4) Sphere {
-	return Sphere{transform, DefaultMaterial}
+	return Sphere{transform, DefaultMaterial()}
 }
+
 func MakeSphereM(material Material) Sphere {
 	return Sphere{multid.IdentityMatrix, material}
 }
 
 func (sphere Sphere) Transform() multid.Matrix4 {
 	return sphere.transform
+}
+func (sphere Sphere) Material() Material {
+	return sphere.material
 }
 
 //todo or Sphere?

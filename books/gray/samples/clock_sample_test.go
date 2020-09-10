@@ -1,6 +1,7 @@
-package multid
+package samples
 
 import (
+	"gray/multid"
 	"gray/oned"
 	"math"
 	"testing"
@@ -8,10 +9,10 @@ import (
 
 //todo add assert
 func Test_clock_example_test(t *testing.T) {
-	canvas := NewCanvas(500, 500)
+	canvas := multid.MakeCanvas(500, 500)
 	radius := float64(canvas.Width * 3 / 8)
 
-	rotationY := RotationY(math.Pi / 6)
+	rotationY := multid.RotationY(math.Pi / 6)
 
 	points := make([]oned.Point, 12, 12)
 	points[0] = oned.Point{0, 0, 1}
@@ -26,5 +27,5 @@ func Test_clock_example_test(t *testing.T) {
 		canvas.Pixels[x][y] = white
 	}
 
-	canvas.MustToPNG("clock_example_test.png")
+	canvas.MustToPNG("clock_sample_test.png")
 }

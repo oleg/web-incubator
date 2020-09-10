@@ -146,12 +146,12 @@ func Test_computing_normal_on_transformed_sphere(t *testing.T) {
 func Test_sphere_has_default_material(t *testing.T) {
 	s := MakeSphere()
 
-	assert.Equal(t, DefaultMaterial, s.Material)
+	assert.Equal(t, DefaultMaterial(), s.Material())
 }
 
 func Test_sphere_may_be_assigned_material(t *testing.T) {
 	m := Material{Ambient: 1}
 	s := MakeSphereM(m)
 
-	assert.Equal(t, m, s.Material)
+	assert.Equal(t, m, s.Material())
 }
