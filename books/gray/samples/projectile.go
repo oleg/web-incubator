@@ -1,12 +1,14 @@
-package oned
+package samples
+
+import "gray/oned"
 
 type projectile struct {
-	position Point
-	velocity Vector
+	position oned.Point
+	velocity oned.Vector
 }
 type environment struct {
-	gravity Vector
-	wind    Vector
+	gravity oned.Vector
+	wind    oned.Vector
 }
 
 //func (p projectile) move() (position Point) {
@@ -15,6 +17,6 @@ type environment struct {
 
 func (proj projectile) tick(env environment) projectile {
 	position := proj.position.AddVector(proj.velocity)
-	velocity := proj.velocity.addVector(env.gravity).addVector(env.wind)
+	velocity := proj.velocity.AddVector(env.gravity).AddVector(env.wind)
 	return projectile{position, velocity}
 }

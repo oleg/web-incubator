@@ -16,7 +16,7 @@ func Test_addVector_gives_vector(t *testing.T) {
 	v1 := Vector{1, 2, 3}
 	v2 := Vector{2, 3, 4}
 
-	vector := v1.addVector(v2)
+	vector := v1.AddVector(v2)
 
 	assert.Equal(t, Vector{3, 5, 7}, vector)
 }

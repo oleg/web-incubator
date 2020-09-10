@@ -34,10 +34,11 @@ func (c Canvas) ToPNG(filename string) error {
 	img := image.NewRGBA(image.Rect(0, 0, c.Width, c.Height))
 	for i, p := range c.Pixels {
 		for j, px := range p {
-			img.Set(i, c.Height-j, color.RGBA{ //todo (Height-j)?
-				R: uint8(px.R() * 255),
-				G: uint8(px.G() * 255),
-				B: uint8(px.B() * 255),
+
+			img.Set(i, j, color.RGBA{ //todo (Height-j)?
+				R: uint8(clamp(px.R()) * 255),
+				G: uint8(clamp(px.G()) * 255),
+				B: uint8(clamp(px.B()) * 255),
 				A: 255})
 		}
 	}
@@ -49,6 +50,17 @@ func (c Canvas) ToPNG(filename string) error {
 		return err
 	}
 	return nil
+}
+
+//todo refactor
+func clamp(r float64) float64 {
+	if r < 0 {
+		return 0
+	}
+	if r > 1 {
+		return 1
+	}
+	return r
 }
 
 func (c Canvas) MustToPNG(filename string) {
