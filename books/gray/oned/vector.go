@@ -28,7 +28,6 @@ func (t Vector) MultiplyScalar(scalar float64) Vector {
 	return Vector(Tuple(t).multiplyScalar(scalar))
 }
 
-
 func (t Vector) magnitude() float64 { //todo: move to Tuple?
 	return math.Sqrt(t.X*t.X + t.Y*t.Y + t.Z*t.Z)
 }
@@ -36,4 +35,10 @@ func (t Vector) magnitude() float64 { //todo: move to Tuple?
 func (t Vector) Normalize() Vector { //todo: move to Tuple?
 	magnitude := t.magnitude()
 	return Vector{t.X / magnitude, t.Y / magnitude, t.Z / magnitude}
+}
+
+func (t Vector) Reflect(normal Vector) Vector {
+	dot := t.Dot(normal)
+	temp := normal.MultiplyScalar(2).MultiplyScalar(dot)
+	return t.subtractVector(temp)
 }

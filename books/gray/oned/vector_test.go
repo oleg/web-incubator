@@ -127,3 +127,21 @@ func Test_cross_product_vector(t *testing.T) {
 	assert.Equal(t, Vector{-1, 2, -1}, v1.cross(v2))
 	assert.Equal(t, Vector{1, -2, 1}, v2.cross(v1))
 }
+
+func Test_reflecting_vector_approaching_at_45_grad(t *testing.T) {
+	v := Vector{1, -1, 0}
+	n := Vector{0, 1, 0}
+
+	r := v.Reflect(n)
+
+	assert.Equal(t, Vector{1, 1, 0}, r)
+}
+
+func Test_reflecting_vector_off_slanted_surface(t *testing.T) {
+	v := Vector{0, -1, 0}
+	n := Vector{math.Sqrt2 / 2, math.Sqrt2 / 2, 0}
+
+	r := v.Reflect(n)
+
+	AssertVectorEqualInDelta(t, Vector{1, 0, 0}, r)
+}
