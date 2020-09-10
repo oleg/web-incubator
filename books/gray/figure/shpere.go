@@ -39,3 +39,11 @@ func (sphere Sphere) Intersect(worldRay Ray) Inters {
 		Inter{t2, sphere},
 	}
 }
+
+func (sphere Sphere) NormalAt(worldPoint oned.Point) oned.Vector {
+	objectPoint := sphere.transform.Inverse().MultiplyPoint(worldPoint)
+	objectNormal := objectPoint.SubtractPoint(oned.Point{})
+	worldNormal := sphere.transform.Inverse().Transpose().MultiplyVector(objectNormal)
+	return worldNormal.Normalize()
+
+}

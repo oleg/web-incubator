@@ -73,7 +73,7 @@ func (m Matrix4) multiplyTuple(t oned.Tuple, x float64) oned.Tuple {
 	return oned.Tuple{r[0], r[1], r[2]}
 }
 
-func (m Matrix4) transpose() Matrix4 {
+func (m Matrix4) Transpose() Matrix4 {
 	//todo or implement as loops?
 	return Matrix4{
 		{m[0][0], m[1][0], m[2][0], m[3][0]},

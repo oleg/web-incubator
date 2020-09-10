@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gray/multid"
 	"gray/oned"
+	"math"
 	"testing"
 )
 
@@ -74,7 +75,7 @@ func Test_intersecting_scaled_sphere_with_ray(t *testing.T) {
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
 	s := Sphere{multid.Scaling(2, 2, 2)}
 
-	xs := s.Intersect(r)
+	xs := s.Intersect(r) //todo table test for intersect
 
 	assert.Equal(t, 2, len(xs))
 	assert.Equal(t, 3., xs[0].Distance)
@@ -88,3 +89,71 @@ func Test_intersecting_translated_sphere_with_ray(t *testing.T) {
 
 	assert.Equal(t, 0, len(xs))
 }
+
+func Test_normal_on_sphere(t *testing.T) {
+	sqrt3d3 := math.Sqrt(3) / 3
+
+	tests := []struct {
+		name     string
+		point    oned.Point
+		expected oned.Vector
+	}{
+		{"The normal on a sphere at a point on the x axis",
+			oned.Point{1, 0, 0}, oned.Vector{1, 0, 0}},
+		{"The normal on a sphere at a point on the y axis",
+			oned.Point{0, 1, 0}, oned.Vector{0, 1, 0}},
+		{"The normal on a sphere at a point on the z axis",
+			oned.Point{0, 0, 1}, oned.Vector{0, 0, 1}},
+		{"The normal on a sphere at a non axial point",
+			oned.Point{sqrt3d3, sqrt3d3, sqrt3d3}, oned.Vector{sqrt3d3, sqrt3d3, sqrt3d3}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			s := MakeSphere()
+
+			r := s.NormalAt(test.point)
+
+			assert.Equal(t, test.expected, r)
+		})
+	}
+}
+
+func Test_normal_is_normalized_vector(t *testing.T) {
+	sqrt3d3 := math.Sqrt(3) / 3
+	s := MakeSphere()
+
+	r := s.NormalAt(oned.Point{sqrt3d3, sqrt3d3, sqrt3d3})
+
+	assert.Equal(t, r.Normalize(), r)
+}
+
+func Test_computing_normal_on_translated_sphere(t *testing.T) {
+	s := Sphere{multid.Translation(0, 1, 0)}
+
+	n := s.NormalAt(oned.Point{0, 1.70711, -0.70711})
+
+	oned.AssertVectorEqualInDelta(t, oned.Vector{0, 0.70711, -0.70711}, n)
+}
+
+func Test_computing_normal_on_transformed_sphere(t *testing.T) {
+	s := Sphere{multid.Scaling(1, 0.5, 1).Multiply(multid.RotationZ(math.Pi / 5))}
+
+	n := s.NormalAt(oned.Point{0, math.Sqrt2 / 2, -math.Sqrt2 / 2})
+
+	oned.AssertVectorEqualInDelta(t, oned.Vector{0, 0.97014, -0.24254}, n)
+}
+
+/*
+	Scenario: Computing the normal on a translated sphere
+	  Given s ← sphere()
+	    And set_transform(s, translation(0, 1, 0))
+	  When n ← normal_at(s, point(0, 1.70711, -0.70711))
+	  Then n = vector(0, 0.70711, -0.70711)
+
+	Scenario: Computing the normal on a transformed sphere
+	  Given s ← sphere()
+	    And m ← scaling(1, 0.5, 1) * rotation_z(π/5)
+	    And set_transform(s, m)
+	  When n ← normal_at(s, point(0, √2/2, -√2/2))
+	  Then n = vector(0, 0.97014, -0.24254)
+*/

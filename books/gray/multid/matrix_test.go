@@ -129,7 +129,7 @@ func Test_transpose_matrix(t *testing.T) {
 		 | 1 | 8 | 5 | 3 |
 		 | 0 | 0 | 5 | 8 |`)
 
-	r := m.transpose()
+	r := m.Transpose()
 	expected := NewMatrix4(
 		`| 0 | 9 | 1 | 0 |
 		 | 9 | 8 | 8 | 0 |
@@ -147,7 +147,7 @@ func Test_transpose_does_not_change_original(t *testing.T) {
 		 | 0 | 0 | 5 | 8 |`
 	m := NewMatrix4(data)
 
-	m.transpose()
+	m.Transpose()
 
 	expected := NewMatrix4(data)
 	assert.Equal(t, expected, m)
@@ -155,7 +155,7 @@ func Test_transpose_does_not_change_original(t *testing.T) {
 
 func Test_transpose_identity_matrix(t *testing.T) {
 
-	m := IdentityMatrix.transpose()
+	m := IdentityMatrix.Transpose()
 
 	assert.Equal(t, IdentityMatrix, m)
 }
