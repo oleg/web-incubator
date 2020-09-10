@@ -64,7 +64,7 @@ func Test_sphere_default_transformation(t *testing.T) {
 }
 func Test_changing_sphere_transformation(t *testing.T) {
 	tr := multid.Translation(2, 3, 4)
-	s := Sphere{tr}
+	s := MakeSphereT(tr)
 
 	r := s.Transform()
 
@@ -73,7 +73,7 @@ func Test_changing_sphere_transformation(t *testing.T) {
 
 func Test_intersecting_scaled_sphere_with_ray(t *testing.T) {
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
-	s := Sphere{multid.Scaling(2, 2, 2)}
+	s := MakeSphereT(multid.Scaling(2, 2, 2))
 
 	xs := s.Intersect(r) //todo table test for intersect
 
@@ -83,7 +83,7 @@ func Test_intersecting_scaled_sphere_with_ray(t *testing.T) {
 }
 func Test_intersecting_translated_sphere_with_ray(t *testing.T) {
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
-	s := Sphere{multid.Translation(5, 0, 0)}
+	s := MakeSphereT(multid.Translation(5, 0, 0))
 
 	xs := s.Intersect(r)
 
@@ -128,7 +128,7 @@ func Test_normal_is_normalized_vector(t *testing.T) {
 }
 
 func Test_computing_normal_on_translated_sphere(t *testing.T) {
-	s := Sphere{multid.Translation(0, 1, 0)}
+	s := MakeSphereT(multid.Translation(0, 1, 0))
 
 	n := s.NormalAt(oned.Point{0, 1.70711, -0.70711})
 
@@ -136,24 +136,22 @@ func Test_computing_normal_on_translated_sphere(t *testing.T) {
 }
 
 func Test_computing_normal_on_transformed_sphere(t *testing.T) {
-	s := Sphere{multid.Scaling(1, 0.5, 1).Multiply(multid.RotationZ(math.Pi / 5))}
+	s := MakeSphereT(multid.Scaling(1, 0.5, 1).Multiply(multid.RotationZ(math.Pi / 5)))
 
 	n := s.NormalAt(oned.Point{0, math.Sqrt2 / 2, -math.Sqrt2 / 2})
 
 	oned.AssertVectorEqualInDelta(t, oned.Vector{0, 0.97014, -0.24254}, n)
 }
 
-/*
-	Scenario: Computing the normal on a translated sphere
-	  Given s ← sphere()
-	    And set_transform(s, translation(0, 1, 0))
-	  When n ← normal_at(s, point(0, 1.70711, -0.70711))
-	  Then n = vector(0, 0.70711, -0.70711)
+func Test_sphere_has_default_material(t *testing.T) {
+	s := MakeSphere()
 
-	Scenario: Computing the normal on a transformed sphere
-	  Given s ← sphere()
-	    And m ← scaling(1, 0.5, 1) * rotation_z(π/5)
-	    And set_transform(s, m)
-	  When n ← normal_at(s, point(0, √2/2, -√2/2))
-	  Then n = vector(0, 0.97014, -0.24254)
-*/
+	assert.Equal(t, DefaultMaterial, s.Material)
+}
+
+func Test_sphere_may_be_assigned_material(t *testing.T) {
+	m := Material{Ambient: 1}
+	s := MakeSphereM(m)
+
+	assert.Equal(t, m, s.Material)
+}

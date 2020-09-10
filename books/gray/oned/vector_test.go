@@ -42,7 +42,7 @@ func Test_subtruct_zero_vector_negates_vector(t *testing.T) {
 func Test_negate_negates_all_points(t *testing.T) {
 	v := Vector{1, -2, 3}
 
-	vector := v.negate()
+	vector := v.Negate()
 
 	assert.Equal(t, Vector{-1, 2, -3}, vector)
 }

@@ -16,7 +16,7 @@ func Test_ball_example(t *testing.T) {
 	canvas := multid.NewCanvas(canvasPixels, canvasPixels)
 	red := oned.Color{1, 0, 0}
 	transform := multid.Shearing(1, 0, 0, 0, 0, 0).Multiply(multid.Scaling(0.5, 1, 1))
-	sphere := Sphere{transform}
+	sphere := MakeSphereT(transform)
 
 	for y := 0; y < canvasPixels; y++ {
 		worldY := half - pixelSize*float64(y)

@@ -8,10 +8,17 @@ import (
 
 type Sphere struct {
 	transform multid.Matrix4
+	Material  Material
 }
 
 func MakeSphere() Sphere {
-	return Sphere{multid.IdentityMatrix}
+	return Sphere{multid.IdentityMatrix, DefaultMaterial}
+}
+func MakeSphereT(transform multid.Matrix4) Sphere {
+	return Sphere{transform, DefaultMaterial}
+}
+func MakeSphereM(material Material) Sphere {
+	return Sphere{multid.IdentityMatrix, material}
 }
 
 func (sphere Sphere) Transform() multid.Matrix4 {

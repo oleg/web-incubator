@@ -12,7 +12,7 @@ func (t Vector) subtractVector(o Vector) Vector {
 	return Vector(Tuple(t).subtract(Tuple(o)))
 }
 
-func (t Vector) negate() Vector {
+func (t Vector) Negate() Vector {
 	return Vector(Tuple(t).negate())
 }
 
