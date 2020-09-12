@@ -2,6 +2,7 @@ package figure
 
 import (
 	"github.com/stretchr/testify/assert"
+	"gray/oned"
 	"testing"
 )
 
@@ -64,4 +65,41 @@ func Test_hit_intersections(t *testing.T) {
 			assert.Equal(t, test.expectedIntersection, hit)
 		})
 	}
+}
+
+func Test_precomputing_state_of_intersection(t *testing.T) {
+	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
+	shape := MakeSphere()
+	i := Inter{4, shape}
+
+	comps := i.PrepareComputations(r)
+
+	assert.Equal(t, i.Distance, comps.Distance)
+	assert.Equal(t, i.Object, comps.Object)
+	assert.Equal(t, oned.Point{0, 0, -1}, comps.Point)
+	assert.Equal(t, oned.Vector{0, 0, -1}, comps.EyeV)
+	assert.Equal(t, oned.Vector{0, 0, -1}, comps.NormalV)
+}
+
+func Test_hit_when_intersection_occurs_on_outside(t *testing.T) {
+	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
+	shape := MakeSphere()
+	i := Inter{4, shape}
+
+	comps := i.PrepareComputations(r)
+
+	assert.Equal(t, false, comps.Inside)
+}
+
+func Test_hit_when_intersection_occurs_on_inside(t *testing.T) {
+	r := Ray{oned.Point{0, 0, 0}, oned.Vector{0, 0, 1}}
+	shape := MakeSphere()
+	i := Inter{1, shape}
+
+	comps := i.PrepareComputations(r)
+
+	assert.Equal(t, oned.Point{0, 0, 1}, comps.Point)
+	assert.Equal(t, oned.Vector{0, 0, -1}, comps.EyeV)
+	assert.Equal(t, oned.Vector{0, 0, -1}, comps.NormalV)
+	assert.Equal(t, true, comps.Inside)
 }

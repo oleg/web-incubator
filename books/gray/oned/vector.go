@@ -20,7 +20,7 @@ func (t Vector) Dot(o Vector) float64 {
 	return Tuple(t).dot(Tuple(o))
 }
 
-func (t Vector) cross(o Vector) Vector {
+func (t Vector) Cross(o Vector) Vector {
 	return Vector(Tuple(t).cross(Tuple(o)))
 }
 

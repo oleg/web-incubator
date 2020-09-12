@@ -13,6 +13,7 @@ type Material struct {
 	Shininess float64
 }
 
+//todo change api, should accept overrides, use builder?
 func DefaultMaterial() Material {
 	return Material{
 		Color:     oned.Color{1, 1, 1},
@@ -22,6 +23,7 @@ func DefaultMaterial() Material {
 		Shininess: 200.0,
 	}
 }
+
 func Lighting(material Material, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector) oned.Color {
 	effectiveColor := material.Color.Multiply(light.Intensity)
 	lightv := light.Position.SubtractPoint(point).Normalize()
@@ -40,3 +42,53 @@ func Lighting(material Material, light PointLight, point oned.Point, eyev oned.V
 	specular := light.Intensity.MultiplyByScalar(material.Specular).MultiplyByScalar(factor)
 	return ambient.Add(diffuse).Add(specular)
 }
+
+//todo think about it
+type MaterialBuilder struct {
+	color     oned.Color
+	ambient   float64
+	diffuse   float64
+	specular  float64
+	shininess float64
+}
+
+func MakeMaterialBuilder() *MaterialBuilder {
+	return &MaterialBuilder{
+		color:     oned.Color{1, 1, 1},
+		ambient:   0.1,
+		diffuse:   0.9,
+		specular:  0.9,
+		shininess: 200.0,
+	}
+}
+
+func (mb *MaterialBuilder) SetColor(color oned.Color) *MaterialBuilder {
+	mb.color = color
+	return mb
+}
+func (mb *MaterialBuilder) SetAmbient(ambient float64) *MaterialBuilder {
+	mb.ambient = ambient
+	return mb
+}
+func (mb *MaterialBuilder) SetDiffuse(diffuse float64) *MaterialBuilder {
+	mb.diffuse = diffuse
+	return mb
+}
+func (mb *MaterialBuilder) SetSpecular(specular float64) *MaterialBuilder {
+	mb.specular = specular
+	return mb
+}
+func (mb *MaterialBuilder) SetShininess(shininess float64) *MaterialBuilder {
+	mb.shininess = shininess
+	return mb
+}
+func (mb *MaterialBuilder) Build() Material {
+	return Material{
+		Color:     mb.color,
+		Ambient:   mb.ambient,
+		Diffuse:   mb.diffuse,
+		Specular:  mb.specular,
+		Shininess: mb.shininess,
+	}
+}
+

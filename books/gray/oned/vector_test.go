@@ -124,8 +124,8 @@ func Test_cross_product_vector(t *testing.T) {
 	v1 := Vector{1, 2, 3}
 	v2 := Vector{2, 3, 4}
 
-	assert.Equal(t, Vector{-1, 2, -1}, v1.cross(v2))
-	assert.Equal(t, Vector{1, -2, 1}, v2.cross(v1))
+	assert.Equal(t, Vector{-1, 2, -1}, v1.Cross(v2))
+	assert.Equal(t, Vector{1, -2, 1}, v2.Cross(v1))
 }
 
 func Test_reflecting_vector_approaching_at_45_grad(t *testing.T) {
