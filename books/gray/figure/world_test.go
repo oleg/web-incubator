@@ -93,6 +93,33 @@ func Test_color_with_intersection_behind_ray(t *testing.T) {
 	oned.AssertColorEqualInDelta(t, materialBuilder().SetAmbient(1).Build().Color, c)
 }
 
+func Test_shade_hit_is_given_intersection_in_shadow(t *testing.T) {
+	s1 := MakeSphere()
+	s2 := MakeSphereT(multid.Translation(0, 0, 10))
+	w := World{
+		PointLight{oned.Point{0, 0, -10}, oned.Color{1, 1, 1}},
+		[]Shape{s1, s2},
+	}
+	r := Ray{oned.Point{0, 0, 5}, oned.Vector{0, 0, 1}}
+	i := Inter{4, s2}
+	comps := i.PrepareComputations(r)
+
+	color := w.ShadeHit(comps)
+
+	assert.Equal(t, oned.Color{0.1, 0.1, 0.1}, color)
+}
+
+func Test_hit_should_offset_point(t *testing.T) {
+	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
+	s := MakeSphereT(multid.Translation(0, 0, 1))
+	i := Inter{5, s}
+
+	comps := i.PrepareComputations(r)
+
+	assert.Less(t, comps.OverPoint.Z, -oned.Delta/2)
+	assert.Less(t, comps.OverPoint.Z, comps.Point.Z)
+}
+
 //util
 func defaultWorld() World {
 	s1 := MakeSphereM(materialBuilder().Build())

@@ -1,5 +1,7 @@
 package oned
 
+const Delta = 0.000009
+
 type Tuple struct {
 	X, Y, Z float64
 }

@@ -16,21 +16,26 @@ func (i Inter) PrepareComputations(r Ray) Computations {
 	comps.Object = i.Object
 	comps.Point = r.Position(comps.Distance)
 	comps.EyeV = r.Direction.Negate()
-	comps.NormalV = comps.Object.NormalAt(comps.Point)
-	if comps.NormalV.Dot(comps.EyeV) < 0 {
-		comps.Inside = true
-		comps.NormalV = comps.NormalV.Negate()
+
+	normalV := comps.Object.NormalAt(comps.Point)
+	comps.Inside = normalV.Dot(comps.EyeV) < 0
+	if comps.Inside {
+		comps.NormalV = normalV.Negate()
+	} else {
+		comps.NormalV = normalV
 	}
+	comps.OverPoint = comps.Point.AddVector(comps.NormalV.MultiplyScalar(oned.Delta))
 	return comps
 }
 
 type Computations struct {
-	Distance float64
-	Object   Shape
-	Point    oned.Point
-	EyeV     oned.Vector
-	NormalV  oned.Vector
-	Inside   bool
+	Distance  float64
+	Object    Shape
+	Point     oned.Point
+	EyeV      oned.Vector
+	NormalV   oned.Vector
+	Inside    bool
+	OverPoint oned.Point
 }
 
 type Inters []Inter

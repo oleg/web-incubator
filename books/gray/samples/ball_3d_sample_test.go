@@ -45,7 +45,7 @@ func Test_ball_3d_sample(t *testing.T) {
 				normal := h.Object.NormalAt(point)
 				eye := ray.Direction.Negate()
 
-				canvas.Pixels[x][y] = figure.Lighting(h.Object.Material(), light, point, eye, normal)
+				canvas.Pixels[x][y] = figure.Lighting(h.Object.Material(), light, point, eye, normal, false)
 			}
 		}
 	}

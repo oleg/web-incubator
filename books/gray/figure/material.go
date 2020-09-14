@@ -24,12 +24,12 @@ func DefaultMaterial() Material {
 	}
 }
 
-func Lighting(material Material, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector) oned.Color {
+func Lighting(material Material, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector, inShadow bool) oned.Color {
 	effectiveColor := material.Color.Multiply(light.Intensity)
 	lightv := light.Position.SubtractPoint(point).Normalize()
 	ambient := effectiveColor.MultiplyByScalar(material.Ambient)
 	lightDotNormal := lightv.Dot(normalv)
-	if lightDotNormal < 0 {
+	if lightDotNormal < 0 || inShadow {
 		return ambient
 	}
 	diffuse := effectiveColor.MultiplyByScalar(material.Diffuse).MultiplyByScalar(lightDotNormal)
@@ -91,4 +91,3 @@ func (mb *MaterialBuilder) Build() Material {
 		Shininess: mb.shininess,
 	}
 }
-

@@ -50,7 +50,7 @@ func Test_negate_negates_all_points(t *testing.T) {
 func Test_magnitude_of_1_0_0(t *testing.T) {
 	v := Vector{1, 0, 0}
 
-	result := v.magnitude()
+	result := v.Magnitude()
 
 	assert.Equal(t, 1.0, result)
 }
@@ -58,7 +58,7 @@ func Test_magnitude_of_1_0_0(t *testing.T) {
 func Test_magnitude_of_0_1_0(t *testing.T) {
 	v := Vector{0, 1, 0}
 
-	result := v.magnitude()
+	result := v.Magnitude()
 
 	assert.Equal(t, 1.0, result)
 }
@@ -66,7 +66,7 @@ func Test_magnitude_of_0_1_0(t *testing.T) {
 func Test_magnitude_of_0_0_1(t *testing.T) {
 	v := Vector{0, 0, 1}
 
-	result := v.magnitude()
+	result := v.Magnitude()
 
 	assert.Equal(t, 1.0, result)
 }
@@ -74,7 +74,7 @@ func Test_magnitude_of_0_0_1(t *testing.T) {
 func Test_magnitude_of_1_2_3(t *testing.T) {
 	v := Vector{1, 2, 3}
 
-	result := v.magnitude()
+	result := v.Magnitude()
 
 	assert.Equal(t, math.Sqrt(14), result)
 }
@@ -82,7 +82,7 @@ func Test_magnitude_of_1_2_3(t *testing.T) {
 func Test_magnitude_of_m1_m2_m3(t *testing.T) {
 	v := Vector{-1, -2, -3}
 
-	result := v.magnitude()
+	result := v.Magnitude()
 
 	assert.Equal(t, math.Sqrt(14), result)
 }
@@ -106,7 +106,7 @@ func Test_normalizing_vector_1_2_3(t *testing.T) {
 func Test_magnitude_of_normalized_vector(t *testing.T) {
 	v := Vector{1, 2, 3}
 
-	result := v.Normalize().magnitude()
+	result := v.Normalize().Magnitude()
 
 	assert.Equal(t, 1.0, result)
 }

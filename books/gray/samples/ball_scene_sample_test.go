@@ -40,7 +40,7 @@ func Test_ball_scene_sample(t *testing.T) {
 			SetSpecular(0.3).Build())
 
 	right := figure.MakeSphereTM(
-		multid.Translation(1.5, 1, -0.5).
+		multid.Translation(1.5, 0.5, -0.5).
 			Multiply(multid.Scaling(0.5, 0.5, 0.5)),
 		figure.MakeMaterialBuilder().
 			SetColor(oned.Color{0.5, 1, 0.1}).

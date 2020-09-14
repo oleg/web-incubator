@@ -54,9 +54,46 @@ func Test_lighting(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 
-			color := Lighting(DefaultMaterial(), test.light, oned.Point{}, test.eyev, test.normalv)
+			color := Lighting(DefaultMaterial(), test.light, oned.Point{}, test.eyev, test.normalv, false)
 
 			oned.AssertColorEqualInDelta(t, test.expected, color)
+		})
+	}
+}
+
+func Test_lighting_with_surface_in_shadow(t *testing.T) {
+	m := DefaultMaterial()
+	eyeV := oned.Vector{0, 0, -1}
+	normalV := oned.Vector{0, 0, -1}
+	light := PointLight{oned.Point{0, 0, -10}, oned.Color{1, 1, 1}}
+
+	r := Lighting(m, light, oned.Point{}, eyeV, normalV, true)
+
+	assert.Equal(t, oned.Color{0.1, 0.1, 0.1}, r)
+}
+
+func Test_shadow(t *testing.T) {
+	tests := []struct {
+		name     string
+		point    oned.Point
+		expected bool
+	}{
+		{"There is no shadow when nothing is collinear with point and light",
+			oned.Point{0, 10, 0}, false},
+		{"The shadow when an object is between the point and the light",
+			oned.Point{10, -10, 10}, true},
+		{"There is no shadow when an object is behind the light",
+			oned.Point{-20, 20, -20}, false},
+		{"There is no shadow when an object is behind the point",
+			oned.Point{-2, 2, -2}, false},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			w := defaultWorld()
+
+			r := w.IsShadowed(test.point)
+
+			assert.Equal(t, test.expected, r)
 		})
 	}
 }
