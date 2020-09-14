@@ -35,8 +35,7 @@ func (sphere Sphere) Material() Material {
 }
 
 //todo or Sphere?
-func (sphere Sphere) Intersect(worldRay Ray) Inters {
-	ray := worldRay.Transform(sphere.Transform().Inverse())
+func (sphere Sphere) LocalIntersect(ray Ray) Inters {
 	sphereToRay := ray.Origin.SubtractPoint(oned.Point{})
 	a := ray.Direction.Dot(ray.Direction)
 	b := 2 * ray.Direction.Dot(sphereToRay)
@@ -56,10 +55,6 @@ func (sphere Sphere) Intersect(worldRay Ray) Inters {
 	}
 }
 
-func (sphere Sphere) NormalAt(worldPoint oned.Point) oned.Vector {
-	objectPoint := sphere.transform.Inverse().MultiplyPoint(worldPoint)
-	objectNormal := objectPoint.SubtractPoint(oned.Point{})
-	worldNormal := sphere.transform.Inverse().Transpose().MultiplyVector(objectNormal)
-	return worldNormal.Normalize()
-
+func (sphere Sphere) LocalNormalAt(localPoint oned.Point) oned.Vector {
+	return localPoint.SubtractPoint(oned.Point{})
 }

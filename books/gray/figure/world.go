@@ -13,7 +13,7 @@ type World struct {
 func (w World) Intersect(ray Ray) Inters {
 	r := Inters{}
 	for _, shape := range w.Objects {
-		r = append(r, shape.Intersect(ray)...)
+		r = append(r, Intersect(shape, ray)...)
 	}
 	sort.Slice(r, func(i, j int) bool {
 		return r[i].Distance < r[j].Distance

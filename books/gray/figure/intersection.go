@@ -17,7 +17,7 @@ func (i Inter) PrepareComputations(r Ray) Computations {
 	comps.Point = r.Position(comps.Distance)
 	comps.EyeV = r.Direction.Negate()
 
-	normalV := comps.Object.NormalAt(comps.Point)
+	normalV := NormalAt(comps.Object, comps.Point)
 	comps.Inside = normalV.Dot(comps.EyeV) < 0
 	if comps.Inside {
 		comps.NormalV = normalV.Negate()

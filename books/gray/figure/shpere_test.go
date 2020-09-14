@@ -34,7 +34,7 @@ func Test_ray_intersects_sphere_at_two_points(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			s := MakeSphere()
 
-			xs := s.Intersect(test.ray)
+			xs := Intersect(s, test.ray)
 
 			assert.Len(t, xs, len(test.expected))
 			for i, expected := range test.expected {
@@ -48,7 +48,7 @@ func Test_intersect_sets_object_on_intersection(t *testing.T) {
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
 	s := MakeSphere()
 
-	res := s.Intersect(r)
+	res := Intersect(s, r)
 
 	assert.Equal(t, 2, len(res))
 	assert.Equal(t, s, res[0].Object)
@@ -75,7 +75,7 @@ func Test_intersecting_scaled_sphere_with_ray(t *testing.T) {
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
 	s := MakeSphereT(multid.Scaling(2, 2, 2))
 
-	xs := s.Intersect(r) //todo table test for intersect
+	xs := Intersect(s, r) //todo table test for intersect
 
 	assert.Equal(t, 2, len(xs))
 	assert.Equal(t, 3., xs[0].Distance)
@@ -85,7 +85,7 @@ func Test_intersecting_translated_sphere_with_ray(t *testing.T) {
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
 	s := MakeSphereT(multid.Translation(5, 0, 0))
 
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 
 	assert.Equal(t, 0, len(xs))
 }
@@ -111,7 +111,7 @@ func Test_normal_on_sphere(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			s := MakeSphere()
 
-			r := s.NormalAt(test.point)
+			r := NormalAt(s, test.point)
 
 			assert.Equal(t, test.expected, r)
 		})
@@ -122,7 +122,7 @@ func Test_normal_is_normalized_vector(t *testing.T) {
 	sqrt3d3 := math.Sqrt(3) / 3
 	s := MakeSphere()
 
-	r := s.NormalAt(oned.Point{sqrt3d3, sqrt3d3, sqrt3d3})
+	r := NormalAt(s, oned.Point{sqrt3d3, sqrt3d3, sqrt3d3})
 
 	assert.Equal(t, r.Normalize(), r)
 }
@@ -130,7 +130,7 @@ func Test_normal_is_normalized_vector(t *testing.T) {
 func Test_computing_normal_on_translated_sphere(t *testing.T) {
 	s := MakeSphereT(multid.Translation(0, 1, 0))
 
-	n := s.NormalAt(oned.Point{0, 1.70711, -0.70711})
+	n := NormalAt(s, oned.Point{0, 1.70711, -0.70711})
 
 	oned.AssertVectorEqualInDelta(t, oned.Vector{0, 0.70711, -0.70711}, n)
 }
@@ -138,7 +138,7 @@ func Test_computing_normal_on_translated_sphere(t *testing.T) {
 func Test_computing_normal_on_transformed_sphere(t *testing.T) {
 	s := MakeSphereT(multid.Scaling(1, 0.5, 1).Multiply(multid.RotationZ(math.Pi / 5)))
 
-	n := s.NormalAt(oned.Point{0, math.Sqrt2 / 2, -math.Sqrt2 / 2})
+	n := NormalAt(s, oned.Point{0, math.Sqrt2 / 2, -math.Sqrt2 / 2})
 
 	oned.AssertVectorEqualInDelta(t, oned.Vector{0, 0.97014, -0.24254}, n)
 }

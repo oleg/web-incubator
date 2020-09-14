@@ -40,9 +40,9 @@ func Test_ball_3d_sample(t *testing.T) {
 
 			ray := figure.Ray{rayOrigin, (position.SubtractPoint(rayOrigin)).Normalize()}
 
-			if ok, h := sphere.Intersect(ray).Hit(); ok {
+			if ok, h := figure.Intersect(sphere, ray).Hit(); ok {
 				point := ray.Position(h.Distance)
-				normal := h.Object.NormalAt(point)
+				normal := figure.NormalAt(h.Object, point)
 				eye := ray.Direction.Negate()
 
 				canvas.Pixels[x][y] = figure.Lighting(h.Object.Material(), light, point, eye, normal, false)
