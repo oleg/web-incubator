@@ -28,7 +28,7 @@ func Test_ball_3d_sample(t *testing.T) {
 	sphere := figure.MakeSphereTM(transform, material)
 
 	lightPosition := oned.Point{-10, 10, -10}
-	lightColor := oned.Color{1, 1, 1}
+	lightColor := oned.White
 	light := figure.PointLight{lightPosition, lightColor}
 
 	for y := 0; y < canvasPixels; y++ {

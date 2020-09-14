@@ -7,7 +7,7 @@ import (
 )
 
 func Test_point_light_has_position_and_intensity(t *testing.T) {
-	intensity := oned.Color{1, 1, 1}
+	intensity := oned.White
 	position := oned.Point{0, 0, 0}
 
 	light := PointLight{position, intensity}
@@ -15,7 +15,3 @@ func Test_point_light_has_position_and_intensity(t *testing.T) {
 	assert.Equal(t, position, light.Position)
 	assert.Equal(t, intensity, light.Intensity)
 }
-
-/*
-
-*/

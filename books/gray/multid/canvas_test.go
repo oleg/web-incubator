@@ -13,7 +13,7 @@ func Test_canvas(t *testing.T) {
 	assert.Equal(t, 20, c.Height)
 	for _, row := range c.Pixels {
 		for _, c := range row {
-			assert.Equal(t, oned.Color{0, 0, 0}, c)
+			assert.Equal(t, oned.Black, c)
 		}
 	}
 }

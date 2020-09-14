@@ -96,7 +96,13 @@ func (m Matrix4) determinant() float64 {
 	return determinant4x4(m)
 }
 
+//todo: quick fix gives 10x improvements
+var cache = make(map[Matrix4]Matrix4)
+
 func (m Matrix4) Inverse() Matrix4 {
+	if cached, ok := cache[m]; ok {
+		return cached
+	}
 	determinant := m.determinant()
 	inverse := Matrix4{}
 	for i := 0; i < L4; i++ {
@@ -104,6 +110,7 @@ func (m Matrix4) Inverse() Matrix4 {
 			inverse[j][i] = cofactor4x4(m, i, j) / determinant
 		}
 	}
+	cache[m] = inverse
 	return inverse
 }
 

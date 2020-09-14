@@ -2,6 +2,9 @@ package oned
 
 type Color Tuple
 
+var Black = Color{0, 0, 0}
+var White = Color{1, 1, 1}
+
 func NewColor(R, G, B float64) Color {
 	return Color{R, G, B}
 }

@@ -11,21 +11,29 @@ type Material struct {
 	Diffuse   float64
 	Specular  float64
 	Shininess float64
+	Pattern   StripePattern
 }
 
 //todo change api, should accept overrides, use builder?
 func DefaultMaterial() Material {
 	return Material{
-		Color:     oned.Color{1, 1, 1},
+		Color:     oned.White,
 		Ambient:   0.1,
 		Specular:  0.9,
 		Diffuse:   0.9,
 		Shininess: 200.0,
+		Pattern:   StripePattern{},
 	}
 }
 
 func Lighting(material Material, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector, inShadow bool) oned.Color {
-	effectiveColor := material.Color.Multiply(light.Intensity)
+	var color oned.Color
+	if material.Pattern != (StripePattern{}) {
+		color = material.Pattern.StripeAt(point)
+	} else {
+		color = material.Color
+	}
+	effectiveColor := color.Multiply(light.Intensity)
 	lightv := light.Position.SubtractPoint(point).Normalize()
 	ambient := effectiveColor.MultiplyByScalar(material.Ambient)
 	lightDotNormal := lightv.Dot(normalv)
@@ -50,11 +58,12 @@ type MaterialBuilder struct {
 	diffuse   float64
 	specular  float64
 	shininess float64
+	pattern   StripePattern
 }
 
 func MakeMaterialBuilder() *MaterialBuilder {
 	return &MaterialBuilder{
-		color:     oned.Color{1, 1, 1},
+		color:     oned.White,
 		ambient:   0.1,
 		diffuse:   0.9,
 		specular:  0.9,
@@ -82,6 +91,10 @@ func (mb *MaterialBuilder) SetShininess(shininess float64) *MaterialBuilder {
 	mb.shininess = shininess
 	return mb
 }
+func (mb *MaterialBuilder) SetPattern(pattern StripePattern) *MaterialBuilder {
+	mb.pattern = pattern
+	return mb
+}
 func (mb *MaterialBuilder) Build() Material {
 	return Material{
 		Color:     mb.color,
@@ -89,5 +102,6 @@ func (mb *MaterialBuilder) Build() Material {
 		Diffuse:   mb.diffuse,
 		Specular:  mb.specular,
 		Shininess: mb.shininess,
+		Pattern:   mb.pattern,
 	}
 }

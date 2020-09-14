@@ -8,7 +8,7 @@ import (
 )
 
 func Test_default_world(t *testing.T) {
-	light := PointLight{oned.Point{-10, 10, -10}, oned.Color{1, 1, 1}}
+	light := PointLight{oned.Point{-10, 10, -10}, oned.White}
 
 	material := DefaultMaterial()
 	material.Color = oned.Color{0.8, 1.0, 0.6}
@@ -53,7 +53,7 @@ func Test_shading_intersection(t *testing.T) {
 
 func Test_shading_intersection_from_inside(t *testing.T) {
 	w := defaultWorld()
-	w.Light = PointLight{oned.Point{0, 0.25, 0}, oned.Color{1, 1, 1}}
+	w.Light = PointLight{oned.Point{0, 0.25, 0}, oned.White}
 	r := Ray{oned.Point{0, 0, 0}, oned.Vector{0, 0, 1}}
 	shape := w.Objects[1]
 	i := Inter{0.5, shape}
@@ -70,7 +70,7 @@ func Test_color_when_ray_misses(t *testing.T) {
 
 	c := w.ColorAt(r)
 
-	oned.AssertColorEqualInDelta(t, oned.Color{0, 0, 0}, c)
+	oned.AssertColorEqualInDelta(t, oned.Black, c)
 }
 
 func Test_color_when_ray_hits(t *testing.T) {
@@ -97,7 +97,7 @@ func Test_shade_hit_is_given_intersection_in_shadow(t *testing.T) {
 	s1 := MakeSphere()
 	s2 := MakeSphereT(multid.Translation(0, 0, 10))
 	w := World{
-		PointLight{oned.Point{0, 0, -10}, oned.Color{1, 1, 1}},
+		PointLight{oned.Point{0, 0, -10}, oned.White},
 		[]Shape{s1, s2},
 	}
 	r := Ray{oned.Point{0, 0, 5}, oned.Vector{0, 0, 1}}
@@ -132,7 +132,7 @@ func defaultWorld() World {
 }
 
 func pointLightSample() PointLight {
-	return PointLight{oned.Point{-10, 10, -10}, oned.Color{1, 1, 1}}
+	return PointLight{oned.Point{-10, 10, -10}, oned.White}
 }
 
 func materialBuilder() *MaterialBuilder {

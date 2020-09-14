@@ -10,7 +10,7 @@ import (
 func Test_default_material(t *testing.T) {
 	m := DefaultMaterial()
 
-	assert.Equal(t, oned.Color{1, 1, 1}, m.Color)
+	assert.Equal(t, oned.White, m.Color)
 	assert.Equal(t, 0.1, m.Ambient)
 	assert.Equal(t, 0.9, m.Diffuse)
 	assert.Equal(t, 0.9, m.Specular)
@@ -28,27 +28,27 @@ func Test_lighting(t *testing.T) {
 		{"Lighting with the eye between the light and the surface",
 			oned.Vector{0, 0, -1},
 			oned.Vector{0, 0, -1},
-			PointLight{oned.Point{0, 0, -10}, oned.Color{1, 1, 1}},
+			PointLight{oned.Point{0, 0, -10}, oned.White},
 			oned.Color{1.9, 1.9, 1.9}},
 		{"Lighting with the eye between light and surface, eye offset 45°",
 			oned.Vector{0, math.Sqrt2 / 2, -math.Sqrt2 / 2},
 			oned.Vector{0, 0, -1},
-			PointLight{oned.Point{0, 0, -10}, oned.Color{1, 1, 1}},
-			oned.Color{1, 1, 1}},
+			PointLight{oned.Point{0, 0, -10}, oned.White},
+			oned.White},
 		{"Lighting with eye opposite surface, light offset 45°",
 			oned.Vector{0, 0, -1},
 			oned.Vector{0, 0, -1},
-			PointLight{oned.Point{0, 10, -10}, oned.Color{1, 1, 1}},
+			PointLight{oned.Point{0, 10, -10}, oned.White},
 			oned.Color{0.7364, 0.7364, 0.7364}},
 		{"Lighting with eye in the path of the reflection vector",
 			oned.Vector{0, -math.Sqrt2 / 2, -math.Sqrt2 / 2},
 			oned.Vector{0, 0, -1},
-			PointLight{oned.Point{0, 10, -10}, oned.Color{1, 1, 1}},
+			PointLight{oned.Point{0, 10, -10}, oned.White},
 			oned.Color{1.6364, 1.6364, 1.6364}},
 		{"Lighting with the light behind the surface",
 			oned.Vector{0, 0, -1},
 			oned.Vector{0, 0, -1},
-			PointLight{oned.Point{0, 0, 10}, oned.Color{1, 1, 1}},
+			PointLight{oned.Point{0, 0, 10}, oned.White},
 			oned.Color{0.1, 0.1, 0.1}},
 	}
 	for _, test := range tests {
@@ -65,7 +65,7 @@ func Test_lighting_with_surface_in_shadow(t *testing.T) {
 	m := DefaultMaterial()
 	eyeV := oned.Vector{0, 0, -1}
 	normalV := oned.Vector{0, 0, -1}
-	light := PointLight{oned.Point{0, 0, -10}, oned.Color{1, 1, 1}}
+	light := PointLight{oned.Point{0, 0, -10}, oned.White}
 
 	r := Lighting(m, light, oned.Point{}, eyeV, normalV, true)
 
@@ -96,4 +96,22 @@ func Test_shadow(t *testing.T) {
 			assert.Equal(t, test.expected, r)
 		})
 	}
+}
+
+func Test_Lighting_with_pattern_applied(t *testing.T) {
+	m := MakeMaterialBuilder().
+		SetAmbient(1).
+		SetDiffuse(0).
+		SetSpecular(0).
+		SetPattern(StripePattern{oned.White, oned.Black}).
+		Build()
+
+	eyeV := oned.Vector{0, 0, -1}
+	normalV := oned.Vector{0, 0, -1}
+	light := PointLight{oned.Point{0, 0, -10}, oned.White}
+	c1 := Lighting(m, light, oned.Point{0.9, 0, 0}, eyeV, normalV, false)
+	c2 := Lighting(m, light, oned.Point{1.1, 0, 0}, eyeV, normalV, false)
+
+	assert.Equal(t, oned.White, c1)
+	assert.Equal(t, oned.Black, c2)
 }

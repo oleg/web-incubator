@@ -45,7 +45,7 @@ func Test_plane_scene_sample(t *testing.T) {
 			SetDiffuse(0.7).
 			SetSpecular(0.3).Build())
 
-	light := figure.PointLight{oned.Point{-10, 10, -10}, oned.Color{1, 1, 1}}
+	light := figure.PointLight{oned.Point{-10, 10, -10}, oned.White}
 	world := figure.World{light, []figure.Shape{floor, back, left, middle, right}}
 	camera := figure.MakeCamera(500, 250, math.Pi/3,
 		figure.ViewTransform(oned.Point{0, 3, -6}, oned.Point{0, 1, 0}, oned.Vector{0, 1, 0}))

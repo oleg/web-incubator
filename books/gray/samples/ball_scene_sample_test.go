@@ -55,7 +55,7 @@ func Test_ball_scene_sample(t *testing.T) {
 			SetDiffuse(0.7).
 			SetSpecular(0.3).Build())
 
-	light := figure.PointLight{oned.Point{-10, 10, -10}, oned.Color{1, 1, 1}}
+	light := figure.PointLight{oned.Point{-10, 10, -10}, oned.White}
 	world := figure.World{light, []figure.Shape{
 		floor, leftWall, rightWall, middle, right, left,
 	}}
