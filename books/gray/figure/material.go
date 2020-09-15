@@ -26,10 +26,10 @@ func DefaultMaterial() Material {
 	}
 }
 
-func Lighting(material Material, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector, inShadow bool) oned.Color {
+func Lighting(material Material, object Shape, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector, inShadow bool) oned.Color {
 	var color oned.Color
 	if material.Pattern != (StripePattern{}) {
-		color = material.Pattern.StripeAt(point)
+		color = material.Pattern.StripeAtObject(object, point)
 	} else {
 		color = material.Color
 	}

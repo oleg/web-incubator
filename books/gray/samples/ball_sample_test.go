@@ -9,7 +9,7 @@ import (
 
 //todo do not use example in the name
 func Test_ball_sample(t *testing.T) {
-	rayOrigin := oned.Point{0, 0, - 5}
+	rayOrigin := oned.Point{0, 0, -5}
 	wallSize := 7.
 	canvasPixels := 100
 	pixelSize := wallSize / float64(canvasPixels)

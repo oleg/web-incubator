@@ -16,7 +16,7 @@ func (t Tuple) subtract(o Tuple) Tuple {
 }
 
 func (t Tuple) negate() Tuple {
-	return Tuple{- t.X, - t.Y, - t.Z}
+	return Tuple{-t.X, -t.Y, -t.Z}
 }
 
 func (t Tuple) multiplyScalar(scalar float64) Tuple {

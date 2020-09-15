@@ -54,7 +54,7 @@ func Test_lighting(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 
-			color := Lighting(DefaultMaterial(), test.light, oned.Point{}, test.eyev, test.normalv, false)
+			color := Lighting(DefaultMaterial(), MakeSphere(), test.light, oned.Point{}, test.eyev, test.normalv, false)
 
 			oned.AssertColorEqualInDelta(t, test.expected, color)
 		})
@@ -67,7 +67,7 @@ func Test_lighting_with_surface_in_shadow(t *testing.T) {
 	normalV := oned.Vector{0, 0, -1}
 	light := PointLight{oned.Point{0, 0, -10}, oned.White}
 
-	r := Lighting(m, light, oned.Point{}, eyeV, normalV, true)
+	r := Lighting(m, MakeSphere(), light, oned.Point{}, eyeV, normalV, true)
 
 	assert.Equal(t, oned.Color{0.1, 0.1, 0.1}, r)
 }
@@ -103,14 +103,14 @@ func Test_Lighting_with_pattern_applied(t *testing.T) {
 		SetAmbient(1).
 		SetDiffuse(0).
 		SetSpecular(0).
-		SetPattern(StripePattern{oned.White, oned.Black}).
+		SetPattern(MakeStripePattern(oned.White, oned.Black)).
 		Build()
 
 	eyeV := oned.Vector{0, 0, -1}
 	normalV := oned.Vector{0, 0, -1}
 	light := PointLight{oned.Point{0, 0, -10}, oned.White}
-	c1 := Lighting(m, light, oned.Point{0.9, 0, 0}, eyeV, normalV, false)
-	c2 := Lighting(m, light, oned.Point{1.1, 0, 0}, eyeV, normalV, false)
+	c1 := Lighting(m, MakeSphere(), light, oned.Point{0.9, 0, 0}, eyeV, normalV, false)
+	c2 := Lighting(m, MakeSphere(), light, oned.Point{1.1, 0, 0}, eyeV, normalV, false)
 
 	assert.Equal(t, oned.White, c1)
 	assert.Equal(t, oned.Black, c2)

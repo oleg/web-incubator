@@ -23,6 +23,7 @@ func (w World) Intersect(ray Ray) Inters {
 
 func (w World) ShadeHit(comps Computations) oned.Color {
 	return Lighting(comps.Object.Material(),
+		comps.Object,
 		w.Light,
 		comps.Point,
 		comps.EyeV,

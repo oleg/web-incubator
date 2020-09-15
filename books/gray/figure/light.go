@@ -6,4 +6,3 @@ type PointLight struct {
 	Position  oned.Point
 	Intensity oned.Color
 }
-
