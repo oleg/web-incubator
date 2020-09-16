@@ -25,6 +25,7 @@ func (i Inter) PrepareComputations(r Ray) Computations {
 		comps.NormalV = normalV
 	}
 	comps.OverPoint = comps.Point.AddVector(comps.NormalV.MultiplyScalar(oned.Delta))
+	comps.ReflectV = r.Direction.Reflect(comps.NormalV)
 	return comps
 }
 
@@ -36,6 +37,7 @@ type Computations struct {
 	NormalV   oned.Vector
 	Inside    bool
 	OverPoint oned.Point
+	ReflectV  oned.Vector
 }
 
 type Inters []Inter

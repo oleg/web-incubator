@@ -3,6 +3,7 @@ package figure
 import (
 	"github.com/stretchr/testify/assert"
 	"gray/oned"
+	"math"
 	"testing"
 )
 
@@ -102,4 +103,14 @@ func Test_hit_when_intersection_occurs_on_inside(t *testing.T) {
 	assert.Equal(t, oned.Vector{0, 0, -1}, comps.EyeV)
 	assert.Equal(t, oned.Vector{0, 0, -1}, comps.NormalV)
 	assert.Equal(t, true, comps.Inside)
+}
+
+func Test_precomputing_reflection_vector(t *testing.T) {
+	shape := MakePlane()
+	ray := Ray{oned.Point{0, 1, -1}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
+	i := Inter{math.Sqrt2, shape}
+
+	comps := i.PrepareComputations(ray)
+
+	assert.Equal(t, oned.Vector{0, math.Sqrt2 / 2, math.Sqrt2 / 2}, comps.ReflectV)
 }

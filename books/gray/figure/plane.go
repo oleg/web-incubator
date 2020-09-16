@@ -12,7 +12,7 @@ type Plane struct {
 }
 
 func MakePlane() Plane {
-	return Plane{}
+	return Plane{multid.IdentityMatrix, DefaultMaterial()}
 }
 func MakePlaneTM(transform multid.Matrix4, material Material) Plane {
 	return Plane{transform, material}

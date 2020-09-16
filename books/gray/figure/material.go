@@ -5,13 +5,16 @@ import (
 	"math"
 )
 
+//todo change types?
+//todo reorder members
 type Material struct {
-	Color     oned.Color
-	Ambient   float64
-	Diffuse   float64
-	Specular  float64
-	Shininess float64
-	Pattern   Pattern
+	Color      oned.Color
+	Ambient    float64
+	Diffuse    float64
+	Specular   float64
+	Shininess  float64
+	Pattern    Pattern
+	Reflective float64
 }
 
 //todo change api, should accept overrides, use builder?
@@ -52,12 +55,13 @@ func Lighting(material Material, object Shape, light PointLight, point oned.Poin
 
 //todo think about it
 type MaterialBuilder struct {
-	color     oned.Color
-	ambient   float64
-	diffuse   float64
-	specular  float64
-	shininess float64
-	pattern   Pattern
+	color      oned.Color
+	ambient    float64
+	diffuse    float64
+	specular   float64
+	shininess  float64
+	pattern    Pattern
+	reflective float64
 }
 
 func MakeMaterialBuilder() *MaterialBuilder {
@@ -69,7 +73,17 @@ func MakeMaterialBuilder() *MaterialBuilder {
 		shininess: 200.0,
 	}
 }
-
+func (mb *MaterialBuilder) Build() Material {
+	return Material{
+		Color:      mb.color,
+		Ambient:    mb.ambient,
+		Diffuse:    mb.diffuse,
+		Specular:   mb.specular,
+		Shininess:  mb.shininess,
+		Pattern:    mb.pattern,
+		Reflective: mb.reflective,
+	}
+}
 func (mb *MaterialBuilder) SetColor(color oned.Color) *MaterialBuilder {
 	mb.color = color
 	return mb
@@ -94,13 +108,7 @@ func (mb *MaterialBuilder) SetPattern(pattern Pattern) *MaterialBuilder {
 	mb.pattern = pattern
 	return mb
 }
-func (mb *MaterialBuilder) Build() Material {
-	return Material{
-		Color:     mb.color,
-		Ambient:   mb.ambient,
-		Diffuse:   mb.diffuse,
-		Specular:  mb.specular,
-		Shininess: mb.shininess,
-		Pattern:   mb.pattern,
-	}
+func (mb *MaterialBuilder) SetReflective(reflective float64) *MaterialBuilder {
+	mb.reflective = reflective
+	return mb
 }
