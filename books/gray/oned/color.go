@@ -26,7 +26,7 @@ func (t Color) Add(o Color) Color {
 	return Color(Tuple(t).add(Tuple(o)))
 }
 
-func (t Color) subtract(o Color) Color {
+func (t Color) Subtract(o Color) Color {
 	return Color(Tuple(t).subtract(Tuple(o)))
 }
 

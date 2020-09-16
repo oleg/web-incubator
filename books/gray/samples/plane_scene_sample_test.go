@@ -12,20 +12,20 @@ func Test_plane_scene_sample(t *testing.T) {
 	floor := figure.MakePlaneTM(
 		multid.IdentityMatrix,
 		figure.MakeMaterialBuilder().
-			SetPattern(figure.StripePattern{
+			SetPattern(figure.MakeStripePatternT(
 				oned.Color{0.7, 0.9, 0.8},
 				oned.Color{0.2, 0.4, 0.1},
-				multid.RotationY(math.Pi / 4)}).
+				multid.RotationY(math.Pi/4))).
 			Build())
 
 	back := figure.MakePlaneTM(
 		multid.Translation(0, 0, 3).
 			Multiply(multid.RotationX(-math.Pi/2)),
 		figure.MakeMaterialBuilder().
-			SetPattern(figure.StripePattern{
+			SetPattern(figure.MakeStripePatternT(
 				oned.Color{0.6, 0.1, 0.2},
 				oned.Color{0.2, 0.1, 0.6},
-				multid.RotationY(-math.Pi / 4)}).
+				multid.RotationY(-math.Pi/4))).
 			Build())
 
 	left := figure.MakeSphereTM(
@@ -40,6 +40,11 @@ func Test_plane_scene_sample(t *testing.T) {
 		multid.Translation(-0.5, 1, 0.2),
 		figure.MakeMaterialBuilder().
 			SetColor(oned.Color{0.1, 1, 0.5}).
+			SetPattern(figure.MakeGradientPatternT(
+				oned.Color{0.1, 1, 0.5},
+				oned.Color{0.5, 0.1, 1},
+				multid.Translation(1, 0, 0).
+					Multiply(multid.Scaling(2, 1, 1)))).
 			SetDiffuse(0.7).
 			SetSpecular(0.3).Build())
 

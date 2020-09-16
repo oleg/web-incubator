@@ -26,7 +26,7 @@ func Test_subtracting_colors(t *testing.T) {
 	c1 := NewColor(0.9, 0.6, 0.75)
 	c2 := NewColor(0.7, 0.1, 0.25)
 
-	result := c1.subtract(c2)
+	result := c1.Subtract(c2)
 
 	AssertColorEqualInDelta(t, NewColor(0.2, 0.5, 0.5), result)
 }

@@ -11,7 +11,7 @@ type Material struct {
 	Diffuse   float64
 	Specular  float64
 	Shininess float64
-	Pattern   StripePattern
+	Pattern   Pattern
 }
 
 //todo change api, should accept overrides, use builder?
@@ -22,14 +22,13 @@ func DefaultMaterial() Material {
 		Specular:  0.9,
 		Diffuse:   0.9,
 		Shininess: 200.0,
-		Pattern:   StripePattern{},
 	}
 }
 
 func Lighting(material Material, object Shape, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector, inShadow bool) oned.Color {
 	var color oned.Color
-	if material.Pattern != (StripePattern{}) {
-		color = material.Pattern.StripeAtObject(object, point)
+	if material.Pattern != nil {
+		color = PatternAtShape(material.Pattern, object, point)
 	} else {
 		color = material.Color
 	}
@@ -58,7 +57,7 @@ type MaterialBuilder struct {
 	diffuse   float64
 	specular  float64
 	shininess float64
-	pattern   StripePattern
+	pattern   Pattern
 }
 
 func MakeMaterialBuilder() *MaterialBuilder {
@@ -91,7 +90,7 @@ func (mb *MaterialBuilder) SetShininess(shininess float64) *MaterialBuilder {
 	mb.shininess = shininess
 	return mb
 }
-func (mb *MaterialBuilder) SetPattern(pattern StripePattern) *MaterialBuilder {
+func (mb *MaterialBuilder) SetPattern(pattern Pattern) *MaterialBuilder {
 	mb.pattern = pattern
 	return mb
 }
