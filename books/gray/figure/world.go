@@ -25,7 +25,7 @@ func (w World) ShadeHit(comps Computations) oned.Color {
 	return Lighting(comps.Object.Material(),
 		comps.Object,
 		w.Light,
-		comps.Point,
+		comps.OverPoint,
 		comps.EyeV,
 		comps.NormalV,
 		w.IsShadowed(comps.OverPoint))

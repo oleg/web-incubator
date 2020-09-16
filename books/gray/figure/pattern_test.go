@@ -86,6 +86,20 @@ func Test_ring_should_extend_in_both_x_and_z(t *testing.T) {
 	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{1, 0, 0}))
 	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{0, 0, 1}))
 	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{0.708, 0, 0.708}))
-
 }
 
+func Test_checkers_should_repeat_in_x_y_z(t *testing.T) {
+	pattern := MakeCheckersPattern(oned.White, oned.Black)
+
+	assert.Equal(t, oned.White, pattern.PatternAt(oned.Point{0, 0, 0}))
+	assert.Equal(t, oned.White, pattern.PatternAt(oned.Point{0.99, 0, 0}))
+	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{1.01, 0, 0}))
+
+	assert.Equal(t, oned.White, pattern.PatternAt(oned.Point{0, 0, 0}))
+	assert.Equal(t, oned.White, pattern.PatternAt(oned.Point{0, 0.99, 0}))
+	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{0, 1.01, 0}))
+
+	assert.Equal(t, oned.White, pattern.PatternAt(oned.Point{0, 0, 0}))
+	assert.Equal(t, oned.White, pattern.PatternAt(oned.Point{0, 0, 0.99}))
+	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{0, 0, 1.01}))
+}

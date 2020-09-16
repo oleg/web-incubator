@@ -17,6 +17,7 @@ func PatternAtShape(pattern Pattern, shape Shape, worldPoint oned.Point) oned.Co
 	return pattern.PatternAt(patternPoint)
 }
 
+//todo refactor: remove duplicates
 type StripePattern struct {
 	A, B      oned.Color
 	transform multid.Matrix4
@@ -75,15 +76,38 @@ func MakeRingPatternT(a, b oned.Color, transform multid.Matrix4) RingPattern {
 }
 
 func (p RingPattern) PatternAt(point oned.Point) oned.Color {
-	hypot := math.Hypot(point.X, point.Z)
-	floor := math.Floor(hypot)
-	mod := math.Mod(floor, 2)
-	if mod == 0 {
+	hypot := math.Floor(math.Hypot(point.X, point.Z))
+	if math.Mod(hypot, 2) == 0 {
 		return p.A
 	}
 	return p.B
 }
 
 func (p RingPattern) Transform() multid.Matrix4 {
+	return p.transform
+}
+
+type CheckersPattern struct {
+	A, B      oned.Color
+	transform multid.Matrix4
+}
+
+func MakeCheckersPattern(a, b oned.Color) CheckersPattern {
+	return CheckersPattern{a, b, multid.IdentityMatrix}
+}
+
+func MakeCheckersPatternT(a, b oned.Color, transform multid.Matrix4) CheckersPattern {
+	return CheckersPattern{a, b, transform}
+}
+
+func (p CheckersPattern) PatternAt(point oned.Point) oned.Color {
+	sum := math.Floor(point.X) + math.Floor(point.Y) + math.Floor(point.Z)
+	if math.Mod(sum, 2) == 0 {
+		return p.A
+	}
+	return p.B
+}
+
+func (p CheckersPattern) Transform() multid.Matrix4 {
 	return p.transform
 }
