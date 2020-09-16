@@ -22,29 +22,28 @@ func Test_plane_scene_sample(t *testing.T) {
 		multid.Translation(0, 0, 3).
 			Multiply(multid.RotationX(-math.Pi/2)),
 		figure.MakeMaterialBuilder().
-			SetPattern(figure.MakeStripePatternT(
-				oned.Color{0.6, 0.1, 0.2},
-				oned.Color{0.2, 0.1, 0.6},
-				multid.RotationY(-math.Pi/4))).
+			SetPattern(figure.MakeRingPatternT(
+				oned.Color{0.8, 0.9, 0.5},
+				oned.Color{0.5, 0.2, 0.3},
+				multid.Translation(0, 0, 2).
+					Multiply(multid.Scaling(0.2, 0.2, 0.2)))).
 			Build())
 
 	left := figure.MakeSphereTM(
 		multid.Translation(-1.5, 0.33, -0.75).
 			Multiply(multid.Scaling(1, 0.33, 0.33)),
 		figure.MakeMaterialBuilder().
-			SetColor(oned.Color{1, 0.8, 0.1}).
+			SetPattern(figure.MakeGradientPatternT(
+				oned.Color{0.3, 1, 0.7},
+				oned.Color{0.7, 0.3, 1},
+				multid.Translation(1, 0, 0).
+					Multiply(multid.Scaling(2, 1, 1)))).
 			SetDiffuse(0.7).
 			SetSpecular(0.3).Build())
 
 	middle := figure.MakeSphereTM(
 		multid.Translation(-0.5, 1, 0.2),
 		figure.MakeMaterialBuilder().
-			SetColor(oned.Color{0.1, 1, 0.5}).
-			SetPattern(figure.MakeGradientPatternT(
-				oned.Color{0.1, 1, 0.5},
-				oned.Color{0.5, 0.1, 1},
-				multid.Translation(1, 0, 0).
-					Multiply(multid.Scaling(2, 1, 1)))).
 			SetDiffuse(0.7).
 			SetSpecular(0.3).Build())
 

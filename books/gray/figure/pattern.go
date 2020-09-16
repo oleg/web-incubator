@@ -60,3 +60,30 @@ func (p GradientPattern) PatternAt(point oned.Point) oned.Color {
 func (p GradientPattern) Transform() multid.Matrix4 {
 	return p.transform
 }
+
+type RingPattern struct {
+	A, B      oned.Color
+	transform multid.Matrix4
+}
+
+func MakeRingPattern(a, b oned.Color) RingPattern {
+	return RingPattern{a, b, multid.IdentityMatrix}
+}
+
+func MakeRingPatternT(a, b oned.Color, transform multid.Matrix4) RingPattern {
+	return RingPattern{a, b, transform}
+}
+
+func (p RingPattern) PatternAt(point oned.Point) oned.Color {
+	hypot := math.Hypot(point.X, point.Z)
+	floor := math.Floor(hypot)
+	mod := math.Mod(floor, 2)
+	if mod == 0 {
+		return p.A
+	}
+	return p.B
+}
+
+func (p RingPattern) Transform() multid.Matrix4 {
+	return p.transform
+}

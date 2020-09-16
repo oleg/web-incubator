@@ -78,3 +78,14 @@ func Test_gradient_linearly_interpolates_between_colors(t *testing.T) {
 	assert.Equal(t, oned.Color{0.5, 0.5, 0.5}, pattern.PatternAt(oned.Point{0.5, 0, 0}))
 	assert.Equal(t, oned.Color{0.25, 0.25, 0.25}, pattern.PatternAt(oned.Point{0.75, 0, 0}))
 }
+
+func Test_ring_should_extend_in_both_x_and_z(t *testing.T) {
+	pattern := MakeRingPattern(oned.White, oned.Black)
+
+	assert.Equal(t, oned.White, pattern.PatternAt(oned.Point{0, 0, 0}))
+	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{1, 0, 0}))
+	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{0, 0, 1}))
+	assert.Equal(t, oned.Black, pattern.PatternAt(oned.Point{0.708, 0, 0.708}))
+
+}
+
