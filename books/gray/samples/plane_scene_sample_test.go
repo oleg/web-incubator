@@ -12,18 +12,19 @@ func Test_plane_scene_sample(t *testing.T) {
 	floor := figure.MakePlaneTM(
 		multid.IdentityMatrix,
 		figure.MakeMaterialBuilder().
+			SetReflective(0.1).
 			SetPattern(figure.MakeCheckersPatternT(
 				oned.Color{0.5, 1, 0.1},
 				oned.Color{0.7, 0.3, 1},
 				multid.Translation(1, 0, 0).
 					Multiply(multid.Scaling(0.5, 0.5, 0.5)))).
-
 			Build())
 
 	back := figure.MakePlaneTM(
 		multid.Translation(0, 0, 3).
 			Multiply(multid.RotationX(-math.Pi/2)),
 		figure.MakeMaterialBuilder().
+			SetReflective(0.3).
 			SetPattern(figure.MakeRingPatternT(
 				oned.Color{0.8, 0.9, 0.5},
 				oned.Color{0.5, 0.2, 0.3},

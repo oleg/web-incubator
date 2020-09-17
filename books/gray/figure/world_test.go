@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gray/multid"
 	"gray/oned"
+	"math"
 	"testing"
 )
 
@@ -46,7 +47,7 @@ func Test_shading_intersection(t *testing.T) {
 	i := Inter{4, shape}
 	comps := i.PrepareComputations(r)
 
-	c := w.ShadeHit(comps)
+	c := w.ShadeHit(comps, MaxDepth)
 
 	oned.AssertColorEqualInDelta(t, oned.Color{0.38066, 0.47583, 0.2855}, c)
 }
@@ -59,7 +60,7 @@ func Test_shading_intersection_from_inside(t *testing.T) {
 	i := Inter{0.5, shape}
 	comps := i.PrepareComputations(r)
 
-	c := w.ShadeHit(comps)
+	c := w.ShadeHit(comps, MaxDepth)
 
 	oned.AssertColorEqualInDelta(t, oned.Color{0.90498, 0.90498, 0.90498}, c)
 }
@@ -68,7 +69,7 @@ func Test_color_when_ray_misses(t *testing.T) {
 	w := defaultWorld()
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 1, 0}}
 
-	c := w.ColorAt(r)
+	c := w.ColorAt(r, MaxDepth)
 
 	oned.AssertColorEqualInDelta(t, oned.Black, c)
 }
@@ -77,7 +78,7 @@ func Test_color_when_ray_hits(t *testing.T) {
 	w := defaultWorld()
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
 
-	c := w.ColorAt(r)
+	c := w.ColorAt(r, MaxDepth)
 
 	oned.AssertColorEqualInDelta(t, oned.Color{0.38066, 0.47583, 0.2855}, c)
 }
@@ -88,7 +89,7 @@ func Test_color_with_intersection_behind_ray(t *testing.T) {
 		MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())}}
 	r := Ray{oned.Point{0, 0, 0.75}, oned.Vector{0, 0, -1}}
 
-	c := w.ColorAt(r)
+	c := w.ColorAt(r, MaxDepth)
 
 	oned.AssertColorEqualInDelta(t, materialBuilder().SetAmbient(1).Build().Color, c)
 }
@@ -104,7 +105,7 @@ func Test_shade_hit_is_given_intersection_in_shadow(t *testing.T) {
 	i := Inter{4, s2}
 	comps := i.PrepareComputations(r)
 
-	color := w.ShadeHit(comps)
+	color := w.ShadeHit(comps, MaxDepth)
 
 	assert.Equal(t, oned.Color{0.1, 0.1, 0.1}, color)
 }
@@ -120,6 +121,86 @@ func Test_hit_should_offset_point(t *testing.T) {
 	assert.Less(t, comps.OverPoint.Z, comps.Point.Z)
 }
 
+func Test_reflected_color_for_non_reflective_material(t *testing.T) {
+	s1 := MakeSphereM(materialBuilder().Build())
+	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())
+	w := World{pointLightSample(), []Shape{s1, s2}}
+	r := Ray{oned.Point{0, 0, 0}, oned.Vector{0, 0, 1}}
+	i := Inter{1, s2}
+	comps := i.PrepareComputations(r)
+
+	color := w.ReflectedColor(comps, 5)
+
+	assert.Equal(t, oned.Color{0, 0, 0}, color)
+}
+
+func Test_reflected_color_for_reflective_material(t *testing.T) {
+	s1 := MakeSphereM(materialBuilder().Build())
+	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())
+	s3 := MakePlaneTM(multid.Translation(0, -1, 0), MakeMaterialBuilder().SetReflective(0.5).Build())
+	w := World{pointLightSample(), []Shape{s1, s2, s3}}
+	r := Ray{oned.Point{0, 0, -3}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
+	i := Inter{math.Sqrt2, s3}
+	comps := i.PrepareComputations(r)
+
+	color := w.ReflectedColor(comps, 5)
+
+	oned.AssertColorEqualInDelta(t, oned.Color{0.19033, 0.23791, 0.142749}, color)
+}
+
+func Test_shade_hit_with_reflective_material(t *testing.T) {
+	s1 := MakeSphereM(materialBuilder().Build())
+	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())
+	s3 := MakePlaneTM(multid.Translation(0, -1, 0), MakeMaterialBuilder().SetReflective(0.5).Build())
+	w := World{pointLightSample(), []Shape{s1, s2, s3}}
+	r := Ray{oned.Point{0, 0, -3}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
+	i := Inter{math.Sqrt2, s3}
+	comps := i.PrepareComputations(r)
+
+	color := w.ShadeHit(comps, MaxDepth)
+
+	oned.AssertColorEqualInDelta(t, oned.Color{0.87675, 0.92434, 0.82918}, color)
+}
+
+func Test_color_at_with_mutually_reflective_surfaces(t *testing.T) {
+	w := World{
+		PointLight{oned.Point{0, 0, 0}, oned.Color{1, 1, 1}},
+		[]Shape{
+			MakePlaneTM(multid.Translation(0, -1, 0), MakeMaterialBuilder().SetReflective(1).Build()),
+			MakePlaneTM(multid.Translation(0, 1, 0), MakeMaterialBuilder().SetReflective(1).Build())}}
+
+	w.ColorAt(Ray{oned.Point{0, 0, 0}, oned.Vector{0, 1, 0}}, MaxDepth)
+
+	//should terminate
+}
+
+func Test_reflected_color_at_maximum_recursive_depth(t *testing.T) {
+	s1 := MakeSphereM(materialBuilder().Build())
+	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())
+	s3 := MakePlaneTM(multid.Translation(0, -1, 0), MakeMaterialBuilder().SetReflective(0.5).Build())
+	w := World{pointLightSample(), []Shape{s1, s2, s3}}
+	r := Ray{oned.Point{0, 0, -3}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
+	i := Inter{math.Sqrt2, s3}
+	comps := i.PrepareComputations(r)
+
+	color := w.ReflectedColor(comps, 0)
+
+	oned.AssertColorEqualInDelta(t, oned.Color{0, 0, 0}, color)
+}
+
+/*
+1: 	Scenario: The reflected color at the maximum recursive depth
+- 	  Given w ← default_world()
+- 	    And shape ← plane() with:
+- 	      | material.reflective | 0.5                   |
+5: 	      | transform           | translation(0, -1, 0) |
+- 	    And shape is added to w
+- 	    And r ← ray(point(0, 0, -3), vector(0, -√2/2, √2/2))
+- 	    And i ← intersection(√2, shape)
+- 	  When comps ← prepare_computations(i, r)
+10: 	    And color ← reflected_color(w, comps, 0)
+- 	  Then color = color(0, 0, 0)
+*/
 //util
 func defaultWorld() World {
 	s1 := MakeSphereM(materialBuilder().Build())

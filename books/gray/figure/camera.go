@@ -32,7 +32,7 @@ func (camera Camera) Render(w World) multid.Canvas {
 	for y := 0; y < camera.VSize; y++ {
 		for x := 0; x < camera.HSize; x++ {
 			ray := camera.RayForPixel(x, y)
-			color := w.ColorAt(ray)
+			color := w.ColorAt(ray, MaxDepth)
 			image.Pixels[x][y] = color
 		}
 	}
