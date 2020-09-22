@@ -25,7 +25,7 @@ func Test_subtractVector_gives_vector(t *testing.T) {
 	v1 := Vector{5, 2, 2}
 	v2 := Vector{5, 6, 1}
 
-	vector := v1.subtractVector(v2)
+	vector := v1.SubtractVector(v2)
 
 	assert.Equal(t, Vector{0, -4, 1}, vector)
 }
@@ -34,7 +34,7 @@ func Test_subtruct_zero_vector_negates_vector(t *testing.T) {
 	zv := Vector{0, 0, 0}
 	v1 := Vector{1, -2, 3}
 
-	vector := zv.subtractVector(v1)
+	vector := zv.SubtractVector(v1)
 
 	assert.Equal(t, Vector{-1, 2, -3}, vector)
 }

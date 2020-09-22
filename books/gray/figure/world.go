@@ -2,6 +2,7 @@ package figure
 
 import (
 	"gray/oned"
+	"math"
 	"sort"
 )
 
@@ -42,7 +43,8 @@ func (w World) ShadeHit(comps Computations, remaining uint8) oned.Color {
 		comps.NormalV,
 		shadowed)
 	reflected := w.ReflectedColor(comps, remaining)
-	return surface.Add(reflected)
+	refracted := w.RefractedColor(comps, remaining)
+	return surface.Add(reflected).Add(refracted)
 }
 
 func (w World) IsShadowed(point oned.Point) bool {
@@ -65,4 +67,27 @@ func (w World) ReflectedColor(comps Computations, remaining uint8) oned.Color {
 	reflectRay := Ray{comps.OverPoint, comps.ReflectV}
 	color := w.ColorAt(reflectRay, remaining-1)
 	return color.MultiplyByScalar(reflective)
+}
+
+func (w World) RefractedColor(comps Computations, remaining uint8) oned.Color {
+	if remaining <= 0 {
+		return oned.Black
+	}
+	transparency := comps.Object.Material().Transparency
+	if transparency == 0 {
+		return oned.Black
+	}
+	nRatio := comps.N1 / comps.N2
+	cosI := comps.EyeV.Dot(comps.NormalV)
+	sin2t := math.Pow(nRatio, 2) * (1 - math.Pow(cosI, 2))
+	if sin2t > 1 {
+		return oned.Black
+	}
+
+	cosT := math.Sqrt(1.0 - sin2t)
+	direction := comps.NormalV.MultiplyScalar(nRatio*cosI - cosT).
+		SubtractVector(comps.EyeV.MultiplyScalar(nRatio))
+
+	refractRay := Ray{comps.UnderPoint, direction}
+	return w.ColorAt(refractRay, remaining-1).MultiplyByScalar(transparency)
 }

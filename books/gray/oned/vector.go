@@ -8,7 +8,7 @@ func (t Vector) AddVector(o Vector) Vector {
 	return Vector(Tuple(t).add(Tuple(o)))
 }
 
-func (t Vector) subtractVector(o Vector) Vector {
+func (t Vector) SubtractVector(o Vector) Vector {
 	return Vector(Tuple(t).subtract(Tuple(o)))
 }
 
@@ -40,5 +40,5 @@ func (t Vector) Normalize() Vector { //todo: move to Tuple?
 func (t Vector) Reflect(normal Vector) Vector {
 	dot := t.Dot(normal)
 	temp := normal.MultiplyScalar(2).MultiplyScalar(dot)
-	return t.subtractVector(temp)
+	return t.SubtractVector(temp)
 }

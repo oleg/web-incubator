@@ -188,6 +188,89 @@ func Test_reflected_color_at_maximum_recursive_depth(t *testing.T) {
 	oned.AssertColorEqualInDelta(t, oned.Color{0, 0, 0}, color)
 }
 
+func Test_refracted_color_with_opaque_surface(t *testing.T) {
+	w := defaultWorld()
+	s := w.Objects[0]
+	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
+	xs := Inters{Inter{4, s}, Inter{6, s}}
+	comps := xs[0].PrepareComputationsEx(r, xs)
+
+	c := w.RefractedColor(comps, MaxDepth)
+
+	assert.Equal(t, oned.Color{0, 0, 0}, c)
+}
+
+func Test_refracted_color_at_the_maximum_recursive_depth(t *testing.T) {
+	s1 := MakeSphereM(testMaterialBuilder().SetTransparency(1.0).SetRefractiveIndex(1.5).Build())
+	s2 := MakeSphereT(multid.Scaling(0.5, 0.5, 0.5))
+	w := World{pointLightSample(), []Shape{s1, s2}}
+	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
+	xs := Inters{Inter{4, s1}, Inter{6, s1}}
+	comps := xs[0].PrepareComputationsEx(r, xs)
+
+	c := w.RefractedColor(comps, 0)
+
+	assert.Equal(t, oned.Color{0, 0, 0}, c)
+}
+
+func Test_refracted_color_under_total_internal_reflection(t *testing.T) {
+	s1 := MakeSphereM(testMaterialBuilder().SetTransparency(1.0).SetRefractiveIndex(1.5).Build())
+	s2 := MakeSphereT(multid.Scaling(0.5, 0.5, 0.5))
+	w := World{pointLightSample(), []Shape{s1, s2}}
+	r := Ray{oned.Point{0, 0, math.Sqrt2 / 2}, oned.Vector{0, 1, 0}}
+	xs := Inters{Inter{-math.Sqrt2 / 2, s1}, Inter{math.Sqrt2 / 2, s1}}
+	comps := xs[1].PrepareComputationsEx(r, xs)
+
+	c := w.RefractedColor(comps, MaxDepth)
+
+	assert.Equal(t, oned.Color{0, 0, 0}, c)
+}
+
+func Test_refracted_color_with_refracted_ray(t *testing.T) {
+	s1 := MakeSphereM(
+		testMaterialBuilder().
+			SetAmbient(1.0).
+			SetPattern(TestPattern{}).
+			Build())
+	s2 := MakeSphereTM(
+		multid.Scaling(0.5, 0.5, 0.5),
+		testMaterialBuilder().
+			SetTransparency(1.0).
+			SetRefractiveIndex(1.5).
+			Build())
+	w := World{pointLightSample(), []Shape{s1, s2}}
+	r := Ray{oned.Point{0, 0, 0.1}, oned.Vector{0, 1, 0}}
+	xs := Inters{Inter{-0.9899, s1}, Inter{-0.4899, s2}, Inter{0.4899, s2}, Inter{0.9899, s1}}
+	comps := xs[2].PrepareComputationsEx(r, xs)
+
+	c := w.RefractedColor(comps, MaxDepth)
+
+	oned.AssertColorEqualInDelta(t, oned.Color{0, 0.99888, 0.04721}, c)
+}
+
+func Test_shade_hit_with_transparent_material(t *testing.T) {
+	s1 := MakeSphereM(testMaterialBuilder().Build())
+	s2 := MakeSphereT(multid.Scaling(0.5, 0.5, 0.5))
+	floor := MakePlaneTM(multid.Translation(0, -1, 0),
+		MakeMaterialBuilder().
+			SetTransparency(0.5).
+			SetRefractiveIndex(1.5).
+			Build())
+	ball := MakeSphereTM(multid.Translation(0, -3.5, -0.5),
+		MakeMaterialBuilder().
+			SetColor(oned.Color{1, 0, 0}).
+			SetAmbient(0.5).
+			Build())
+	w := World{pointLightSample(), []Shape{s1, s2, floor, ball}}
+	r := Ray{oned.Point{0, 0, -3}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
+	xs := Inters{Inter{math.Sqrt2, floor}}
+	comps := xs[0].PrepareComputationsEx(r, xs)
+
+	color := w.ShadeHit(comps, MaxDepth)
+
+	oned.AssertColorEqualInDelta(t, oned.Color{0.93642, 0.68642, 0.68642}, color)
+}
+
 //util
 func defaultWorld() World {
 	s1 := MakeSphereM(testMaterialBuilder().Build())
@@ -208,4 +291,14 @@ func testMaterialBuilder() *MaterialBuilder {
 		SetColor(oned.Color{0.8, 1.0, 0.6}).
 		SetDiffuse(0.7).
 		SetSpecular(0.2)
+}
+
+type TestPattern struct {
+}
+
+func (t TestPattern) PatternAt(point oned.Point) oned.Color {
+	return oned.Color{point.X, point.Y, point.Z}
+}
+func (t TestPattern) Transform() multid.Matrix4 {
+	return multid.IdentityMatrix
 }
