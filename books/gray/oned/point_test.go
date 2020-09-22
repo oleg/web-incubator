@@ -34,7 +34,7 @@ func Test_subtractVector_gives_point(t *testing.T) {
 	p := Point{3, 2, 1}
 	v := Vector{5, 6, 7}
 
-	point := p.subtractVector(v)
+	point := p.SubtractVector(v)
 
 	assert.Equal(t, Point{-2, -4, -6}, point)
 }

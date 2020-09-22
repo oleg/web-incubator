@@ -29,8 +29,9 @@ func (i Inter) PrepareComputationsEx(r Ray, xs Inters) Computations {
 	} else {
 		comps.NormalV = normalV
 	}
-	comps.OverPoint = comps.Point.AddVector(comps.NormalV.MultiplyScalar(oned.Delta))
 	comps.ReflectV = r.Direction.Reflect(comps.NormalV)
+	comps.OverPoint = comps.Point.AddVector(comps.NormalV.MultiplyScalar(oned.Delta))
+	comps.UnderPoint = comps.Point.SubtractVector(comps.NormalV.MultiplyScalar(oned.Delta))
 	comps.N1, comps.N2 = calcNs(i, xs)
 	return comps
 }
@@ -79,16 +80,17 @@ func remove(s []Shape, i int) []Shape {
 }
 
 type Computations struct {
-	Distance  float64
-	Object    Shape
-	Point     oned.Point
-	EyeV      oned.Vector
-	NormalV   oned.Vector
-	Inside    bool
-	OverPoint oned.Point
-	ReflectV  oned.Vector
-	N1        float64
-	N2        float64
+	Distance   float64
+	Object     Shape
+	Point      oned.Point
+	OverPoint  oned.Point
+	UnderPoint oned.Point
+	EyeV       oned.Vector
+	NormalV    oned.Vector
+	ReflectV   oned.Vector
+	Inside     bool
+	N1         float64
+	N2         float64
 }
 
 type Inters []Inter

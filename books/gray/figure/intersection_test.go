@@ -146,3 +146,15 @@ func Test_finding_n1_and_n2_at_various_intersections(t *testing.T) {
 		})
 	}
 }
+
+func Test_under_point_is_offset_below_surface(t *testing.T) {
+	ray := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
+	shape := MakeSphereTM(multid.Translation(0, 0, 1), GlassMaterialBuilder().Build())
+	i := Inter{5, shape}
+	xs := Inters{i}
+
+	comps := i.PrepareComputationsEx(ray, xs)
+
+	assert.Greater(t, comps.UnderPoint.Z, -oned.Delta/2)
+	assert.Greater(t, comps.UnderPoint.Z, comps.Point.Z)
+}
