@@ -45,7 +45,7 @@ func Test_shading_intersection(t *testing.T) {
 	r := Ray{oned.Point{0, 0, -5}, oned.Vector{0, 0, 1}}
 	shape := w.Objects[0]
 	i := Inter{4, shape}
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	c := w.ShadeHit(comps, MaxDepth)
 
@@ -58,7 +58,7 @@ func Test_shading_intersection_from_inside(t *testing.T) {
 	r := Ray{oned.Point{0, 0, 0}, oned.Vector{0, 0, 1}}
 	shape := w.Objects[1]
 	i := Inter{0.5, shape}
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	c := w.ShadeHit(comps, MaxDepth)
 
@@ -85,13 +85,13 @@ func Test_color_when_ray_hits(t *testing.T) {
 
 func Test_color_with_intersection_behind_ray(t *testing.T) {
 	w := World{pointLightSample(), []Shape{
-		MakeSphereM(materialBuilder().SetAmbient(1).Build()),
-		MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())}}
+		MakeSphereM(testMaterialBuilder().SetAmbient(1).Build()),
+		MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), testMaterialBuilder().SetAmbient(1).Build())}}
 	r := Ray{oned.Point{0, 0, 0.75}, oned.Vector{0, 0, -1}}
 
 	c := w.ColorAt(r, MaxDepth)
 
-	oned.AssertColorEqualInDelta(t, materialBuilder().SetAmbient(1).Build().Color, c)
+	oned.AssertColorEqualInDelta(t, testMaterialBuilder().SetAmbient(1).Build().Color, c)
 }
 
 func Test_shade_hit_is_given_intersection_in_shadow(t *testing.T) {
@@ -103,7 +103,7 @@ func Test_shade_hit_is_given_intersection_in_shadow(t *testing.T) {
 	}
 	r := Ray{oned.Point{0, 0, 5}, oned.Vector{0, 0, 1}}
 	i := Inter{4, s2}
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	color := w.ShadeHit(comps, MaxDepth)
 
@@ -115,19 +115,19 @@ func Test_hit_should_offset_point(t *testing.T) {
 	s := MakeSphereT(multid.Translation(0, 0, 1))
 	i := Inter{5, s}
 
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	assert.Less(t, comps.OverPoint.Z, -oned.Delta/2)
 	assert.Less(t, comps.OverPoint.Z, comps.Point.Z)
 }
 
 func Test_reflected_color_for_non_reflective_material(t *testing.T) {
-	s1 := MakeSphereM(materialBuilder().Build())
-	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())
+	s1 := MakeSphereM(testMaterialBuilder().Build())
+	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), testMaterialBuilder().SetAmbient(1).Build())
 	w := World{pointLightSample(), []Shape{s1, s2}}
 	r := Ray{oned.Point{0, 0, 0}, oned.Vector{0, 0, 1}}
 	i := Inter{1, s2}
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	color := w.ReflectedColor(comps, 5)
 
@@ -135,13 +135,13 @@ func Test_reflected_color_for_non_reflective_material(t *testing.T) {
 }
 
 func Test_reflected_color_for_reflective_material(t *testing.T) {
-	s1 := MakeSphereM(materialBuilder().Build())
-	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())
+	s1 := MakeSphereM(testMaterialBuilder().Build())
+	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), testMaterialBuilder().SetAmbient(1).Build())
 	s3 := MakePlaneTM(multid.Translation(0, -1, 0), MakeMaterialBuilder().SetReflective(0.5).Build())
 	w := World{pointLightSample(), []Shape{s1, s2, s3}}
 	r := Ray{oned.Point{0, 0, -3}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
 	i := Inter{math.Sqrt2, s3}
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	color := w.ReflectedColor(comps, 5)
 
@@ -149,13 +149,13 @@ func Test_reflected_color_for_reflective_material(t *testing.T) {
 }
 
 func Test_shade_hit_with_reflective_material(t *testing.T) {
-	s1 := MakeSphereM(materialBuilder().Build())
-	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())
+	s1 := MakeSphereM(testMaterialBuilder().Build())
+	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), testMaterialBuilder().SetAmbient(1).Build())
 	s3 := MakePlaneTM(multid.Translation(0, -1, 0), MakeMaterialBuilder().SetReflective(0.5).Build())
 	w := World{pointLightSample(), []Shape{s1, s2, s3}}
 	r := Ray{oned.Point{0, 0, -3}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
 	i := Inter{math.Sqrt2, s3}
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	color := w.ShadeHit(comps, MaxDepth)
 
@@ -175,35 +175,22 @@ func Test_color_at_with_mutually_reflective_surfaces(t *testing.T) {
 }
 
 func Test_reflected_color_at_maximum_recursive_depth(t *testing.T) {
-	s1 := MakeSphereM(materialBuilder().Build())
-	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), materialBuilder().SetAmbient(1).Build())
+	s1 := MakeSphereM(testMaterialBuilder().Build())
+	s2 := MakeSphereTM(multid.Scaling(0.5, 0.5, 0.5), testMaterialBuilder().SetAmbient(1).Build())
 	s3 := MakePlaneTM(multid.Translation(0, -1, 0), MakeMaterialBuilder().SetReflective(0.5).Build())
 	w := World{pointLightSample(), []Shape{s1, s2, s3}}
 	r := Ray{oned.Point{0, 0, -3}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
 	i := Inter{math.Sqrt2, s3}
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	color := w.ReflectedColor(comps, 0)
 
 	oned.AssertColorEqualInDelta(t, oned.Color{0, 0, 0}, color)
 }
 
-/*
-1: 	Scenario: The reflected color at the maximum recursive depth
-- 	  Given w ← default_world()
-- 	    And shape ← plane() with:
-- 	      | material.reflective | 0.5                   |
-5: 	      | transform           | translation(0, -1, 0) |
-- 	    And shape is added to w
-- 	    And r ← ray(point(0, 0, -3), vector(0, -√2/2, √2/2))
-- 	    And i ← intersection(√2, shape)
-- 	  When comps ← prepare_computations(i, r)
-10: 	    And color ← reflected_color(w, comps, 0)
-- 	  Then color = color(0, 0, 0)
-*/
 //util
 func defaultWorld() World {
-	s1 := MakeSphereM(materialBuilder().Build())
+	s1 := MakeSphereM(testMaterialBuilder().Build())
 	s2 := MakeSphereT(multid.Scaling(0.5, 0.5, 0.5))
 
 	return World{
@@ -216,7 +203,7 @@ func pointLightSample() PointLight {
 	return PointLight{oned.Point{-10, 10, -10}, oned.White}
 }
 
-func materialBuilder() *MaterialBuilder {
+func testMaterialBuilder() *MaterialBuilder {
 	return MakeMaterialBuilder().
 		SetColor(oned.Color{0.8, 1.0, 0.6}).
 		SetDiffuse(0.7).

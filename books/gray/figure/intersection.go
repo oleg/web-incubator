@@ -10,7 +10,12 @@ type Inter struct {
 	Object   Shape
 }
 
-func (i Inter) PrepareComputations(r Ray) Computations {
+//todo:oleg update tests and remove this method
+func (i Inter) prepareComputations(r Ray) Computations {
+	return i.PrepareComputationsEx(r, Inters{i})
+}
+
+func (i Inter) PrepareComputationsEx(r Ray, xs Inters) Computations {
 	comps := Computations{}
 	comps.Distance = i.Distance
 	comps.Object = i.Object
@@ -26,7 +31,51 @@ func (i Inter) PrepareComputations(r Ray) Computations {
 	}
 	comps.OverPoint = comps.Point.AddVector(comps.NormalV.MultiplyScalar(oned.Delta))
 	comps.ReflectV = r.Direction.Reflect(comps.NormalV)
+	comps.N1, comps.N2 = calcNs(i, xs)
 	return comps
+}
+
+func calcNs(hit Inter, xs Inters) (n1 float64, n2 float64) {
+	var shapes []Shape
+	for _, i := range xs {
+		if i == hit {
+			n1 = refractiveIndex(shapes)
+		}
+		shapes = updateShapes(shapes, i.Object)
+		if i == hit {
+			n2 = refractiveIndex(shapes)
+		}
+	}
+	return
+}
+
+func updateShapes(shapes []Shape, shape Shape) []Shape {
+	if ok, pos := includes(shapes, shape); ok {
+		return remove(shapes, pos)
+	} else {
+		return append(shapes, shape)
+	}
+}
+
+func refractiveIndex(shapes []Shape) float64 {
+	if len(shapes) != 0 {
+		return shapes[len(shapes)-1].Material().RefractiveIndex
+	}
+	return 1.0
+}
+
+func includes(containers []Shape, object Shape) (bool, int) {
+	for i, o := range containers {
+		if o == object {
+			return true, i
+		}
+	}
+	return false, -1
+}
+
+func remove(s []Shape, i int) []Shape {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
 }
 
 type Computations struct {
@@ -38,6 +87,8 @@ type Computations struct {
 	Inside    bool
 	OverPoint oned.Point
 	ReflectV  oned.Vector
+	N1        float64
+	N2        float64
 }
 
 type Inters []Inter

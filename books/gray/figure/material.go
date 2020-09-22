@@ -8,24 +8,20 @@ import (
 //todo change types?
 //todo reorder members
 type Material struct {
-	Color      oned.Color
-	Ambient    float64
-	Diffuse    float64
-	Specular   float64
-	Shininess  float64
-	Pattern    Pattern
-	Reflective float64
+	Color           oned.Color
+	Pattern         Pattern
+	Ambient         float64
+	Diffuse         float64
+	Specular        float64
+	Shininess       float64
+	Reflective      float64
+	Transparency    float64
+	RefractiveIndex float64
 }
 
 //todo change api, should accept overrides, use builder?
 func DefaultMaterial() Material {
-	return Material{
-		Color:     oned.White,
-		Ambient:   0.1,
-		Specular:  0.9,
-		Diffuse:   0.9,
-		Shininess: 200.0,
-	}
+	return MakeMaterialBuilder().Build()
 }
 
 func Lighting(material Material, object Shape, light PointLight, point oned.Point, eyev oned.Vector, normalv oned.Vector, inShadow bool) oned.Color {
@@ -53,35 +49,46 @@ func Lighting(material Material, object Shape, light PointLight, point oned.Poin
 	return ambient.Add(diffuse).Add(specular)
 }
 
+func GlassMaterialBuilder() *MaterialBuilder {
+	return MakeMaterialBuilder().
+		SetRefractiveIndex(1.5).
+		SetTransparency(1.0)
+}
+
 //todo think about it
 type MaterialBuilder struct {
-	color      oned.Color
-	ambient    float64
-	diffuse    float64
-	specular   float64
-	shininess  float64
-	pattern    Pattern
-	reflective float64
+	color           oned.Color
+	pattern         Pattern
+	ambient         float64
+	diffuse         float64
+	specular        float64
+	shininess       float64
+	reflective      float64
+	transparency    float64
+	refractiveIndex float64
 }
 
 func MakeMaterialBuilder() *MaterialBuilder {
 	return &MaterialBuilder{
-		color:     oned.White,
-		ambient:   0.1,
-		diffuse:   0.9,
-		specular:  0.9,
-		shininess: 200.0,
+		color:           oned.White,
+		ambient:         0.1,
+		diffuse:         0.9,
+		specular:        0.9,
+		refractiveIndex: 1.0,
+		shininess:       200.0,
 	}
 }
 func (mb *MaterialBuilder) Build() Material {
 	return Material{
-		Color:      mb.color,
-		Ambient:    mb.ambient,
-		Diffuse:    mb.diffuse,
-		Specular:   mb.specular,
-		Shininess:  mb.shininess,
-		Pattern:    mb.pattern,
-		Reflective: mb.reflective,
+		Color:           mb.color,
+		Pattern:         mb.pattern,
+		Ambient:         mb.ambient,
+		Diffuse:         mb.diffuse,
+		Specular:        mb.specular,
+		Shininess:       mb.shininess,
+		Reflective:      mb.reflective,
+		Transparency:    mb.transparency,
+		RefractiveIndex: mb.refractiveIndex,
 	}
 }
 func (mb *MaterialBuilder) SetColor(color oned.Color) *MaterialBuilder {
@@ -110,5 +117,13 @@ func (mb *MaterialBuilder) SetPattern(pattern Pattern) *MaterialBuilder {
 }
 func (mb *MaterialBuilder) SetReflective(reflective float64) *MaterialBuilder {
 	mb.reflective = reflective
+	return mb
+}
+func (mb *MaterialBuilder) SetTransparency(transparency float64) *MaterialBuilder {
+	mb.transparency = transparency
+	return mb
+}
+func (mb *MaterialBuilder) SetRefractiveIndex(refractiveIndex float64) *MaterialBuilder {
+	mb.refractiveIndex = refractiveIndex
 	return mb
 }

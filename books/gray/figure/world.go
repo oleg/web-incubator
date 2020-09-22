@@ -24,8 +24,9 @@ func (w World) Intersect(ray Ray) Inters {
 }
 
 func (w World) ColorAt(r Ray, remaining uint8) oned.Color {
-	if hit, inter := w.Intersect(r).Hit(); hit {
-		return w.ShadeHit(inter.PrepareComputations(r), remaining)
+	xs := w.Intersect(r)
+	if ok, hit := xs.Hit(); ok {
+		return w.ShadeHit(hit.PrepareComputationsEx(r, xs), remaining)
 	}
 	return oned.Black
 }

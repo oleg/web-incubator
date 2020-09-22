@@ -27,6 +27,12 @@ func MakeSphereM(material Material) Sphere {
 	return Sphere{multid.IdentityMatrix, material}
 }
 
+func MakeGlassSphere() Sphere {
+	return Sphere{
+		multid.IdentityMatrix,
+		GlassMaterialBuilder().Build()}
+}
+
 func (sphere Sphere) Transform() multid.Matrix4 {
 	return sphere.transform
 }

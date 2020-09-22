@@ -155,3 +155,12 @@ func Test_sphere_may_be_assigned_material(t *testing.T) {
 
 	assert.Equal(t, m, s.Material())
 }
+
+func Test_helper_for_producing_sphere_with_glassy_material(t *testing.T) {
+	s := MakeGlassSphere()
+
+	assert.Equal(t, multid.IdentityMatrix, s.Transform())
+	assert.Equal(t, 1.0, s.Material().Transparency)
+	assert.Equal(t, 1.5, s.Material().RefractiveIndex)
+}
+

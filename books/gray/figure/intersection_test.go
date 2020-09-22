@@ -2,6 +2,7 @@ package figure
 
 import (
 	"github.com/stretchr/testify/assert"
+	"gray/multid"
 	"gray/oned"
 	"math"
 	"testing"
@@ -73,7 +74,7 @@ func Test_precomputing_state_of_intersection(t *testing.T) {
 	shape := MakeSphere()
 	i := Inter{4, shape}
 
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	assert.Equal(t, i.Distance, comps.Distance)
 	assert.Equal(t, i.Object, comps.Object)
@@ -87,7 +88,7 @@ func Test_hit_when_intersection_occurs_on_outside(t *testing.T) {
 	shape := MakeSphere()
 	i := Inter{4, shape}
 
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	assert.Equal(t, false, comps.Inside)
 }
@@ -97,7 +98,7 @@ func Test_hit_when_intersection_occurs_on_inside(t *testing.T) {
 	shape := MakeSphere()
 	i := Inter{1, shape}
 
-	comps := i.PrepareComputations(r)
+	comps := i.prepareComputations(r)
 
 	assert.Equal(t, oned.Point{0, 0, 1}, comps.Point)
 	assert.Equal(t, oned.Vector{0, 0, -1}, comps.EyeV)
@@ -110,7 +111,38 @@ func Test_precomputing_reflection_vector(t *testing.T) {
 	ray := Ray{oned.Point{0, 1, -1}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
 	i := Inter{math.Sqrt2, shape}
 
-	comps := i.PrepareComputations(ray)
+	comps := i.prepareComputations(ray)
 
 	assert.Equal(t, oned.Vector{0, math.Sqrt2 / 2, math.Sqrt2 / 2}, comps.ReflectV)
+}
+
+func Test_finding_n1_and_n2_at_various_intersections(t *testing.T) {
+	tests := []struct {
+		name  string
+		index int
+		n1    float64
+		n2    float64
+	}{
+		{"case 0", 0, 1.0, 1.5},
+		{"case 1", 1, 1.5, 2.0},
+		{"case 2", 2, 2.0, 2.5},
+		{"case 3", 3, 2.5, 2.5},
+		{"case 4", 4, 2.5, 1.5},
+		{"case 5", 5, 1.5, 1.0},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			a := MakeSphereTM(multid.Scaling(2, 2, 2), GlassMaterialBuilder().SetRefractiveIndex(1.5).Build())
+			b := MakeSphereTM(multid.Translation(0, 0, -0.25), GlassMaterialBuilder().SetRefractiveIndex(2.0).Build())
+			c := MakeSphereTM(multid.Translation(0, 0, 0.25), GlassMaterialBuilder().SetRefractiveIndex(2.5).Build())
+
+			r := Ray{oned.Point{0, 0, -4}, oned.Vector{0, 0, 1}}
+			xs := Inters{Inter{2, a}, Inter{2.75, b}, Inter{3.25, c}, Inter{4.75, b}, Inter{5.25, c}, Inter{6, a}}
+
+			comps := xs[test.index].PrepareComputationsEx(r, xs)
+
+			assert.Equal(t, test.n1, comps.N1)
+			assert.Equal(t, test.n2, comps.N2)
+		})
+	}
 }
