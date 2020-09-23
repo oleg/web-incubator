@@ -19,7 +19,7 @@ func (i Inter) PrepareComputationsEx(r Ray, xs Inters) Computations {
 	comps := Computations{}
 	comps.Distance = i.Distance
 	comps.Object = i.Object
-	comps.Point = r.Position(comps.Distance)
+	comps.Point = r.Position(i.Distance)
 	comps.EyeV = r.Direction.Negate()
 
 	normalV := NormalAt(comps.Object, comps.Point)
@@ -106,4 +106,16 @@ func (xs Inters) Hit() (bool, Inter) {
 		}
 	}
 	return false, Inter{}
+}
+
+func Schlick(comps Computations) float64 {
+	cos := comps.EyeV.Dot(comps.NormalV)
+	if comps.N1 > comps.N2 {
+		n := comps.N1 / comps.N2
+		sin2t := n * n * (1.0 - cos*cos)
+		if sin2t > 1.0 {
+			return 1.0
+		}
+	}
+	return 0.0
 }

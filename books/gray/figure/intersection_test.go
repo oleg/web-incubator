@@ -158,3 +158,14 @@ func Test_under_point_is_offset_below_surface(t *testing.T) {
 	assert.Greater(t, comps.UnderPoint.Z, -oned.Delta/2)
 	assert.Greater(t, comps.UnderPoint.Z, comps.Point.Z)
 }
+
+func Test_schlick_approximation_under_total_internal_reflection(t *testing.T) {
+	s := MakeSphereTM(multid.IdentityMatrix, GlassMaterialBuilder().Build())
+	r := Ray{oned.Point{0, 0, math.Sqrt2 / 2}, oned.Vector{0, 1, 0}}
+	xs := Inters{Inter{-math.Sqrt2 / 2, s}, Inter{math.Sqrt2 / 2, s}}
+	comps := xs[1].PrepareComputationsEx(r, xs)
+
+	reflectance := Schlick(comps)
+
+	assert.Equal(t, 1.0, reflectance)
+}
