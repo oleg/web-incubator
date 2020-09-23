@@ -2,6 +2,7 @@ package figure
 
 import (
 	"gray/oned"
+	"math"
 	"sort"
 )
 
@@ -116,6 +117,8 @@ func Schlick(comps Computations) float64 {
 		if sin2t > 1.0 {
 			return 1.0
 		}
+		cos = math.Sqrt(1.0 - sin2t)
 	}
-	return 0.0
+	r0 := math.Pow((comps.N1-comps.N2)/(comps.N1+comps.N2), 2)
+	return r0 + (1-r0)*math.Pow(1-cos, 5)
 }
