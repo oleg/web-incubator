@@ -271,6 +271,30 @@ func Test_shade_hit_with_transparent_material(t *testing.T) {
 	oned.AssertColorEqualInDelta(t, oned.Color{0.93642, 0.68642, 0.68642}, color)
 }
 
+func Test_shade_hit_with_reflective_transparent_material(t *testing.T) {
+	s1 := MakeSphereM(testMaterialBuilder().Build())
+	s2 := MakeSphereT(multid.Scaling(0.5, 0.5, 0.5))
+	floor := MakePlaneTM(multid.Translation(0, -1, 0),
+		MakeMaterialBuilder().
+			SetReflective(0.5).
+			SetTransparency(0.5).
+			SetRefractiveIndex(1.5).
+			Build())
+	ball := MakeSphereTM(multid.Translation(0, -3.5, -0.5),
+		MakeMaterialBuilder().
+			SetColor(oned.Color{1, 0, 0}).
+			SetAmbient(0.5).
+			Build())
+	w := World{pointLightSample(), []Shape{s1, s2, floor, ball}}
+	r := Ray{oned.Point{0, 0, -3}, oned.Vector{0, -math.Sqrt2 / 2, math.Sqrt2 / 2}}
+	xs := Inters{Inter{math.Sqrt2, floor}}
+	comps := xs[0].PrepareComputationsEx(r, xs)
+
+	color := w.ShadeHit(comps, MaxDepth)
+
+	oned.AssertColorEqualInDelta(t, oned.Color{0.93391, 0.69643, 0.69243}, color)
+}
+
 //util
 func defaultWorld() World {
 	s1 := MakeSphereM(testMaterialBuilder().Build())

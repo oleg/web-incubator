@@ -44,7 +44,16 @@ func (w World) ShadeHit(comps Computations, remaining uint8) oned.Color {
 		shadowed)
 	reflected := w.ReflectedColor(comps, remaining)
 	refracted := w.RefractedColor(comps, remaining)
-	return surface.Add(reflected).Add(refracted)
+	material := comps.Object.Material()
+	if material.Reflective > 0 && material.Transparency > 0 {
+		reflectance := Schlick(comps)
+		return surface.
+			Add(reflected.MultiplyByScalar(reflectance)).
+			Add(refracted.MultiplyByScalar(1 - reflectance))
+	}
+	return surface.
+		Add(reflected).
+		Add(refracted)
 }
 
 func (w World) IsShadowed(point oned.Point) bool {
