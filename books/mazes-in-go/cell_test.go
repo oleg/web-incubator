@@ -1,4 +1,4 @@
-package mazes_in_go
+package mazes
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -17,7 +17,7 @@ func Test_new_cell(t *testing.T) {
 	assert.Nil(t, cell.south)
 }
 
-func Test_is_linked_two_not_linked(t *testing.T) {
+func Test_linked__two_cells_unlinked_if_they_are_not_linked(t *testing.T) {
 	c1 := NewCell(0, 0)
 	c2 := NewCell(0, 1)
 
@@ -25,17 +25,7 @@ func Test_is_linked_two_not_linked(t *testing.T) {
 	assert.False(t, c2.linked(c1))
 }
 
-func Test_is_linked_two_both_linked(t *testing.T) {
-	c1 := NewCell(0, 0)
-	c2 := NewCell(0, 1)
-
-	c1.link(c2)
-
-	assert.True(t, c1.linked(c2))
-	assert.True(t, c2.linked(c1))
-}
-
-func Test_is_linked_two_both_linked(t *testing.T) {
+func Test_linked__both_cells_are_linked_after_one_linked_to_another(t *testing.T) {
 	c1 := NewCell(0, 0)
 	c2 := NewCell(0, 1)
 

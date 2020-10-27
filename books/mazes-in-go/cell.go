@@ -1,13 +1,17 @@
-package mazes_in_go
+package mazes
 
 type Cell struct {
 	row, column              int
-	north, south, east, west *Cell
+	north, east, south, west *Cell
 	links                    map[*Cell]bool
 }
 
 func NewCell(row, column int) *Cell {
-	return &Cell{row: row, column: column, links: make(map[*Cell]bool)}
+	return &Cell{
+		row:    row,
+		column: column,
+		links:  make(map[*Cell]bool),
+	}
 }
 
 func (c *Cell) linked(o *Cell) bool {
