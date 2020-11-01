@@ -1,3 +1,3 @@
 #!/bin/sh
-make maze
+make
 ./maze test
