@@ -1,6 +1,6 @@
 P=maze
 OBJECTS=cell.o
-CFLAGS = -g -Wall -O3
+CFLAGS = -g -Wall -O0
 LDLIBS=
 
 $(P): $(OBJECTS)

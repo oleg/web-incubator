@@ -34,27 +34,37 @@ Grid* Grid_create(size_t rows, size_t columns) {
   return grid;
 }
 
-void test_create_grid() {
+void test_create_grid_non_null() {
   printf("> should create grid 5x5 with non-null rows and non-null cells\n");
   
   Grid* grid = Grid_create(5, 5);
 
   if (grid == NULL)
     printf("ERROR: failed to create grid\n");
+  
+  for (size_t i = 0; i < 5; i++)
+    if (grid->rows[i] == NULL)
+      printf("ERROR: row %zu is null\n", i);
+}
+
+
+void test_create_grid_correct_sizes() {
+  printf("> should create grid 5x7 with correct rows and cells sizes\n");
+  
+  Grid* grid = Grid_create(5, 7);
+
   if (grid->n_rows != 5)
     printf("ERROR: wrong grid rows size %zu\n", grid->n_rows);
   
-  for (size_t i = 0; i < 5; i++) {
-    printf("r -> %zu\n", grid->rows[i]->n_cells);
-    if (grid->rows[i] == NULL) {
-      printf("ERROR: row %zu is null\n", i);
-    }
-  }
+  for (size_t i = 0; i < grid->n_rows; i++)
+    if (grid->rows[i]->n_cells != 7)
+      printf("ERROR: row %zu has wrong cell size %zu\n", i, grid->rows[i]->n_cells);
 }
 
 
 void Grid_run_tests() {
-  test_create_grid();
+  test_create_grid_non_null();
+  test_create_grid_correct_sizes();
 }
 
 int run_tests() {
