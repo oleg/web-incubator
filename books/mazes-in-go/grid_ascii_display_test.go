@@ -9,7 +9,7 @@ import (
 func Test_displays_simple_1x1_grid(t *testing.T) {
 	g := NewGrid(1, 1)
 
-	str := asAscii(g)
+	str := ToAscii(g)
 
 	expected := dedent.Dedent(`
 		+---+
@@ -20,7 +20,7 @@ func Test_displays_simple_1x1_grid(t *testing.T) {
 func Test_displays_simple_2x2_grid(t *testing.T) {
 	g := NewGrid(2, 2)
 
-	str := asAscii(g)
+	str := ToAscii(g)
 
 	expected := dedent.Dedent(`
 		+---+---+
@@ -57,7 +57,7 @@ func Test_displays_complex_4x4_grid(t *testing.T) {
 	g.Cell(3, 0).link(g.Cell(3, 1))
 	//3V
 
-	str := asAscii(g)
+	str := ToAscii(g)
 
 	expected := dedent.Dedent(`
 		+---+---+---+---+

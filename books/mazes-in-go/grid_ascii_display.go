@@ -1,6 +1,6 @@
 package mazes
 
-func asAscii(grid Grid) string {
+func ToAscii(grid Grid) string {
 	str := "\n" + printTop(grid.cells[0]) + "\n"
 	for _, row := range grid.cells {
 		str += printMiddle(row) + "\n"
