@@ -2,8 +2,8 @@ package mazes
 
 type Cell struct {
 	row, column              int
-	north, east, south, west *Cell
-	links                    map[*Cell]bool
+	north, east, south, west *Cell //todo make an array?
+	links                    map[*Cell]bool//todo rename merged, connected
 }
 
 func NewCell(row, column int) *Cell {

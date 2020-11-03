@@ -2,7 +2,7 @@ package mazes
 
 type Grid struct {
 	height, width int
-	cells         [][]*Cell //todo one dimensional array?
+	cells         [][]*Cell
 }
 
 func NewGrid(height, width int) Grid {
