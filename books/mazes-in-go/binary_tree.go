@@ -4,15 +4,24 @@ import "math/rand"
 
 func BinaryTree(grid Grid) {
 	grid.EachCells(func(cell *Cell) {
-		var neighbors []*Cell
-		if cell.north != nil {
-			neighbors = append(neighbors, cell.north)
-		}
-		if cell.east != nil {
-			neighbors = append(neighbors, cell.east)
-		}
-		if len(neighbors) > 0 {
-			cell.link(neighbors[rand.Intn(len(neighbors))])
+		if neighbor := chooseNeighbor(cell); neighbor != nil {
+			cell.link(neighbor)
 		}
 	})
+}
+
+func chooseNeighbor(cell *Cell) *Cell {
+	if cell.north != nil && cell.east != nil {
+		if rand.Intn(2) == 0 {
+			return cell.north
+		}
+		return cell.east
+	}
+	if cell.north != nil {
+		return cell.north
+	}
+	if cell.east != nil {
+		return cell.east
+	}
+	return nil
 }
