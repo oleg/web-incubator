@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type Algo func(grid mazes.Grid)
+type Algo func(grid *mazes.Grid)
 
 var algorithms = map[string]Algo{
 	"binary":     mazes.BinaryTree,

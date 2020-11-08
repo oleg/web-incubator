@@ -11,10 +11,6 @@ func Test_new_cell(t *testing.T) {
 	assert.Equal(t, 0, cell.row)
 	assert.Equal(t, 0, cell.column)
 	assert.Empty(t, cell.links)
-	assert.Nil(t, cell.east)
-	assert.Nil(t, cell.north)
-	assert.Nil(t, cell.west)
-	assert.Nil(t, cell.south)
 }
 
 func Test_linked__two_cells_unlinked_if_they_are_not_linked(t *testing.T) {

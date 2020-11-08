@@ -1,7 +1,6 @@
 package mazes
 
 import (
-	"fmt"
 	"github.com/lithammer/dedent"
 	"github.com/stretchr/testify/assert"
 	"math/rand"
@@ -13,7 +12,6 @@ func Test_produces_sidewinder(t *testing.T) {
 	grid := NewGrid(5, 5)
 
 	Sidewinder(grid)
-	fmt.Println(ToAscii(grid))
 
 	expected := dedent.Dedent(`
 	+---+---+---+---+---+

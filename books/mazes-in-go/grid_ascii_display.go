@@ -1,33 +1,33 @@
 package mazes
 
-func ToAscii(grid Grid) string {
-	str := "\n" + printTop(grid.cells[0]) + "\n"
+func ToAscii(grid *Grid) string {
+	str := "\n" + printTop(grid, grid.cells[0]) + "\n"
 	for _, row := range grid.cells {
-		str += printMiddle(row) + "\n"
-		str += printBottom(row) + "\n"
+		str += printMiddle(grid, row) + "\n"
+		str += printBottom(grid, row) + "\n"
 	}
 	return str[:len(str)-1]
 }
 
-func printTop(row []*Cell) string {
+func printTop(grid *Grid, row []*Cell) string {
 	str := "+"
 	for _, cell := range row {
-		str += choose(cell.linked(cell.north), "   +", "---+")
+		str += choose(cell.linked(grid.North(cell)), "   +", "---+")
 	}
 	return str
 }
 
-func printBottom(row []*Cell) string {
+func printBottom(grid *Grid, row []*Cell) string {
 	str := "+"
 	for _, cell := range row {
-		str += choose(cell.linked(cell.south), "   +", "---+")
+		str += choose(cell.linked(grid.South(cell)), "   +", "---+")
 	}
 	return str
 }
-func printMiddle(row []*Cell) string {
+func printMiddle(grid *Grid, row []*Cell) string {
 	str := "|"
 	for _, cell := range row {
-		str += choose(cell.linked(cell.east), "    ", "   |")
+		str += choose(cell.linked(grid.East(cell)), "    ", "   |")
 	}
 	return str
 }

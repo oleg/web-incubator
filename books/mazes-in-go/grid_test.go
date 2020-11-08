@@ -48,24 +48,24 @@ func Test_sets_north_south_east_west_sides(t *testing.T) {
 	//	d|e|f
 	//	g|h|i
 
-	assertNorthEastSouthWest(t, a, n, b, d, n)
-	assertNorthEastSouthWest(t, b, n, c, e, a)
-	assertNorthEastSouthWest(t, c, n, n, f, b)
+	assertNorthEastSouthWest(t, a, n, b, d, n, grid)
+	assertNorthEastSouthWest(t, b, n, c, e, a, grid)
+	assertNorthEastSouthWest(t, c, n, n, f, b, grid)
 
-	assertNorthEastSouthWest(t, d, a, e, g, n)
-	assertNorthEastSouthWest(t, e, b, f, h, d)
-	assertNorthEastSouthWest(t, f, c, n, i, e)
+	assertNorthEastSouthWest(t, d, a, e, g, n, grid)
+	assertNorthEastSouthWest(t, e, b, f, h, d, grid)
+	assertNorthEastSouthWest(t, f, c, n, i, e, grid)
 
-	assertNorthEastSouthWest(t, g, d, h, n, n)
-	assertNorthEastSouthWest(t, h, e, i, n, g)
-	assertNorthEastSouthWest(t, i, f, n, n, h)
+	assertNorthEastSouthWest(t, g, d, h, n, n, grid)
+	assertNorthEastSouthWest(t, h, e, i, n, g, grid)
+	assertNorthEastSouthWest(t, i, f, n, n, h, grid)
 }
 
-func assertNorthEastSouthWest(t *testing.T, c, north, east, south, west *Cell) {
-	assert.Equal(t, north, c.north)
-	assert.Equal(t, east, c.east)
-	assert.Equal(t, south, c.south)
-	assert.Equal(t, west, c.west)
+func assertNorthEastSouthWest(t *testing.T, c, north, east, south, west *Cell, g *Grid) {
+	assert.Equal(t, north, g.North(c))
+	assert.Equal(t, east, g.East(c))
+	assert.Equal(t, south, g.South(c))
+	assert.Equal(t, west, g.West(c))
 }
 
 func Test_creates_new_grid_with_100_cells(t *testing.T) {
@@ -127,4 +127,105 @@ func Test_iterate_over_all_cells_correct_cells(t *testing.T) {
 
 	assert.Equal(t, grid.cells[2][0], visitedCells[4])
 	assert.Equal(t, grid.cells[2][1], visitedCells[5])
+}
+
+func Test_grid_returns_north_cell(t *testing.T) {
+	grid := NewGrid(4, 4)
+
+	assert.Nil(t, grid.North(grid.Cell(0, 0)))
+	assert.Nil(t, grid.North(grid.Cell(0, 1)))
+	assert.Nil(t, grid.North(grid.Cell(0, 2)))
+	assert.Nil(t, grid.North(grid.Cell(0, 3)))
+
+	AssertEqualCell(t, grid.Cell(0, 0), grid.North(grid.Cell(1, 0)))
+	AssertEqualCell(t, grid.Cell(0, 1), grid.North(grid.Cell(1, 1)))
+	AssertEqualCell(t, grid.Cell(0, 2), grid.North(grid.Cell(1, 2)))
+	AssertEqualCell(t, grid.Cell(0, 3), grid.North(grid.Cell(1, 3)))
+
+	AssertEqualCell(t, grid.Cell(1, 0), grid.North(grid.Cell(2, 0)))
+	AssertEqualCell(t, grid.Cell(1, 1), grid.North(grid.Cell(2, 1)))
+	AssertEqualCell(t, grid.Cell(1, 2), grid.North(grid.Cell(2, 2)))
+	AssertEqualCell(t, grid.Cell(1, 3), grid.North(grid.Cell(2, 3)))
+
+	AssertEqualCell(t, grid.Cell(2, 0), grid.North(grid.Cell(3, 0)))
+	AssertEqualCell(t, grid.Cell(2, 1), grid.North(grid.Cell(3, 1)))
+	AssertEqualCell(t, grid.Cell(2, 2), grid.North(grid.Cell(3, 2)))
+	AssertEqualCell(t, grid.Cell(2, 3), grid.North(grid.Cell(3, 3)))
+}
+
+func Test_grid_returns_east_cell(t *testing.T) {
+	grid := NewGrid(4, 4)
+
+	AssertEqualCell(t, grid.Cell(0, 1), grid.East(grid.Cell(0, 0)))
+	AssertEqualCell(t, grid.Cell(1, 1), grid.East(grid.Cell(1, 0)))
+	AssertEqualCell(t, grid.Cell(2, 1), grid.East(grid.Cell(2, 0)))
+	AssertEqualCell(t, grid.Cell(3, 1), grid.East(grid.Cell(3, 0)))
+
+	AssertEqualCell(t, grid.Cell(0, 2), grid.East(grid.Cell(0, 1)))
+	AssertEqualCell(t, grid.Cell(1, 2), grid.East(grid.Cell(1, 1)))
+	AssertEqualCell(t, grid.Cell(2, 2), grid.East(grid.Cell(2, 1)))
+	AssertEqualCell(t, grid.Cell(3, 2), grid.East(grid.Cell(3, 1)))
+
+	AssertEqualCell(t, grid.Cell(0, 3), grid.East(grid.Cell(0, 2)))
+	AssertEqualCell(t, grid.Cell(1, 3), grid.East(grid.Cell(1, 2)))
+	AssertEqualCell(t, grid.Cell(2, 3), grid.East(grid.Cell(2, 2)))
+	AssertEqualCell(t, grid.Cell(3, 3), grid.East(grid.Cell(3, 2)))
+
+	assert.Nil(t, grid.East(grid.Cell(0, 3)))
+	assert.Nil(t, grid.East(grid.Cell(1, 3)))
+	assert.Nil(t, grid.East(grid.Cell(2, 3)))
+	assert.Nil(t, grid.East(grid.Cell(3, 3)))
+}
+
+func Test_grid_returns_south_cell(t *testing.T) {
+	grid := NewGrid(4, 4)
+
+	AssertEqualCell(t, grid.Cell(1, 0), grid.South(grid.Cell(0, 0)))
+	AssertEqualCell(t, grid.Cell(1, 1), grid.South(grid.Cell(0, 1)))
+	AssertEqualCell(t, grid.Cell(1, 2), grid.South(grid.Cell(0, 2)))
+	AssertEqualCell(t, grid.Cell(1, 3), grid.South(grid.Cell(0, 3)))
+
+	AssertEqualCell(t, grid.Cell(2, 0), grid.South(grid.Cell(1, 0)))
+	AssertEqualCell(t, grid.Cell(2, 1), grid.South(grid.Cell(1, 1)))
+	AssertEqualCell(t, grid.Cell(2, 2), grid.South(grid.Cell(1, 2)))
+	AssertEqualCell(t, grid.Cell(2, 3), grid.South(grid.Cell(1, 3)))
+
+	AssertEqualCell(t, grid.Cell(3, 0), grid.South(grid.Cell(2, 0)))
+	AssertEqualCell(t, grid.Cell(3, 1), grid.South(grid.Cell(2, 1)))
+	AssertEqualCell(t, grid.Cell(3, 2), grid.South(grid.Cell(2, 2)))
+	AssertEqualCell(t, grid.Cell(3, 3), grid.South(grid.Cell(2, 3)))
+
+	assert.Nil(t, grid.South(grid.Cell(3, 0)))
+	assert.Nil(t, grid.South(grid.Cell(3, 1)))
+	assert.Nil(t, grid.South(grid.Cell(3, 2)))
+	assert.Nil(t, grid.South(grid.Cell(3, 3)))
+}
+
+func Test_grid_returns_west_cell(t *testing.T) {
+	grid := NewGrid(4, 4)
+
+	assert.Nil(t, grid.West(grid.Cell(0, 0)))
+	assert.Nil(t, grid.West(grid.Cell(1, 0)))
+	assert.Nil(t, grid.West(grid.Cell(2, 0)))
+	assert.Nil(t, grid.West(grid.Cell(3, 0)))
+
+	AssertEqualCell(t, grid.Cell(0, 0), grid.West(grid.Cell(0, 1)))
+	AssertEqualCell(t, grid.Cell(1, 0), grid.West(grid.Cell(1, 1)))
+	AssertEqualCell(t, grid.Cell(2, 0), grid.West(grid.Cell(2, 1)))
+	AssertEqualCell(t, grid.Cell(3, 0), grid.West(grid.Cell(3, 1)))
+
+	AssertEqualCell(t, grid.Cell(0, 1), grid.West(grid.Cell(0, 2)))
+	AssertEqualCell(t, grid.Cell(1, 1), grid.West(grid.Cell(1, 2)))
+	AssertEqualCell(t, grid.Cell(2, 1), grid.West(grid.Cell(2, 2)))
+	AssertEqualCell(t, grid.Cell(3, 1), grid.West(grid.Cell(3, 2)))
+
+	AssertEqualCell(t, grid.Cell(0, 2), grid.West(grid.Cell(0, 3)))
+	AssertEqualCell(t, grid.Cell(1, 2), grid.West(grid.Cell(1, 3)))
+	AssertEqualCell(t, grid.Cell(2, 2), grid.West(grid.Cell(2, 3)))
+	AssertEqualCell(t, grid.Cell(3, 2), grid.West(grid.Cell(3, 3)))
+}
+
+func AssertEqualCell(t *testing.T, expected, actual *Cell) {
+	assert.Equal(t, expected.row, actual.row)
+	assert.Equal(t, expected.column, actual.column)
 }

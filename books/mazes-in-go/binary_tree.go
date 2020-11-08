@@ -2,26 +2,29 @@ package mazes
 
 import "math/rand"
 
-func BinaryTree(grid Grid) {
+func BinaryTree(grid *Grid) {
 	grid.EachCells(func(cell *Cell) {
-		if neighbor := chooseNeighbor(cell); neighbor != nil {
+		if neighbor := chooseNeighbor(grid, cell); neighbor != nil {
 			cell.link(neighbor)
 		}
 	})
 }
 
-func chooseNeighbor(cell *Cell) *Cell {
-	if cell.north != nil && cell.east != nil {
+func chooseNeighbor(grid *Grid, cell *Cell) *Cell {
+	north := grid.North(cell)
+	east := grid.East(cell)
+
+	if north != nil && east != nil {
 		if rand.Intn(2) == 0 {
-			return cell.north
+			return north
 		}
-		return cell.east
+		return east
 	}
-	if cell.north != nil {
-		return cell.north
+	if north != nil {
+		return north
 	}
-	if cell.east != nil {
-		return cell.east
+	if east != nil {
+		return east
 	}
 	return nil
 }
