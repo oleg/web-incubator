@@ -19,6 +19,7 @@ struct Grid {
 
 Row* Row_create(size_t n) {
   Row* row = malloc(sizeof(Row)+n*sizeof(Cell));
+  /*
   if (!row) {
     printf("ERROR: failed to create Row\n");
     return NULL;
@@ -33,11 +34,13 @@ Row* Row_create(size_t n) {
     Cell_set_south(&c, NULL);
     Cell_set_west(&c, NULL);
   }
+  */
   return row;
 }
 
 Grid* Grid_create(size_t rows, size_t columns) {
   Grid* grid = malloc(sizeof(Grid)+rows*(sizeof(Row*)));
+  /*
   if (!grid) {
     //todo return or print an error message?
     return NULL;
@@ -51,6 +54,7 @@ Grid* Grid_create(size_t rows, size_t columns) {
     }
     grid->rows[i] = row;
   }
+  */
   return grid;
 }
 

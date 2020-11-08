@@ -1,36 +1,24 @@
 #ifndef CELL_H_INCLUDED
 #define CELL_H_INCLUDED
 
+#define Z 0
+#define N 1
+#define E 2
+#define S 4
+#define W 8
 
-#define N 0
-#define E 1
-#define S 2
-#define W 3
 
 typedef struct Cell Cell;
 struct Cell {
   int row;
   int column;
-
-  Cell *links[4];
-  bool merged[4];
-  
+  int links;
 };
 
-Cell *Cell_north(Cell *cell);
-Cell *Cell_east(Cell *cell);
-Cell *Cell_south(Cell *cell);
-Cell *Cell_west(Cell *cell);
+bool Cell_link(Cell *cell, Cell *other);
+bool Cell_linked(Cell *cell, Cell *other);
+int Cell_relation(Cell *cell, Cell *other);
 
-void Cell_set_north(Cell *cell, Cell *other);
-void Cell_set_east(Cell *cell, Cell *other);
-void Cell_set_south(Cell *cell, Cell *other);
-void Cell_set_west(Cell *cell, Cell *other);
-
-bool Cell_merge(Cell *cell, Cell *other);
-bool Cell_merged(Cell *cell, Cell *other);
-
-//util
 void Cell_print(Cell *cell);
 void Cell_run_tests();
 

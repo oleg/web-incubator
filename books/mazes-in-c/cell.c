@@ -4,143 +4,152 @@
 #include <stdbool.h>
 #include "cell.h"
 
-
 void Cell_print(Cell *cell) {
   //todo should return string not print it
   printf("DEBUG: Cell(%p) {\n", cell);
-  printf("\trow: %d, column: %d\n", cell->row, cell->column);
-  printf("\tlinks N: %p, E: %p, S: %p, W: %p\n", cell->links[N], cell->links[E], cell->links[S], cell->links[W]);
-  printf("\tmerged N: %d, E: %d, S: %d, W: %d\n", cell->merged[N], cell->merged[E], cell->merged[S], cell->merged[W]);  
+  printf("\trow: %d, column: %d, links:%d\n", cell->row, cell->column, cell->links);
   printf("}\n");
 }
 
+int K[3][3] = {{Z, N, Z},
+	       {W, Z, E},
+	       {Z, S, Z},};
 
-Cell *Cell_north(Cell *cell) {
-  return cell->links[N];
+int Cell_relation(Cell *c, Cell *o) {
+  int ir = 1 + c->row - o->row;
+  int ic = 1 + c->column - o->column;
+  if (ir < 0 || ir >= 3)
+    return false;
+  if (ic < 0 || ic >= 3)
+    return false;
+
+  return K[ir][ic];
 }
 
-Cell *Cell_east(Cell *cell) {
-  return cell->links[E];
+bool Cell_link(Cell *c, Cell *o) {
+  int k = Cell_relation(c, o);
+  if (!k)
+    return false;
+
+  c->links |= k;
+  return true;
 }
 
-Cell *Cell_south(Cell *cell) {
-  return cell->links[S];
-}
+bool Cell_linked(Cell *c, Cell *o) {
+  int k = Cell_relation(c, o);
+  if (!k)
+    return false;
 
-Cell *Cell_west(Cell *cell) {
-  return cell->links[W];
-}
-
-
-void Cell_set_north(Cell *cell, Cell *other) {
-  cell->links[N] = other;
-}
-
-void Cell_set_east(Cell *cell, Cell *other) {
-  cell->links[E] = other;
-}
-
-void Cell_set_south(Cell *cell, Cell *other) {
-  cell->links[S] = other;
-}
-
-void Cell_set_west(Cell *cell, Cell *other) {
-  cell->links[W] = other;
-}
-
-bool Cell_merge(Cell *cell, Cell *other) {
-  int NO = -1, ci = NO, oi = NO;
-  
-  for (int i = N; i <= W; i++) {
-    if (cell->links[i] == other)
-      ci = i;
-    if (other->links[i] == cell) 
-      oi = i;
-  }
-  
-  if (ci > NO && oi > NO) {
-    cell->merged[ci] = true;
-    other->merged[oi] = true;
-    return true;
-  }
-  //todo error: can't merge unrelated cells
-  return false;
-}
-
-bool Cell_merged(Cell *cell, Cell *other) {
-  for (size_t i = N; i <= W; i++) {
-    if (cell->links[i] == other) {
-      return cell->merged[i];
-    }
-  }
-  return false;
+  return c->links & k;
 }
 
 //tests
-
-void test_cell_links() {
-  printf("> should return east cell\n");
-  Cell cell = {.row = 5, .column = 5};
-  Cell north = {.row = 4, .column = 5};
-  Cell east = {.row = 5, .column = 6};
-  Cell south = {.row = 6, .column = 5};
-  Cell west = {.row = 5, .column = 4};
-
-  Cell_set_north(&cell, &north);
-  Cell_set_east(&cell, &east);
-  Cell_set_south(&cell, &south);
-  Cell_set_west(&cell, &west);
-
-  if (Cell_north(&cell) != &north)
-    printf("ERROR: wrong north vaule\n");
-  if (Cell_east(&cell) != &east)
-    printf("ERROR: wrong east vaule\n");
-  if (Cell_south(&cell) != &south)
-    printf("ERROR: wrong south vaule\n");
-  if (Cell_north(&cell) != &north)
-    printf("ERROR: wrong north vaule\n");
-  
-}
-
 void test_create_cell() {
-  printf("> should be able to create cell with specific row and column\n");
+  printf("> should be able to create cell with specific row, column, and links\n");
   Cell a = {.row = 1, .column = 2};
   if (a.row != 1)
     printf("ERROR: wrong row\n");
   if (a.column != 2)
     printf("ERROR: wrong column\n");
+  if (a.links != Z)
+    printf("ERROR: wrong links vaule\n");
+  printf("<\n");  
 }
 
 
-void test_link_two_cells() {
-  printf("> should link two cells\n");
-  Cell bt = {.row = 0, .column = 0}, *b = &bt; 
-  Cell at = {.row = 0, .column = 1}, *a = &at;
-  Cell ct = {.row = 0, .column = 2}, *c = &ct;
+void test_non_linked_by_default() {
+  printf("> should see cells as unlinked by default\n");
+  Cell a0t = {.row = 0, .column = 0}, *a0 = &a0t; 
+  Cell a1t = {.row = 0, .column = 1}, *a1 = &a1t;
+  Cell a2t = {.row = 0, .column = 2}, *a2 = &a2t;
 
-  Cell_set_east(b, a);
-  Cell_set_west(a, b);
+  Cell b0t = {.row = 1, .column = 0}, *b0 = &b0t; 
+  Cell b1t = {.row = 1, .column = 1}, *b1 = &b1t;
+  Cell b2t = {.row = 1, .column = 2}, *b2 = &b2t;
+
+  Cell c0t = {.row = 2, .column = 0}, *c0 = &c0t; 
+  Cell c1t = {.row = 2, .column = 1}, *c1 = &c1t;
+  Cell c2t = {.row = 2, .column = 2}, *c2 = &c2t;
+
+  Cell* cells[] = {a0, a1, a2,
+		   b0, b1, b2,
+		   c0, c1, c2};
   
-  Cell_set_east(a, c);
-  Cell_set_west(c, a);
+  for (int i = 0; i < 9; i++)
+    for (int j = 0; j < 9; j++)
+      if (Cell_linked(cells[i], cells[j]))
+	printf("ERROR: cells %d and %d must not be linked\n", i, j);
+  printf("<\n");
+}
+
+void test_link_neighbor_cells() {
+  printf("> should link neighbor cells\n");
+  Cell a1t = {.row = 0, .column = 1}, *a1 = &a1t;
+  
+  Cell b0t = {.row = 1, .column = 0}, *b0 = &b0t;
+  Cell b1t = {.row = 1, .column = 1}, *b1 = &b1t;
+  Cell b2t = {.row = 1, .column = 2}, *b2 = &b2t;
+  
+  Cell c1t = {.row = 2, .column = 1}, *c1 = &c1t;
 
   
-  if (!Cell_merge(a, b))
-    printf("ERROR: unable to merge a to b\n");
+  if (!Cell_link(b1, b2))
+    printf("ERROR: unable to link b1 to b2\n");
 
+  if (!Cell_linked(b1, b2))
+    printf("ERROR: b1 is not linked to b2\n");
+
+  if (Cell_linked(b1, b0))
+    printf("ERROR: b1 is linked to b0\n");
+
+  if (Cell_linked(b1, b1))
+    printf("ERROR: b1 is linked to b1\n");
   
-  if (!Cell_merged(a, b))
-    printf("ERROR: a not merged to b\n");
-  if (!Cell_merged(b, a))
-    printf("ERROR: b not merged to a\n");
-  if (Cell_merged(a, c))
-    printf("ERROR: a merged to c\n");
-  if (Cell_merged(c, a))
-    printf("ERROR: c merged to a\n");
+  if (Cell_linked(b1, a1))
+    printf("ERROR: b1 is linked to a1\n");
+
+  if (Cell_linked(b1, c1))
+    printf("ERROR: b1 is linked to c1\n");
+
+
+  printf("<\n");
+}
+
+void test_link_non_neighbor_cells() {
+  printf("> should not link non-neighbor cells\n");
+  Cell a0t = {.row = 0, .column = 0}, *a0 = &a0t; 
+  Cell a1t = {.row = 0, .column = 1}, *a1 = &a1t;
+  Cell a2t = {.row = 0, .column = 2}, *a2 = &a2t;
+
+  Cell b0t = {.row = 1, .column = 0}, *b0 = &b0t; 
+  Cell b1t = {.row = 1, .column = 1}, *b1 = &b1t;
+  Cell b2t = {.row = 1, .column = 2}, *b2 = &b2t;
+
+  Cell c0t = {.row = 2, .column = 0}, *c0 = &c0t; 
+  Cell c1t = {.row = 2, .column = 1}, *c1 = &c1t;
+  Cell c2t = {.row = 2, .column = 2}, *c2 = &c2t;
+
+  Cell *linkable[] = {a1, b0, b2, c1};
+  Cell *unlinkable[] = {b1, a0, a2, c0, c2};
+
+  for (int i = 0; i < 4; i++)
+    if (!Cell_link(b1, linkable[i]))
+      printf("ERROR: must be able to link (1,1) and (%d,%d)\n",
+	     linkable[i]->row, linkable[i]->column);
+  
+  for (int i = 0; i < 5; i++)
+    if (Cell_link(b1, unlinkable[i]))
+      printf("ERROR: must not be able to link (1,1) and (%d,%d)\n",
+	     unlinkable[i]->row, unlinkable[i]->column);
+
+  printf("<\n");
 }
 
 void Cell_run_tests() {
+  printf(">> Cell_run_tests >>\n");
   test_create_cell();
-  test_cell_links();
-  test_link_two_cells();
+  test_non_linked_by_default();
+  test_link_non_neighbor_cells();
+  test_link_neighbor_cells();
+  printf("<< Cell_run_tests <<\n");
 }
