@@ -4,115 +4,98 @@
 #include <stdbool.h>
 #include "cell.h"
 
-typedef struct Row Row;
-struct Row {
-  size_t n_cells;
-  Cell cells[];
-};
+typedef struct {
+  int i;
+  int j;
+} C;
+  
+//typedef struct Grid Grid;
+typedef struct {
+  int rows;
+  int columns;
+  int size;
+  int cells[];
+} Grid;
 
-typedef struct Grid Grid;
-struct Grid {
-  size_t n_rows;
-  Row* rows[];
-  //  Cell** cells[]???
-};
-
-Row* Row_create(size_t n) {
-  Row* row = malloc(sizeof(Row)+n*sizeof(Cell));
-  /*
-  if (!row) {
-    printf("ERROR: failed to create Row\n");
-    return NULL;
-  }
-  row->n_cells = n;
-  for (size_t i = 0; i < n; i++) {
-    Cell c = row->cells[i];
-    c.row = 0;
-    c.column = 0;
-    Cell_set_north(&c, NULL);
-    Cell_set_east(&c, NULL);
-    Cell_set_south(&c, NULL);
-    Cell_set_west(&c, NULL);
-  }
-  */
-  return row;
-}
-
-Grid* Grid_create(size_t rows, size_t columns) {
-  Grid* grid = malloc(sizeof(Grid)+rows*(sizeof(Row*)));
-  /*
+Grid* Grid_create(int rows, int columns) {
+  Grid* grid = malloc(sizeof(Grid) + sizeof(int)*rows*columns);
   if (!grid) {
-    //todo return or print an error message?
+    printf("DEBUG: Grid_create malloc failed\n");
     return NULL;
   }
-  grid->n_rows = rows;
-  for (size_t i = 0; i < rows; i++) {
-    Row* row = Row_create(columns);
-    if (row == NULL) {
-      //todo cleanup, error message?
-      return NULL;
-    }
-    grid->rows[i] = row;
+  grid->rows = rows;
+  grid->columns = columns;
+  grid->size = rows*columns;
+  for (int i = 0; i < grid->size; i++) {
+    grid->cells[i] = 0;
   }
-  */
   return grid;
 }
 
-void test_create_rows_with_correct_sizes() {
-  printf("> should create row with correct number of cells\n");
-  
-  Row* r = Row_create(6);
-  
-  if (r == NULL)
-    printf("ERROR: failed to create row\n");
-  
-  if (r->n_cells != 6)
-    printf("ERROR: wrong number of cells\n");
-
-  for (size_t i = 0; i < r->n_cells; i++)
-    if (r->cells[i].column != 3)
-      printf("ERROR: Cell %zu is not correctly initialized\n", i);
+int Grid_get_cell(Grid *grid, int i, int j) {
+  return 0;
 }
 
-void test_create_grid_non_null() {
-  printf("> should create grid 5x5 with non-null rows and non-null cells\n");
+void Grid_set_cell(Grid *grid, int i, int j, int cell) {
   
-  Grid* grid = Grid_create(5, 5);
+}
+
+
+bool Grid_link(Grid *grid, C c, C o) {
+  int a = Grid_get_cell(grid, c.i, c.j);
+  
+  return false;
+}
+
+void test_create_grid() {
+  printf("> should create grid 3x4 with non-null rows and non-null cells\n");
+  /* for (int i = 0; i < (rows*columns); i++) { */
+  /*   printf("+++: (%d,%d)=%d\n", i/rows,i - (i/rows)*rows, g->cells[i]); */
+  /* } */
+
+  Grid* grid = Grid_create(3, 4);
 
   if (grid == NULL)
     printf("ERROR: failed to create grid\n");
+
+  if (grid->rows != 3)
+    printf("ERROR: wrong rows size\n");
+
+  if (grid->columns != 4)
+    printf("ERROR: wrong columns size\n");
   
-  for (size_t i = 0; i < 5; i++)
-    if (grid->rows[i] == NULL)
-      printf("ERROR: row %zu is null\n", i);
+  if (grid->size != 12)
+    printf("ERROR: wrong size\n");
+  
+
+  for (int i = 0; i < grid->size; i++)
+    if (grid->cells[i] != 0)
+      printf("ERROR: unexpected cell vaule\n");
+
+  printf("<\n");
 }
 
-
-void test_create_grid_correct_sizes() {
-  printf("> should create grid 5x7 with correct rows and cells sizes\n");
+void test_link_neighbors_cells() {
+  printf("> should \n");
   
-  Grid* grid = Grid_create(5, 7);
-
-  if (grid->n_rows != 5)
-    printf("ERROR: wrong grid rows size %zu\n", grid->n_rows);
+  Grid* grid = Grid_create(3, 3);
+  if (!Grid_link(grid, (C){0,0}, (C){0,1}))
+    printf("ERROR: failed to link (0,0) to (0,1)\n");
   
-  for (size_t i = 0; i < grid->n_rows; i++)
-    if (grid->rows[i]->n_cells != 7)
-      printf("ERROR: row %zu has wrong cell size %zu\n", i, grid->rows[i]->n_cells);
 }
-
 
 void Grid_run_tests() {
-  test_create_rows_with_correct_sizes();
-  test_create_grid_non_null();
-  test_create_grid_correct_sizes();
+  printf(">> Grid_run_tests >>\n");
+  test_create_grid();
+  test_link_neighbors_cells();
+  printf("<< Grid_run_tests <<\n");  
 }
 
 int run_tests() {
-  printf("=> running tests\n");
+  printf(">>> TESTS >>>\n");
   Cell_run_tests();
   Grid_run_tests();
-  printf("=> tests finished\n");
+  printf("<<< TESTS <<<\n");
   return EXIT_SUCCESS;
 }
 
