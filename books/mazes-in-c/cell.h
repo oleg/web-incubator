@@ -1,12 +1,6 @@
 #ifndef CELL_H_INCLUDED
 #define CELL_H_INCLUDED
 
-#define Z 0
-#define N 1
-#define E 2
-#define S 4
-#define W 8
-
 
 typedef struct Cell Cell;
 struct Cell {
