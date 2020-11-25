@@ -1,10 +1,13 @@
-package mazes
+package generator
 
-import "math/rand"
+import (
+	"math/rand"
+	"mazes/maze"
+)
 
-func Sidewinder(grid *Grid) {
-	for _, row := range grid.cells {
-		var run []*Cell
+func Sidewinder(grid *maze.Grid) {
+	grid.EachRow(func(n int, row []*maze.Cell) {
+		var run []*maze.Cell
 		for _, cell := range row {
 			run = append(run, cell)
 
@@ -15,13 +18,13 @@ func Sidewinder(grid *Grid) {
 				member := run[rand.Intn(len(run))]
 				north := grid.North(member)
 				if north != nil {
-					member.link(north)
+					member.Link(north)
 				}
-				run = []*Cell{}
+				run = []*maze.Cell{}
 			} else {
-				cell.link(grid.East(cell))
+				cell.Link(grid.East(cell))
 			}
 		}
 
-	}
+	})
 }

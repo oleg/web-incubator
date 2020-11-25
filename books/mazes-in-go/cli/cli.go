@@ -4,15 +4,17 @@ import (
 	"flag"
 	"fmt"
 	"math/rand"
-	"mazes"
+	"mazes/generator"
+	"mazes/maze"
+	"mazes/render"
 	"time"
 )
 
-type Algo func(grid *mazes.Grid)
+type Algo func(grid *maze.Grid)
 
 var algorithms = map[string]Algo{
-	"binary":     mazes.BinaryTree,
-	"sidewinder": mazes.Sidewinder,
+	"binary":     generator.BinaryTree,
+	"sidewinder": generator.Sidewinder,
 }
 
 func main() {
@@ -23,9 +25,9 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	grid := mazes.NewGrid(*height, *width)
+	grid := maze.NewGrid(*height, *width)
 	algorithms[*algorithm](grid)
-	ascii := mazes.ToAscii(grid)
+	ascii := render.ToAscii(grid)
 
 	fmt.Println(ascii)
 }

@@ -1,16 +1,19 @@
-package mazes
+package generator
 
-import "math/rand"
+import (
+	"math/rand"
+	"mazes/maze"
+)
 
-func BinaryTree(grid *Grid) {
-	grid.EachCells(func(cell *Cell) {
+func BinaryTree(grid *maze.Grid) {
+	grid.EachCells(func(cell *maze.Cell) {
 		if neighbor := chooseNeighbor(grid, cell); neighbor != nil {
-			cell.link(neighbor)
+			cell.Link(neighbor)
 		}
 	})
 }
 
-func chooseNeighbor(grid *Grid, cell *Cell) *Cell {
+func chooseNeighbor(grid *maze.Grid, cell *maze.Cell) *maze.Cell {
 	north := grid.North(cell)
 	east := grid.East(cell)
 

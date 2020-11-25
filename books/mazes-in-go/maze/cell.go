@@ -1,4 +1,4 @@
-package mazes
+package maze
 
 type Cell struct {
 	row, column int
@@ -13,11 +13,11 @@ func NewCell(row, column int) *Cell {
 	}
 }
 
-func (c *Cell) linked(o *Cell) bool {
+func (c *Cell) Linked(o *Cell) bool {
 	return c.links[o]
 }
 
-func (c *Cell) link(o *Cell) {
+func (c *Cell) Link(o *Cell) {
 	c.links[o] = true
 	o.links[c] = true
 }

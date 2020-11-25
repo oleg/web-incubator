@@ -1,4 +1,4 @@
-package mazes
+package maze
 
 type Grid struct {
 	height, width int
@@ -21,11 +21,23 @@ func makeCells(height int, width int) [][]*Cell {
 	return cells
 }
 
+////todo:oleg test
+//func (g *Grid) First() *Cell {
+//	return g.cells[0]
+//}
+
 func (g *Grid) EachCells(f func(cell *Cell)) {
 	for _, row := range g.cells {
 		for _, cell := range row {
 			f(cell)
 		}
+	}
+}
+
+//todo:oleg test me
+func (g *Grid) EachRow(f func(n int, row []*Cell)) {
+	for n, row := range g.cells {
+		f(n, row)
 	}
 }
 

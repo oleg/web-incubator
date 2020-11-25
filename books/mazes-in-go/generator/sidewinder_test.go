@@ -1,15 +1,17 @@
-package mazes
+package generator
 
 import (
 	"github.com/lithammer/dedent"
 	"github.com/stretchr/testify/assert"
 	"math/rand"
+	"mazes/maze"
+	"mazes/render"
 	"testing"
 )
 
 func Test_produces_sidewinder(t *testing.T) {
 	rand.Seed(42)
-	grid := NewGrid(5, 5)
+	grid := maze.NewGrid(5, 5)
 
 	Sidewinder(grid)
 
@@ -25,5 +27,5 @@ func Test_produces_sidewinder(t *testing.T) {
 	+   +   +   +   +   +
 	|   |   |   |   |   |
 	+---+---+---+---+---+`)
-	assert.Equal(t, expected, ToAscii(grid))
+	assert.Equal(t, expected, render.ToAscii(grid))
 }
