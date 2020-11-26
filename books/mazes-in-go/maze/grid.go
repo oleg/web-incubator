@@ -1,7 +1,7 @@
 package maze
 
 type Grid struct {
-	height, width int
+	Height, Width int
 	cells         [][]*Cell
 }
 
@@ -21,11 +21,6 @@ func makeCells(height int, width int) [][]*Cell {
 	return cells
 }
 
-////todo:oleg test
-//func (g *Grid) First() *Cell {
-//	return g.cells[0]
-//}
-
 func (g *Grid) EachCells(f func(cell *Cell)) {
 	for _, row := range g.cells {
 		for _, cell := range row {
@@ -42,10 +37,10 @@ func (g *Grid) EachRow(f func(n int, row []*Cell)) {
 }
 
 func (g *Grid) Cell(row int, column int) *Cell {
-	if row < 0 || row >= g.height {
+	if row < 0 || row >= g.Height {
 		return nil
 	}
-	if column < 0 || column >= g.width {
+	if column < 0 || column >= g.Width {
 		return nil
 	}
 	return g.cells[row][column]
