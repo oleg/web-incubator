@@ -59,13 +59,38 @@ func Test_day3_task1_index_forest(t *testing.T) {
 }
 
 func Test_day3_task1_count_trees(t *testing.T) {
+	tests := []struct {
+		name              string
+		rowInc, columnInc int
+		expected          int
+	}{
+		{"case 1", 1, 1, 2},
+		{"case 2", 1, 3, 7},
+		{"case 3", 1, 5, 3},
+		{"case 4", 1, 7, 4},
+		{"case 5", 2, 1, 2},
+	}
+
 	forest := NewForest(testForestRaw)
 
-	count := forest.CountTrees(1, 3)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
 
-	if count != 7 {
-		t.Errorf("Wrong number of trees %d", count)
+			count := forest.CountTrees(test.rowInc, test.columnInc)
+
+			if count != test.expected {
+				t.Errorf("Wrong number of trees %d", count)
+			}
+		})
 	}
 }
 
+func Test_day3_task1_count_product(t *testing.T) {
+	forest := NewForest(testForestRaw)
 
+	count := forest.CountProduct()
+
+	if count != 336 {
+		t.Errorf("Wrong product %d", count)
+	}
+}

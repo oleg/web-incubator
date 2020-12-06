@@ -9,6 +9,7 @@ func main() {
 	text := misc.MustReadFileToString("day3/input.txt")
 	forest := NewForest(text)
 	println(forest.CountTrees(1, 3))
+	println(forest.CountProduct())
 }
 
 type Forest struct {
@@ -36,4 +37,12 @@ func (f *Forest) CountTrees(rowInc, columnInc int) int {
 		}
 	}
 	return count
+}
+
+func (f *Forest) CountProduct() int {
+	return f.CountTrees(1, 1) *
+		f.CountTrees(1, 3) *
+		f.CountTrees(1, 5) *
+		f.CountTrees(1, 7) *
+		f.CountTrees(2, 1)
 }
