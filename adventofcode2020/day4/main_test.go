@@ -30,15 +30,6 @@ func Test_day4_task1_parse_passports(t *testing.T) {
 	}
 }
 
-func Test_day4_task1_parse_passport_fields(t *testing.T) {
-	passports := ParsePassports(strings.NewReader(testPassportData))
-
-	p := passports[3]
-	if p.byr || !p.iyr || !p.eyr || !p.hgt || !p.hcl || !p.ecl || !p.pid || p.cid {
-		t.Errorf("Wrong lengs of passports %v", p)
-	}
-}
-
 func Test_day4_task1_valid(t *testing.T) {
 	passports := ParsePassports(strings.NewReader(testPassportData))
 
