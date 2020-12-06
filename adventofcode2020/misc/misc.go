@@ -3,6 +3,7 @@ package misc
 import (
 	"bufio"
 	"io"
+	"io/ioutil"
 	"os"
 	"strconv"
 )
@@ -33,9 +34,10 @@ func MustAtoi(str string) int {
 	return num
 }
 
-func ReadStructs(reader io.Reader, f func(string)) {
-	scanner := bufio.NewScanner(reader)
-	for scanner.Scan() {
-		f(scanner.Text())
+func MustReadFileToString(filename string) string {
+	bytes, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
 	}
+	return string(bytes)
 }
