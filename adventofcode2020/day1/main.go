@@ -1,12 +1,12 @@
 package main
 
-import "github.com/oleg/incubator/adventofcode2020/io"
+import (
+	"github.com/oleg/incubator/adventofcode2020/misc"
+)
 
 func main() {
-	ints, err := io.ReadInts("day1/input.txt")
-	if err != nil {
-		panic(err)
-	}
+	ints := misc.MustReadInts(misc.MustOpen("day1/input.txt"))
+
 	a1, b1 := find1(ints)
 	println(a1 * b1)
 	a2, b2, c2 := find2(ints)

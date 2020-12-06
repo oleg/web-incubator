@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func Test_day1_task1(t *testing.T) {
+func Test_day1_part1(t *testing.T) {
 	input := []int{1721, 979, 366, 299, 675, 1456}
 
 	a, b := find1(input)
@@ -18,7 +18,7 @@ func Test_day1_task1(t *testing.T) {
 	}
 }
 
-func Test_day1_task2(t *testing.T) {
+func Test_day1_part2(t *testing.T) {
 	input := []int{1721, 979, 366, 299, 675, 1456}
 
 	a, b, c := find2(input)
