@@ -4,20 +4,30 @@ import (
 	"bufio"
 	"github.com/oleg/incubator/adventofcode2020/misc"
 	"math"
+	"sort"
 )
 
 func main() {
 	reader := misc.MustOpen("day5/input.txt")
 	scanner := bufio.NewScanner(reader)
-	maxId := 0
+	seats := make([]int, 0)
 	for scanner.Scan() {
-		seatId := seatId(parseRowAndColumn(scanner.Text()))
-		if seatId > maxId {
-			maxId = seatId
-		}
+		seats = append(seats, seatId(parseRowAndColumn(scanner.Text())))
 	}
-	println(maxId)
+	sort.Ints(seats)
+	println(seats[len(seats)-1])
+	println(findEmpty(seats))
+}
 
+func findEmpty(seats []int) int {
+	top := 2
+	for top < len(seats) {
+		if seats[top-2] != seats[top]-2 {
+			return seats[top] - 1
+		}
+		top++
+	}
+	return 0
 }
 
 func seatId(row, column int) int {
