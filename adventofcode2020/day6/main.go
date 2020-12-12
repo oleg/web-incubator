@@ -4,20 +4,56 @@ import (
 	"bufio"
 	"github.com/oleg/incubator/adventofcode2020/misc"
 	"io"
+	"strconv"
+	"strings"
 )
 
 func main() {
 	reader := misc.MustOpen("day6/input.txt")
 
-	count := 0
+	countUnique := 0
+	countRepeated := 0
 	for _, g := range parseGroups(reader) {
-		count += countUniqueAnswers(g)
+		countUnique += countUniqueAnswers(g)
+		countRepeated += countRepeatedAnswers(g)
 	}
-	println(count)
+	println(countUnique)
+	println(countRepeated)
 }
 
 type group struct {
-	lines []string
+	lines []line
+}
+
+type line int64
+
+func newLine(str string) line {
+	bits := [26]bool{}
+	for _, r := range str {
+		bits['z'-r] = true
+	}
+	bitStr := ""
+	for _, bit := range bits {
+		bitStr += bitToStr(bit)
+	}
+	res, err := strconv.ParseInt(bitStr, 2, 0)
+	if err != nil {
+		panic(err)
+	}
+	return line(res)
+}
+
+func bitToStr(b bool) string {
+	if b {
+		return "1"
+	} else {
+		return "0"
+	}
+}
+
+func (l line) count() int {
+	binary := strconv.FormatInt(int64(l), 2)
+	return strings.Count(binary, "1")
 }
 
 func parseGroups(reader io.Reader) []group {
@@ -30,7 +66,7 @@ func parseGroups(reader io.Reader) []group {
 			groups = append(groups, g)
 			g = group{}
 		} else {
-			g.lines = append(g.lines, text)
+			g.lines = append(g.lines, newLine(text))
 		}
 	}
 	groups = append(groups, g)
@@ -38,20 +74,17 @@ func parseGroups(reader io.Reader) []group {
 }
 
 func countUniqueAnswers(g group) int {
-	answers := make(map[rune]struct{}, 0)
+	res := newLine("")
 	for _, line := range g.lines {
-		for _, r := range line {
-			answers[r] = struct{}{}
-		}
+		res |= line
 	}
-	return len(answers)
+	return res.count()
 }
+
 func countRepeatedAnswers(g group) int {
-	answers := make(map[rune]struct{}, 0)
+	res := newLine("abcdefghijklmnopqrstuvwxyz")
 	for _, line := range g.lines {
-		for _, r := range line {
-			answers[r] = struct{}{}
-		}
+		res &= line
 	}
-	return len(answers)
+	return res.count()
 }

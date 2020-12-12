@@ -47,11 +47,11 @@ func Test_day6_task1_parse_groups(t *testing.T) {
 		t.Errorf("Wrong number of lines %d expected 5", len(groups[1].lines))
 	}
 
-	if groups[2].lines[0] != "ab" {
-		t.Errorf("Wrong contet of the line 2.0 %s", groups[2].lines[0])
+	if groups[2].lines[0] != 3 {
+		t.Errorf("Wrong contet of the line g[2].l[0] %d", groups[2].lines[0])
 	}
-	if groups[2].lines[1] != "ac" {
-		t.Errorf("Wrong contet of the line 2.1 %s", groups[2].lines[1])
+	if groups[2].lines[1] != 5 {
+		t.Errorf("Wrong contet of the line g[2].l[1] %d", groups[2].lines[1])
 	}
 }
 
