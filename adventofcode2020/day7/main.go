@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"github.com/oleg/incubator/adventofcode2020/misc"
 	"io"
 	"regexp"
@@ -11,13 +10,15 @@ import (
 
 func main() {
 	reader := misc.MustOpen("day7/input.txt")
-	bags := parseBags(reader)
-	fmt.Println(countCanContain("shiny gold", bags))
+	repo := bagsRepository{}
+	bags := parseBags(reader, repo)
+	println(countCanContain("shiny gold", bags))
+	println(countMustHold(repo["shiny gold"]) - 1)
 }
 
 type bag struct {
 	name string
-	bags []*bag
+	bags map[*bag]int
 }
 
 type bagsRepository map[string]*bag
@@ -25,7 +26,7 @@ type bagsRepository map[string]*bag
 func (bags bagsRepository) getOrCreate(name string) *bag {
 	aBag, found := bags[name]
 	if !found {
-		aBag = &bag{name: name, bags: make([]*bag, 0)}
+		aBag = &bag{name: name, bags: make(map[*bag]int, 0)}
 		bags[name] = aBag
 	}
 	return aBag
@@ -34,21 +35,20 @@ func (bags bagsRepository) getOrCreate(name string) *bag {
 func (bags bagsRepository) newBag(rule string) *bag {
 	topName := strings.Split(rule, " bags contain ")[0]
 	innerBagNames := regexp.
-		MustCompile(`\d (\w+ \w+)+`).
+		MustCompile(`(\d) (\w+ \w+)+`).
 		FindAllStringSubmatch(rule, -1)
 
 	topBag := bags.getOrCreate(topName)
 
 	for _, name := range innerBagNames {
-		aBag := bags.getOrCreate(name[1])
-		topBag.bags = append(topBag.bags, aBag)
+		aBag := bags.getOrCreate(name[2])
+		topBag.bags[aBag] = misc.MustAtoi(name[1])
 	}
 	return topBag
 }
 
-func parseBags(reader io.Reader) []*bag {
+func parseBags(reader io.Reader, bags bagsRepository) []*bag {
 	topLevel := make([]*bag, 0)
-	bags := bagsRepository{}
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		topLevel = append(topLevel, bags.newBag(scanner.Text()))
@@ -70,10 +70,18 @@ func containAny(name string, bag *bag) bool {
 	if bag.name == name {
 		return true
 	}
-	for _, b := range bag.bags {
+	for b, _ := range bag.bags {
 		if containAny(name, b) {
 			return true
 		}
 	}
 	return false
+}
+
+func countMustHold(bag *bag) int {
+	count := 1
+	for b, c := range bag.bags {
+		count += c * countMustHold(b)
+	}
+	return count
 }
