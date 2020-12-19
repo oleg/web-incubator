@@ -20,12 +20,12 @@ func main() {
 		{Id: 3, Content: "Hola", Author: "Jain"},
 	}
 
-	err := writeCsvFile("posts.csv", allPosts)
+	err := writeCsvFile("csvfile/posts.csv", allPosts)
 	if err != nil {
 		panic(err)
 	}
 
-	posts, err := readCsvFile("posts.csv")
+	posts, err := readCsvFile("csvfile/posts.csv")
 	if err != nil {
 		panic(err)
 	}
