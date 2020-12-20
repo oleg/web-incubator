@@ -12,7 +12,7 @@ import (
 
 func main() {
 	d := newDevice()
-	processInstructions(bufio.NewReader(misc.MustOpen("day14/input.txt")), d.setMask, d.setMem)
+	processInstructions(misc.MustOpen("day14/input.txt"), d.setMask, d.setMem)
 	println(d.sum())
 }
 
