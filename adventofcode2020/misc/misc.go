@@ -6,7 +6,12 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 )
+
+func TrimNewLine(str string) string {
+	return strings.TrimPrefix(str, "\n")
+}
 
 func MustOpen(filename string) io.Reader {
 	file, err := os.Open(filename)
