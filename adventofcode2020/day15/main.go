@@ -1,9 +1,13 @@
 package main
 
 func main() {
-	g := newGenerator(20, 0, 1, 11, 6, 3)
-	g.skip(2020)
-	println(g.last)
+	g1 := newGenerator(20, 0, 1, 11, 6, 3)
+	g1.skip(2020)
+	println(g1.last)
+
+	g2 := newGenerator(20, 0, 1, 11, 6, 3)
+	g2.skip(30000000)
+	println(g2.last)
 }
 
 type steps struct {
