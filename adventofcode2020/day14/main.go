@@ -5,15 +5,20 @@ import (
 	"fmt"
 	"github.com/oleg/incubator/adventofcode2020/misc"
 	"io"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	d := newDevice()
-	processInstructions(misc.MustOpen("day14/input.txt"), d.setMask, d.setMem)
-	println(d.sum())
+	d1 := newDevice()
+	processInstructions(misc.MustOpen("day14/input.txt"), d1.setMask, d1.setMem)
+	println(d1.sum())
+
+	d2 := newDevice()
+	processInstructions(misc.MustOpen("day14/input.txt"), d2.setMask, d2.setMem2)
+	println(d2.sum())
 }
 
 type device struct {
@@ -37,6 +42,25 @@ func (d *device) setMem(addr, num int64) {
 	num &= d.mask.zeros
 	d.memory[addr] = num
 }
+
+func (d *device) setMem2(addr, num int64) {
+	addr |= d.mask.ones
+	l := len(d.mask.xs)
+	top := int(math.Pow(2, float64(l)))
+	for i := 0; i < top; i++ {
+		s := []rune(fmt.Sprintf("%0"+fmt.Sprintf("%d", l)+"b", i))
+		newAddrStr := []rune(fmt.Sprintf("%036b", addr))
+		for p, v := range d.mask.xs {
+			newAddrStr[v] = s[p]
+		}
+		newAddr, err := strconv.ParseInt(string(newAddrStr), 2, 64)
+		if err != nil {
+			panic(err)
+		}
+		d.memory[newAddr] = num
+	}
+}
+
 func (d *device) sum() int64 {
 	var sum int64
 	for _, v := range d.memory {
@@ -47,13 +71,16 @@ func (d *device) sum() int64 {
 
 type mask struct {
 	zeros, ones int64
+	xs          []int
 }
 
 func newMask(s string) mask {
+	xs := make([]int, 0)
 	var z, o strings.Builder
-	for _, v := range s {
+	for i, v := range s {
 		switch v {
 		case 'X':
+			xs = append(xs, i)
 			z.WriteRune('1')
 			o.WriteRune('0')
 		default:
@@ -69,7 +96,7 @@ func newMask(s string) mask {
 	if err != nil {
 		panic(err)
 	}
-	return mask{zeros: zeros, ones: ones}
+	return mask{zeros: zeros, ones: ones, xs: xs}
 }
 
 func (m mask) String() string {

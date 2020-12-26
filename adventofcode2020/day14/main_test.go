@@ -29,6 +29,18 @@ func Test_day14_task1_newMask(t *testing.T) {
 	}
 }
 
+func Test_day14_task2(t *testing.T) {
+	d := newDevice()
+	d.setMask(newMask("000000000000000000000000000000X1001X"))
+	d.setMem2(42, 100)
+
+	sum := d.sum()
+
+	if sum != 400 {
+		t.Errorf("Wrong sum %v", sum)
+	}
+}
+
 func Test_day14_task1_execute_instructions(t *testing.T) {
 	instructions := strings.TrimPrefix(`
 mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
