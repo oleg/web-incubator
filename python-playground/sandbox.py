@@ -21,7 +21,9 @@ scope()
 def maker(n):
     def action(x):
         return x * n
+
     return action
+
 
 def maker2(n):
     return lambda x: n * x

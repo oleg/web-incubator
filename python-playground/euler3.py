@@ -7,6 +7,7 @@ from math import trunc, sqrt
 PRIMES = []
 NOT_PRIMES = []
 
+
 def is_prime(n):
     if n in NOT_PRIMES: return False
     if n in PRIMES: return True
