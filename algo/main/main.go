@@ -1,25 +1,21 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
 	var n int
-	fmt.Scan(&n)
-	ks := kadd(n)
-	fmt.Println(len(ks))
-	for _, v := range ks {
-		fmt.Print(v, " ")
+	fmt.Fscan(os.Stdin, &n)
+	intervals := make([]interval, n)
+	for i := 0; i < n; i++ {
+		var from, to int
+		fmt.Fscan(os.Stdin, &from, &to)
+		intervals[i] = interval{from: from, to: to}
 	}
 }
 
-func kadd(n int) []int {
-	answer := make([]int, 0)
-	for res, v := n, 1; res != 0; v++ {
-		dec := res - v
-		if dec == 0 || dec > v {
-			res = dec
-			answer = append(answer, v)
-		}
-	}
-	return answer
+type interval struct {
+	from, to int
 }
