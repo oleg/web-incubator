@@ -1,4 +1,4 @@
-(ns euler-clojure.e52)
+(ns e52)
 
 (defn same-chars? [a b]
   (= (sort (.toString a))

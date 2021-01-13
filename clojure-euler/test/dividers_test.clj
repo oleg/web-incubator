@@ -1,5 +1,5 @@
-(ns euler-clojure.dividers-test
-  (:use [euler-clojure.core] :reload-all)
+(ns dividers-test
+  (:use [experiments] :reload-all)
   (:use [clojure.test]))
 
 (deftest dividers-test
@@ -22,13 +22,13 @@
   (is (= [2 2 3 3] (lazy-dividers 36)))
   (is (= [3 3 11] (lazy-dividers 99))))
   
-(deftest dividable?-test 
-  (is (dividable? 4 2))
-  (is (not (dividable? 3 2)))
-  (is (dividable? 22 11)))
-
-(deftest prime?-test 
-  (is (prime? 3))
-  (is (not (dividable? 3 2)))
-  (is (dividable? 22 11)))  
-  
+;(deftest dividable?-test
+;  (is (dividable? 4 2))
+;  (is (not (dividable? 3 2)))
+;  (is (dividable? 22 11)))
+;
+;(deftest prime?-test
+;  (is (prime? 3))
+;  (is (not (dividable? 3 2)))
+;  (is (dividable? 22 11)))
+;

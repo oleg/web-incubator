@@ -1,4 +1,4 @@
-(ns euler-clojure.e2
+(ns e2
   (:use [euler-clojure.core :only (fib-seq)]))
 
 (defn e2 []

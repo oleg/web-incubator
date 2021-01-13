@@ -1,4 +1,4 @@
-(ns euler-clojure.e36
+(ns e36
   (:use [euler-clojure.core :only (palindrome?)]))
 
 (defn bipals [top]

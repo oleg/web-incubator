@@ -1,4 +1,4 @@
-(ns euler-clojure.e18)
+(ns e18)
 
 (def data [
 [75]

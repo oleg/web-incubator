@@ -1,5 +1,5 @@
-(ns euler-clojure.e18-test
-  (:use [euler-clojure.e18] :reload-all)
+(ns e18-test
+  (:use [e18] :reload-all)
   (:use [clojure.test]))
 
 (deftest solve-test

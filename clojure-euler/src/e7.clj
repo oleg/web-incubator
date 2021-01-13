@@ -1,4 +1,4 @@
-(ns euler-clojure.e7
+(ns e7
   (:use [euler-clojure.core :only (prime?)]))
 
 (defn e7 []

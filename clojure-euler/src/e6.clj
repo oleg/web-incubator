@@ -1,4 +1,4 @@
-(ns euler-clojure.e6)
+(ns e6)
 
 (defn e6 []
   (let [sum-of-pows (reduce + (for [i (range 101)] (* i i)))

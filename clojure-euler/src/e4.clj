@@ -1,4 +1,4 @@
-(ns euler-clojure.e4
+(ns e4
   (:use [euler-clojure.core :only (palindrome?)]))
 
 (defn max-palindrome [num]

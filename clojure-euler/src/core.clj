@@ -1,4 +1,4 @@
-(ns euler-clojure.core)
+(ns core)
 
 (defn divides? [v n]
   (= 0 (mod v n)))

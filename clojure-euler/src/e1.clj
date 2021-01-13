@@ -1,5 +1,5 @@
-(ns euler-clojure.e1
-  (:use [euler-clojure.core :only (divides?)]))
+(ns e1
+  (:use [core :only (divides?)]))
 
 (defn e1 []
   (reduce + (for [i (range 999 0 -1)

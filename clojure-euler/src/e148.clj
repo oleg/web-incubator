@@ -1,4 +1,4 @@
-(ns euler-clojure.e148)
+(ns e148)
 
 (defn next-pascal [l] (map + (cons 0 l) (conj l 0)))
 

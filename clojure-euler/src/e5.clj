@@ -1,4 +1,4 @@
-(ns euler-clojure.e5
+(ns e5
   (:use [euler-clojure.core :only (dividers)]))
 
 (defn count-values [m]
