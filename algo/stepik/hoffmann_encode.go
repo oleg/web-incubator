@@ -82,13 +82,13 @@ func encodeHoffman(input string) hoffmanEncoding {
 			code: strings.Repeat("0", freq[rune(input[0])]),
 		}
 	}
-	dict := makeDictionary(input, freq)
+	dict := makeDictionary(freq)
 	code := encode(input, dict)
 	return hoffmanEncoding{dict: dict, code: code}
 }
 
-func makeDictionary(input string, freq map[rune]int) map[rune]string {
-	pq := buildQueue(input, freq)
+func makeDictionary(freq map[rune]int) map[rune]string {
+	pq := buildQueue(freq)
 	dict := make(map[rune]string)
 	pq[0].fillPrefixDict("", dict)
 	delete(dict, 0)
@@ -103,7 +103,7 @@ func encode(input string, dict map[rune]string) string {
 	return b.String()
 }
 
-func buildQueue(input string, freq map[rune]int) priorityQueue {
+func buildQueue(freq map[rune]int) priorityQueue {
 	pq := priorityQueue{}
 	for k, v := range freq {
 		pq.insert(node{letter: k, freq: v})
