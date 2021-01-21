@@ -1,4 +1,4 @@
-package search
+package corm
 
 import (
 	"github.com/stretchr/testify/assert"

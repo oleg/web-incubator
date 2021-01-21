@@ -24,7 +24,7 @@ func Test_BinarySearch(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			index, found := Search(test.val, test.arr)
+			index, found := BinarySearch(test.val, test.arr)
 
 			assert.Equal(t, test.expected.index, index)
 			assert.Equal(t, test.expected.found, found)

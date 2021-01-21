@@ -1,6 +1,6 @@
 package grok
 
-func Search(target int, array []int) (int, bool) {
+func BinarySearch(target int, array []int) (int, bool) {
 	low := 0
 	high := len(array) - 1
 	for low <= high {

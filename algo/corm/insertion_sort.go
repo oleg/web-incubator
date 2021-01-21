@@ -1,4 +1,4 @@
-package sort
+package corm
 //2.1-1
 func InsertionSort(arr []int) {
 	for k := 1; k < len(arr); k++ {

@@ -1,11 +1,8 @@
-package sort
+package corm
 
 //2.2-2
 func SelectionSort(arr []int) {
 	l := len(arr)
-	if l == 0 || l == 1 {
-		return
-	}
 	for i := 0; i < l-1; i++ {
 		mini := i
 		min := arr[mini]
