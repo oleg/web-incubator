@@ -18,3 +18,9 @@ def sim_distance(prefs, person1, person2):
     if len(items) == 0:
         return 0
     return 1 / (1 + sqrt(sum(items)))
+
+
+def test_sim_distance():
+    c = load_critics()
+    d = sim_distance(c, 'Lisa Rose', 'Gene Seymour')
+    assert d == 0.29429805508554946
