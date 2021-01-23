@@ -45,6 +45,15 @@ def sim_pearson(prefs, p1, p2):
     return num / den
 
 
+def top_matches(prefs, person, n=5, similarity=sim_pearson):
+    scores = [(similarity(prefs, person, other), other)
+              for other in prefs
+              if other != person]
+    scores.sort()
+    scores.reverse()
+    return scores[0:n]
+
+
 def test_sim_distance():
     c = load_critics()
     d = sim_distance(c, 'Lisa Rose', 'Gene Seymour')
@@ -55,3 +64,13 @@ def test_sim_parson():
     c = load_critics()
     d = sim_pearson(c, 'Lisa Rose', 'Gene Seymour')
     assert d == 0.39605901719066977
+
+
+def test_top_matches():
+    c = load_critics()
+    tm = top_matches(c, 'Lisa Rose')
+    assert tm == [(0.9912407071619299, 'Toby'),
+                  (0.7470178808339965, 'Jack Matthews'),
+                  (0.5940885257860044, 'Mick LaSalle'),
+                  (0.5669467095138396, 'Claudia Puig'),
+                  (0.40451991747794525, 'Michael Phillips')]
