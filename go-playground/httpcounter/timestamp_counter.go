@@ -51,7 +51,7 @@ func (t *TimestampCounter) count(stamp time.Time) int {
 }
 
 func (t *TimestampCounter) countOldStamps(stamp time.Time) int {
-	intervalStart := stamp.Add(- t.Interval)
+	intervalStart := stamp.Add(-t.Interval)
 	for i, v := range t.stamps[t.first:] { //use binary search?
 		if v.After(intervalStart) {
 			return i

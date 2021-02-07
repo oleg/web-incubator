@@ -35,4 +35,3 @@ func TestMakePipe(t *testing.T) {
 		t.Errorf("Wrong seconds %v, expected %v", seconds, expectedSeconds)
 	}
 }
-
