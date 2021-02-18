@@ -43,6 +43,17 @@ def predict(x, w, b):
     return x * w + b
 
 
+def gradient(x, y, w):
+    return 2 * np.average(x * (predict(x, w, 0) - y))
+
+
+def train2(x, y, iterations, lr):
+    w = 0
+    for i in range(iterations):
+        w -= gradient(x, y, w) * lr
+    return w
+
+
 # Tests
 def test_predict():
     x = np.array([1, 3, 2, 5])
@@ -71,3 +82,9 @@ def test_predict_data():
 
     assert w == 1.1000000000000008
     assert b == 12.929999999999769
+
+
+def test_train2_prediction():
+    x, y = load_pizza()
+    w = train2(x, y, iterations=100, lr=0.001)
+    assert w == 1.8436928702010968
