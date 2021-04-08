@@ -24,17 +24,28 @@ const WordsForm = ({onUpdate}) => {
 }
 
 
-const Word = ({word}) =>
-    <div className="word-block">
+const Word = ({word, onClick}) => {
+    return <div className="word-block" onClick={() => onClick(word)}>
         <span className="word">{word.text}</span>
         <span className="superscript">{word.freq}</span>
-    </div>
+    </div>;
+}
 
-const WordsList = ({words}) =>
-    <div>{words.map(w => <Word word={w} key={w.text}/>)}</div>
+const WordsList = ({words, onClick}) =>
+    <div>{words.map(w => <Word word={w} key={w.text} onClick={onClick}/>)}</div>
+
+const sortWords = a => {
+    a.sort((a, b) => b.freq - a.freq)
+    return a
+}
 
 const App = () => {
     const [words, setWords] = useState([]);
+    const moveToWords = (word) => {
+        setWords(sortWords(words.concat(word)))
+        setBuffer(sortWords(buffer.filter(x => x !== word)))
+    }
+
     useEffect(() => {
         fetch("http://localhost:3001/words")
             .then(res => res.json())
@@ -43,11 +54,17 @@ const App = () => {
                 error => alert(error),
             )
     }, []);
-
+    const [buffer, setBuffer] = useState([]);
+    const moveToBuffer = (word) => {
+        setBuffer(sortWords(buffer.concat(word)))
+        setWords(sortWords(words.filter(x => x !== word)))
+    }
     return (
         <Container className="p-3">
             <WordsForm onUpdate={setWords}/>
-            <WordsList words={words}/>
+            <WordsList words={buffer} onClick={moveToWords} key="w1"/>
+            <hr/>
+            <WordsList words={words} onClick={moveToBuffer} kye="w2"/>
         </Container>
     );
 };
