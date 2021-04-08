@@ -24,6 +24,7 @@ func main() {
 	}
 	http.HandleFunc("/words", words)
 	http.HandleFunc("/upload", upload)
+	http.HandleFunc("/lists", lists)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
@@ -42,6 +43,36 @@ func words(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 	}
 	fmt.Printf("%v\n", "words")
+}
+
+type ListCreate struct {
+	Name  string   `json:"name"`
+	Words []Word `json:"words"`
+}
+
+func lists(w http.ResponseWriter, r *http.Request) {
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	decoder := json.NewDecoder(r.Body)
+	var t ListCreate
+	err := decoder.Decode(&t)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%v\n", t)
+	fmt.Fprintln(w, `{"hello": "world"}`)
+	//x := []Word{
+	//	{"hello", 30},
+	//	{"my", 20},
+	//	{"friend", 10},
+	//}
+
+	//err := encoder.Encode(x)
+	//if err != nil {
+	//	log.Print(err)
+	//}
+	fmt.Printf("%v\n", "lists")
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {

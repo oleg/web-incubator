@@ -17,7 +17,7 @@ const WordsForm = ({onUpdate}) => {
                 error => alert(error)
             );
     };
-    return <form className="words-form" onSubmit={onSubmit} ref={wform}>
+    return <form onSubmit={onSubmit} ref={wform}>
         <input type="file" name="subfile"/>
         <input type="submit" value="Add"/>
     </form>;
@@ -30,9 +30,36 @@ const Word = ({word, onClick}) => {
         <span className="superscript">{word.freq}</span>
     </div>;
 }
-
-const WordsList = ({words, onClick}) =>
-    <div>{words.map(w => <Word word={w} key={w.text} onClick={onClick}/>)}</div>
+const WordsList = ({words, onClick}) => {
+    const lForm = useRef(null);
+    const onSubmit = (event) => {
+        const x = lForm.current.getElementsByClassName('list-name')[0]//todo rewrite to stateful field
+        event.preventDefault()
+        fetch('http://localhost:3001/lists', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "no-cors",
+            body: JSON.stringify({
+                name: x.value,
+                words: words
+            })
+        })
+            .then(response => response.json())
+            .then(
+                result => alert(result),
+                error => alert(error)
+            );
+    };
+    return <>
+        <div>{words.map(w => <Word word={w} key={w.text} onClick={onClick}/>)}</div>
+        <form onSubmit={onSubmit} ref={lForm}>
+            <input type="text" className="list-name"/>
+            <input type="submit" value="Save"/>
+        </form>
+    </>;
+}
 
 const sortWords = a => {
     a.sort((a, b) => b.freq - a.freq)
