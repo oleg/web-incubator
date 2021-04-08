@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -31,14 +33,19 @@ func main() {
 func words(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-	encoder := json.NewEncoder(w)
 	x := []Word{
 		{"hello", 30},
 		{"my", 20},
 		{"friend", 10},
 	}
-	err := encoder.Encode(x)
+
+	var t ListCreate
+	err := load(&t, "default")
+	if err == nil {
+		x = t.Words
+	}
+	encoder := json.NewEncoder(w)
+	err = encoder.Encode(x)
 	if err != nil {
 		log.Print(err)
 	}
@@ -46,7 +53,7 @@ func words(w http.ResponseWriter, r *http.Request) {
 }
 
 type ListCreate struct {
-	Name  string   `json:"name"`
+	Name  string `json:"name"`
 	Words []Word `json:"words"`
 }
 
@@ -60,18 +67,14 @@ func lists(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%v\n", t)
-	fmt.Fprintln(w, `{"hello": "world"}`)
-	//x := []Word{
-	//	{"hello", 30},
-	//	{"my", 20},
-	//	{"friend", 10},
-	//}
 
-	//err := encoder.Encode(x)
-	//if err != nil {
-	//	log.Print(err)
-	//}
+	err = store(t, t.Name)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Fprintln(w, `{"hello": "world"}`)
+
 	fmt.Printf("%v\n", "lists")
 }
 
@@ -121,4 +124,31 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 	}
 	fmt.Printf("%v\n", "upload")
+}
+func store(data interface{}, filename string) error {
+	buffer := new(bytes.Buffer)
+	encoder := gob.NewEncoder(buffer)
+	err := encoder.Encode(data)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(filename, buffer.Bytes(), 0600)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func load(data interface{}, filename string) error {
+	raw, err := os.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+	buffer := bytes.NewBuffer(raw)
+	dec := gob.NewDecoder(buffer)
+	err = dec.Decode(data)
+	if err != nil {
+		return err
+	}
+	return nil
 }
