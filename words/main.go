@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"strings"
 )
 
 type Word struct {
@@ -40,7 +41,6 @@ func words(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print(err)
 	}
-	//fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 	fmt.Printf("%v\n", "words")
 }
 
@@ -58,13 +58,21 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
 	s := string(all)
 
-	//fmt.Printf("%v\n", s)
-
-	reg := regexp.MustCompile(`\p{L}+`)
-	allString := reg.FindAllString(s, -1)
+	s = regexp.MustCompile(`([0-9]|>|-|<|,|!|\.|\?|:|\\)`).ReplaceAllString(s, " ")
+	allString := regexp.MustCompile(`\s`).Split(s, -1)
 	m := make(map[string]int, len(allString))
 	for _, v := range allString {
 		m[v]++
+	}
+
+	delete(m, "")
+
+	for k, v := range m {
+		kLower := strings.ToLower(k)
+		if _, found := m[kLower]; found {
+			delete(m, k)
+			m[kLower] += v
+		}
 	}
 
 	x := make([]Word, 0, len(m))
