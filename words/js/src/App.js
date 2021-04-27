@@ -9,20 +9,20 @@ const WordsForm = ({onUpdate}) => {
         event.preventDefault()
         fetch('http://localhost:3001/upload', {
             method: 'POST',
+            mode: 'cors',
             body: new FormData(wform.current)
         })
             .then(response => response.json())
             .then(
-                result => onUpdate(result),
+                res => onUpdate(res),
                 error => alert(error)
             );
     };
     return <form onSubmit={onSubmit} ref={wform}>
-        <input type="file" name="subfile"/>
+        <input type="file" name="subfile" />
         <input type="submit" value="Add"/>
     </form>;
 }
-
 
 const Word = ({word, onClick}) => {
     return <div className="word-block" onClick={() => onClick(word)}>
@@ -30,34 +30,44 @@ const Word = ({word, onClick}) => {
         <span className="superscript">{word.freq}</span>
     </div>;
 }
-const WordsList = ({words, onClick}) => {
+
+const ListsList = ({lists, loadList}) => {
+    return <div>
+        {lists.map(l => <div><a href="#" key={l.name} onClick={() => loadList(l.name)}>{l.name}</a></div>)}
+    </div>;
+}
+
+const WordsList = ({words, onClick, onSave}) => {
     const lForm = useRef(null);
     const onSubmit = (event) => {
-        const x = lForm.current.getElementsByClassName('list-name')[0]//todo rewrite to stateful field
+        //todo rewrite to stateful field
+        const listNameField = lForm.current.getElementsByClassName('list-name')[0]
         event.preventDefault()
         fetch('http://localhost:3001/lists', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            mode: "no-cors",
+            mode: 'cors',
             body: JSON.stringify({
-                name: x.value,
+                name: listNameField.value,
                 words: words
             })
         })
-            .then(response => response.json())
+            // .then(res => res)
             .then(
-                result => alert(result),
+                res => onSave(),
                 error => alert(error)
             );
     };
     return <>
-        <div>{words.map(w => <Word word={w} key={w.text} onClick={onClick}/>)}</div>
         <form onSubmit={onSubmit} ref={lForm}>
             <input type="text" className="list-name"/>
             <input type="submit" value="Save"/>
         </form>
+        <div>
+            {words.map(w => <Word word={w} key={w.text} onClick={onClick}/>)}
+        </div>
     </>;
 }
 
@@ -72,26 +82,44 @@ const App = () => {
         setWords(sortWords(words.concat(word)))
         setBuffer(sortWords(buffer.filter(x => x !== word)))
     }
-
-    useEffect(() => {
-        fetch("http://localhost:3001/words")
-            .then(res => res.json())
-            .then(
-                result => setWords(result),
-                error => alert(error),
-            )
-    }, []);
     const [buffer, setBuffer] = useState([]);
     const moveToBuffer = (word) => {
         setBuffer(sortWords(buffer.concat(word)))
         setWords(sortWords(words.filter(x => x !== word)))
     }
+
+    const loadList = (list) => {
+        fetch("http://localhost:3001/words?" + new URLSearchParams({name: list}), {
+            mode: "cors",
+        })
+            .then(res => res.json())
+            .then(
+                res => setWords(res),
+                error => alert(error),
+            )
+    }
+    const loadLists = () => {
+        fetch("http://localhost:3001/lists", {
+            mode: "cors",
+        })
+            .then(res => res.json())
+            .then(
+                res => setLists(res.lists),
+                error => alert(error),
+            )
+    }
+    const [lists, setLists] = useState([])
+    useEffect(loadLists, []);
+
     return (
         <Container className="p-3">
+            <ListsList lists={lists} loadList={loadList}/>
+            <br/>
             <WordsForm onUpdate={setWords}/>
-            <WordsList words={buffer} onClick={moveToWords} key="w1"/>
-            <hr/>
-            <WordsList words={words} onClick={moveToBuffer} kye="w2"/>
+            <br/>
+            <WordsList words={buffer} onClick={moveToWords} onSave={loadLists} key="w1"/>
+            <br/>
+            <WordsList words={words} onClick={moveToBuffer} onSave={loadLists} kye="w2"/>
         </Container>
     );
 };
