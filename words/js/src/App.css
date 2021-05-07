@@ -18,3 +18,16 @@
 .word-block:hover {
   background-color: #428bca;
 }
+
+.words-list {
+  /*border: 1px solid #428bca;*/
+  /*padding: 5px;*/
+}
+
+.list-name {
+  padding: 5px;
+}
+
+.list-name-box {
+  width: 50%;
+}

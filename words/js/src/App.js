@@ -19,8 +19,9 @@ const WordsForm = ({onUpdate}) => {
             );
     };
     return <form onSubmit={onSubmit} ref={wform}>
-        <input type="file" name="subfile" />
+        <input type="file" name="subfile"/>
         <input type="submit" value="Add"/>
+        <br/>
     </form>;
 }
 
@@ -32,16 +33,18 @@ const Word = ({word, onClick}) => {
 }
 
 const ListsList = ({lists, loadList}) => {
-    return <div>
-        {lists.map(l => <div><a href="#" key={l.name} onClick={() => loadList(l.name)}>{l.name}</a></div>)}
+    return <div className="list-name-box">
+        {lists.map(l =>
+        <span className="list-name" key={l.name}>
+            <a href="#" key={l.name} onClick={() => loadList(l.name)}>{l.name}</a>
+        </span>)}
     </div>;
 }
 
 const WordsList = ({words, onClick, onSave}) => {
     const lForm = useRef(null);
+    const [listName, setListName] = useState([]);
     const onSubmit = (event) => {
-        //todo rewrite to stateful field
-        const listNameField = lForm.current.getElementsByClassName('list-name')[0]
         event.preventDefault()
         fetch('http://localhost:3001/lists', {
             method: 'POST',
@@ -50,7 +53,7 @@ const WordsList = ({words, onClick, onSave}) => {
             },
             mode: 'cors',
             body: JSON.stringify({
-                name: listNameField.value,
+                name: listName,
                 words: words
             })
         })
@@ -60,15 +63,24 @@ const WordsList = ({words, onClick, onSave}) => {
                 error => alert(error)
             );
     };
-    return <>
+    return <div className="words-list">
         <form onSubmit={onSubmit} ref={lForm}>
-            <input type="text" className="list-name"/>
+            <input type="text" value={listName} onChange={(e) => setListName(e.target.value)} className="list-name"/>
             <input type="submit" value="Save"/>
         </form>
         <div>
             {words.map(w => <Word word={w} key={w.text} onClick={onClick}/>)}
         </div>
-    </>;
+    </div>;
+}
+
+const RemoveList = ({lists, onChange}) => {
+    return <div>
+        list to remove <select onChange={(e)=>onChange(e.target.value)}>
+            {lists.map(l => <option value={l.name} key={l.name}>{l.name}</option>)}
+        </select>
+        {/*<input type="submit" value="remove"/>*/}
+    </div>;
 }
 
 const sortWords = a => {
@@ -98,6 +110,10 @@ const App = () => {
                 error => alert(error),
             )
     }
+    const loadListByName = async (list) => {
+        const response = await fetch("http://localhost:3001/words?" + new URLSearchParams({name: list}), {mode: "cors"})
+        return await response.json();
+    }
     const loadLists = () => {
         fetch("http://localhost:3001/lists", {
             mode: "cors",
@@ -117,8 +133,16 @@ const App = () => {
             <br/>
             <WordsForm onUpdate={setWords}/>
             <br/>
+            <span>buffer</span>
             <WordsList words={buffer} onClick={moveToWords} onSave={loadLists} key="w1"/>
             <br/>
+            <span>selected</span>
+            <RemoveList lists={lists} onChange={(v) => {
+                loadListByName(v)
+                    .then(w => w.map( x => x.text))
+                    .then(w => words.filter(x => !w.includes(x.text)))
+                    .then(w => setWords(w))
+            }}/>
             <WordsList words={words} onClick={moveToBuffer} onSave={loadLists} kye="w2"/>
         </Container>
     );
