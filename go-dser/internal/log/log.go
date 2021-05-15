@@ -43,7 +43,7 @@ func (l *Log) setup() error {
 	}
 	var baseOffsets []uint64
 	for _, file := range files {
-		offStr := strings.TrimPrefix(
+		offStr := strings.TrimSuffix(
 			file.Name(),
 			path.Ext(file.Name()),
 		)
@@ -122,13 +122,13 @@ func (l *Log) Reset() error {
 
 func (l *Log) LowestOffset() (uint64, error) {
 	l.mu.RLock()
-	defer l.mu.Unlock()
+	defer l.mu.RUnlock()
 	return l.segments[0].baseOffset, nil
 }
 
 func (l *Log) HighestOffset() (uint64, error) {
 	l.mu.RLock()
-	defer l.mu.Unlock()
+	defer l.mu.RUnlock()
 	off := l.segments[len(l.segments)-1].nextOffset
 	if off == 0 {
 		return 0, nil
