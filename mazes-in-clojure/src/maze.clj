@@ -6,6 +6,14 @@
            [{} {} {:open #{:south}} {}]
            [{} {} {:open #{:north}} {}]])
 
+(defn empty-maze [x y]
+  (vec (repeat x (vec (repeat y {})))))
+
+(defn generate [{x :x y :y}]
+  (let [m (empty-maze x y)]
+    m))
+
+
 (defn render-cell-top [c]
   (str (if (:north (:open c)) "   +" "---+")))
 
