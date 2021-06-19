@@ -1,16 +1,22 @@
 (ns maze
   (:require [clojure.string :as str]))
 
-(def maze [[{} {} {} {}]
-           [{} {:open #{:east}} {:open #{:west}} {}]
-           [{} {} {:open #{:south}} {}]
-           [{} {} {:open #{:north}} {}]])
+;; (def maze [[{} {} {} {}]
+;;            [{} {:open #{:east}} {:open #{:west}} {}]
+;;            [{} {} {:open #{:south}} {}]
+;;            [{} {} {:open #{:north}} {}]])
 
-(defn empty-maze [x y]
-  (vec (repeat x (vec (repeat y {})))))
 
-(defn generate [{x :x y :y}]
-  (let [m (empty-maze x y)]
+(defn empty-maze [rows columns]
+  {:rows rows
+   :columns columns
+   :cells (vec (map (fn [x1] (vec (map (fn [y1] {:x x1 :y y1})
+                                       (range 0 columns))))
+                    (range rows)))})
+
+
+(defn generate [rows columns]
+  (let [m (empty-maze rows columns)]
     m))
 
 
@@ -42,11 +48,16 @@
     (str/join "\n" [(render-row-middle r)
                     (render-row-bottom r)])))
 
-(defn render-maze [[f :as all]]
+(defn render [[f :as all]]
   (let [render-row-top (make-row-renderer render-east-cell-top render-cell-top)]
     (str/join "\n" (cons (render-row-top f)
                          (map render-row all)))))
 
 (defn run [opts]
-  (println (render-maze maze)))
+  (let [{rows :rows columns :columns} opts]
+    (println (render (:cells (generate rows columns))))))
+
+
+(defn cell-at [m r c]
+  ((m r) c))
 
