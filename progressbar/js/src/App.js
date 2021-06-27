@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Badge, Col, Container, ProgressBar, Row} from 'react-bootstrap';
-
+import {Badge, Col, Container, ProgressBar, Row, Form} from 'react-bootstrap';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import './App.css';
 
 const ItemsList = ({items}) => {
@@ -33,18 +34,17 @@ const App = () => {
 
     const [title, setTitle] = useState([]);
     const [percentComplete, setPercentComplete] = useState([]);
+    const [startDate, setStartDate] = useState(new Date());
 
     const onItemCreate = (event) => {
         event.preventDefault()
-        console.log(title)
-        console.log(percentComplete)
         let data = {
-            "dateStarted": "2021-01-02",
+            "dateStarted": startDate.toISOString().split('T')[0],
             "tags": [],
             "title": title,
             "percentComplete": percentComplete
         }
-        console.log(JSON.stringify(data))
+        // console.log(JSON.stringify(data))
 
         fetch('http://localhost:3001/items', {
             method: 'POST',
@@ -54,7 +54,12 @@ const App = () => {
         })
             .then(response => response.json())
             .then(
-                res => loadItems(),
+                res => {
+                    loadItems()
+                    setTitle("")
+                    setPercentComplete("")
+                    setStartDate(new Date())
+                },
                 error => alert(error)
             );
     };
@@ -62,14 +67,16 @@ const App = () => {
     return (
         <Container className="p-3">
             <ItemsList items={items}/>
-            <Col><Row>
-                <form onSubmit={onItemCreate}>
-                    <input type="text" onChange={ (e) => setTitle(e.target.value)} value={title} placeholder="Title"/>
-                    <input type="text" onChange={(e) => setPercentComplete(e.target.value)} value={percentComplete}
-                           placeholder="Percent Complete"/>
-                    <button type="submit">Add</button>
-                </form>
-            </Row></Col>
+            <Form onSubmit={onItemCreate}>
+                <input type="text" onChange={(e) => setTitle(e.target.value)} value={title} placeholder="Title"/>
+                <br/>
+                <input type="text" onChange={(e) => setPercentComplete(e.target.value)} value={percentComplete}
+                       placeholder="Percent Complete"/>
+                <br/>
+                <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} dateFormat="yyyy-MM-dd"/>
+                <br/>
+                <button type="submit">Add</button>
+            </Form>
         </Container>
     );
 };
