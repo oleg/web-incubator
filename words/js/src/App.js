@@ -28,7 +28,7 @@ const WordsForm = ({onUpdate}) => {
 const Word = ({word, onClick}) => {
     return <div className="word-block" onClick={() => onClick(word)}>
         <span className="word">{word.text}</span>
-        <span className="superscript">{word.freq}</span>
+        <span className="superscript">{word.percentComplete}</span>
     </div>;
 }
 
