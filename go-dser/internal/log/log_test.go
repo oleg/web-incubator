@@ -12,7 +12,7 @@ import (
 func TestLog(t *testing.T) {
 	for scenario, fn := range map[string]func(t *testing.T, log *Log){
 		"append and read a record succeeds": testAppendRead,
-		"offset out of range error":         testOufOfRangeError,
+		"offset out of range error":         testOutOfRangeError,
 		"init with existing segment":        testInitExisting,
 		"reader":                            testReader,
 		"truncate":                          testTruncate,
@@ -45,10 +45,11 @@ func testAppendRead(t *testing.T, log *Log) {
 	require.Equal(t, app.Value, read.Value)
 }
 
-func testOufOfRangeError(t *testing.T, o *Log) {
+func testOutOfRangeError(t *testing.T, o *Log) {
 	read, err := o.Read(1)
 	require.Nil(t, read)
-	require.Error(t, err)
+	apiErr := err.(api.ErrOffsetOutOfRange)
+	require.Equal(t, uint64(1), apiErr.Offset)
 }
 
 func testInitExisting(t *testing.T, log *Log) {
