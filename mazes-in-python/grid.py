@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import List
 
 from cell import Cell
 
@@ -8,7 +9,7 @@ from cell import Cell
 class Grid:
     rows: int
     columns: int
-    grid: List[List[Cell]] = field(default_factory=None, compare=False)
+    grid: list[list[Cell]] = field(default_factory=list, compare=False)
 
     def __init__(self, rows, columns):
         self.rows = rows
@@ -17,7 +18,8 @@ class Grid:
         self.configure_cells()
 
     def prepare_grid(self):
-        return [[Cell(r, c) for c in range(0, self.columns)] for r in range(0, self.rows)]
+        return [[Cell(r, c) for c in range(0, self.columns)]
+                for r in range(0, self.rows)]
 
     def configure_cells(self):
         for c in self:
@@ -34,34 +36,33 @@ class Grid:
         return self.grid[r][c]
 
     def __iter__(self):
-        return (self.grid[r][c] for r in range(0, self.rows) for c in range(0, self.columns))
+        for row in self.grid:
+            for item in row:
+                yield item
 
-    def __str__(self):
-        if not self.columns or not self.rows:
+    def __str__(self) -> str:
+        return GridPrinter().print(self)
+
+
+class GridPrinter:
+    def print(self, grid: Grid) -> str:
+        if not grid.columns or not grid.rows:
             return ""
+        res = "\n"
+        for row in grid.grid:
+            top = []
+            east = ["|"]
+            for c in row:
+                top.append((' ' if c.is_linked(c.north) else '-') * 3)
+                east.append(' ' if c.is_linked(c.east) else '|')
+            res += self.__wrap__(top)
+            res += "   ".join(east) + "\n"
+        res += self.__wrap__(["-" * 3] * grid.columns)
+        return res
 
-        res = ""
-        for r in self.grid:
-            w = []
-            p = ["|"]
-            for c in r:
-
-                if c.is_linked(c.north):
-                    w.append('   ')
-                else:
-                    w.append('---')
-
-                if c.is_linked(c.east):
-                    p.append(" ")
-                else:
-                    p.append("|")
-
-            ws = "+" + "+".join(w) + "+" + "\n"
-            ps = "   ".join(p) + "\n"
-            res += ws + ps
-
-        res += "+" + "+".join(["---"] * self.columns) + "+"
-        return "\n" + res + "\n"
+    @staticmethod
+    def __wrap__(line: list) -> str:
+        return "+" + "+".join(line) + "+\n"
 
 
 def test_can_create_grid():
@@ -128,7 +129,7 @@ def test_str_single_1x1():
 |   |
 +---+
 """
-    # @formatter:on
+# @formatter:on
 
 
 def test_str_complete_4x4():
@@ -146,6 +147,7 @@ def test_str_complete_4x4():
 +---+---+---+---+
 """
 # @formatter:on
+
 
 def test_show_4x4_complex():
     g = Grid(4, 4)
@@ -182,4 +184,4 @@ def test_show_4x4_complex():
 |       |   |   |
 +---+---+---+---+
 """
-    # @formatter:on
+# @formatter:on

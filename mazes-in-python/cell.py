@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict
 
 
 @dataclass(unsafe_hash=True, repr=False)
@@ -9,14 +8,14 @@ class Cell:
     row: int = field(hash=True)
     column: int = field(hash=True)
 
-    north: Cell = field(default=None, init=False, compare=False)
-    east: Cell = field(default=None, init=False, compare=False)
-    south: Cell = field(default=None, init=False, compare=False)
-    west: Cell = field(default=None, init=False, compare=False)
+    north: Cell | None = field(default=None, init=False, compare=False)
+    east: Cell | None = field(default=None, init=False, compare=False)
+    south: Cell | None = field(default=None, init=False, compare=False)
+    west: Cell | None = field(default=None, init=False, compare=False)
 
-    links: Dict[Cell, bool] = field(default_factory=dict, init=False, compare=False)
+    links: dict[Cell, bool] = field(default_factory=dict, init=False, compare=False)
 
-    def is_linked(self, cell: Cell) -> bool:
+    def is_linked(self, cell: Cell | None) -> bool:
         return cell in self.links
 
     def link(self, cell: Cell, bidi=True):
@@ -33,6 +32,7 @@ class Cell:
         return [c for c in [self.north, self.east, self.south, self.west] if c]
 
     def __repr__(self):
+        # return f"Cell({self.row},{self.column})"
         return "Cell([{},{}] [n={}, e={}, s={}, w={}] [{}])" \
             .format(self.row, self.column, self.north, self.east, self.south, self.west, self.__links_str__())
 

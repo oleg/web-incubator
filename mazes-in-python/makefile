@@ -1,0 +1,3 @@
+build:
+	mypy .
+	pytest *.py
