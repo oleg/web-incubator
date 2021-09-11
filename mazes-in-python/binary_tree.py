@@ -14,8 +14,9 @@ class BinaryTree:
 
     def generate(self, direction: str, grid: Grid):
         index = self.dirs.index(direction)
+        ln = len(self.fs)
         for cell in grid:
-            cells = [self.fs[(index + i) % 4](cell) for i in [0, 1]]
+            cells = [self.fs[(index + i) % ln](cell) for i in [0, 1]]
             if ns := [v for v in cells if v]:
                 if n := self.rnd.choice(ns):
                     cell.link(n)
