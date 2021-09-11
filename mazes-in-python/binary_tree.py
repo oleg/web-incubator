@@ -5,7 +5,6 @@ from operator import attrgetter
 from grid import Grid
 
 
-# todo test me
 class BinaryTree:
     dirs = ['north', 'east', 'south', 'west']
     fs = [attrgetter(d) for d in dirs]
@@ -20,3 +19,47 @@ class BinaryTree:
             if ns := [v for v in cells if v]:
                 if n := self.rnd.choice(ns):
                     cell.link(n)
+
+
+def test_north():
+    g = Grid(5, 5)
+    tr = BinaryTree(6)
+    tr.generate('north', g)
+    # @formatter:off
+    assert str(g) == \
+"""
++---+---+---+---+---+
+|                   |
++   +   +---+---+   +
+|   |   |           |
++   +---+---+   +   +
+|   |           |   |
++   +   +---+   +   +
+|   |   |       |   |
++---+   +---+---+   +
+|       |           |
++---+---+---+---+---+
+"""
+# @formatter:on
+
+
+def test_east():
+    g = Grid(5, 5)
+    tr = BinaryTree(6)
+    tr.generate('south', g)
+    # @formatter:off
+    assert str(g) == \
+"""
++---+---+---+---+---+
+|           |   |   |
++   +---+---+   +   +
+|               |   |
++   +---+---+---+   +
+|       |       |   |
++   +---+   +---+   +
+|       |           |
++   +---+   +---+---+
+|                   |
++---+---+---+---+---+
+"""
+# @formatter:on

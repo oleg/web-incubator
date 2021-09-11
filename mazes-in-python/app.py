@@ -8,7 +8,7 @@ from grid import Grid
 @click.option('--height', default=10, help='height of the maze')
 @click.option('--width', default=10, help='with of the maze')
 @click.option('--direction', default="north", help='direction')
-@click.option('--seed', help='seed')
+@click.option('--seed', help='seed', type=int)
 def main(height, width, direction, seed):
     grid = Grid(height, width)
     BinaryTree(seed).generate(direction, grid)
