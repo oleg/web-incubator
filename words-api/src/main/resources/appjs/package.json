@@ -25,9 +25,9 @@
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "ecstatic": "^4.1.4",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "uglify-js": "^3.12.1",
-    "watchify": "^3.11.1"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "uglify-js": "^3.14.2",
+    "watchify": "^4.0.0"
   }
 }
