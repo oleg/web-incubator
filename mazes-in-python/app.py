@@ -13,7 +13,7 @@ from sidewinder import Sidewinder
 def main(height: int, width: int, direction: str, seed: int, algorithm: str):
     grid = Grid(height, width)
     generator = {'binary': BinaryTree, 'sidewinder': Sidewinder}[algorithm](seed)
-    generator.generate(direction, grid)
+    generator.generate(direction, grid)  # type: ignore
     click.echo(str(grid))
 
 
