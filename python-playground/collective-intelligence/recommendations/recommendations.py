@@ -1,10 +1,12 @@
+from __future__ import annotations
 import csv
 from collections import defaultdict
 from math import sqrt
+import typing
 
 
-def load_critics():
-    critics = defaultdict(dict)
+def load_critics() -> dict[str, dict[str, typing.Any]]:
+    critics: dict[str, dict[str, typing.Any]] = defaultdict(dict)
     with open('critics.csv') as file:
         for row in csv.reader(file):
             critics[row[0]][row[1]] = float(row[2])
