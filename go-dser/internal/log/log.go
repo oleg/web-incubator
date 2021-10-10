@@ -182,4 +182,3 @@ func (l *Log) newSegment(off uint64) error {
 	l.activeSegment = s
 	return nil
 }
-
