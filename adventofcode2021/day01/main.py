@@ -20,10 +20,24 @@ def count_increased_windows(mesures: Iterable[int]) -> int:
     return count
 
 
+def sliding_window(iterable, n):
+    it = iter(iterable)
+    window = collections.deque(islice(it, n), maxlen=n)
+    if len(window) == n:
+        yield tuple(window)
+    for x in it:
+        window.append(x)
+        yield tuple(window)
+
+
 def run(seq) -> None:
     mesures = [int(s.rstrip()) for s in seq]
     print(count_increased(mesures))
     print(count_increased_windows(mesures))
+
+
+if __name__ == '__main__':
+    run(fileinput.input())
 
 
 def test_count_increased():
@@ -45,17 +59,3 @@ def test_count_increased_windows():
     assert count_increased_windows([1, 1, 1, 2]) == 1
     assert count_increased_windows([5, 1, 1, 2]) == 0
     assert count_increased_windows([199, 200, 208, 210, 200, 207, 240, 269, 260, 263]) == 5
-
-
-def sliding_window(iterable, n):
-    it = iter(iterable)
-    window = collections.deque(islice(it, n), maxlen=n)
-    if len(window) == n:
-        yield tuple(window)
-    for x in it:
-        window.append(x)
-        yield tuple(window)
-
-
-if __name__ == '__main__':
-    run(fileinput.input())
