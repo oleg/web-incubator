@@ -1,8 +1,7 @@
 package grok
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
+	"algo/assert"
 	"testing"
 )
 
@@ -17,8 +16,6 @@ func TestFind(t *testing.T) {
 
 	d := NewDijkstra(graph)
 	path, cost := d.find("book", "piano")
-	fmt.Printf("%v\n", d.costs)
-	fmt.Printf("%v\n", d.parents)
-	assert.Equal(t, []string{"book", "lp", "drums", "piano"}, path)
-	assert.Equal(t, 35, cost)
+	assert.EqualSlice(t, path, []string{"book", "lp", "drums", "piano"})
+	assert.Equal(t, cost, 35)
 }

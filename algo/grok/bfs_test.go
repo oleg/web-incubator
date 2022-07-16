@@ -1,7 +1,7 @@
 package grok
 
 import (
-	"github.com/stretchr/testify/assert"
+	"algo/assert"
 	"strings"
 	"testing"
 )
@@ -14,7 +14,7 @@ func TestBfsOnSimpleGraph(t *testing.T) {
 		return strings.HasSuffix(s, "777")
 	})
 
-	assert.True(t, found)
+	assert.Equal(t, found, true)
 	assert.Equal(t, "f-777", item)
 }
 func TestBfsOnSimpleGraphWrongStart(t *testing.T) {
@@ -25,7 +25,7 @@ func TestBfsOnSimpleGraphWrongStart(t *testing.T) {
 		return strings.HasSuffix(s, "777")
 	})
 
-	assert.False(t, found)
+	assert.Equal(t, found, false)
 	assert.Equal(t, "", item)
 }
 func TestBfsOnCircular(t *testing.T) {
@@ -40,7 +40,7 @@ func TestBfsOnCircular(t *testing.T) {
 		return strings.HasSuffix(s, "777")
 	})
 
-	assert.False(t, found)
+	assert.Equal(t, found, false)
 	assert.Equal(t, "", item)
 }
 
@@ -59,55 +59,59 @@ func TestQueue(t *testing.T) {
 	q := queue{}
 
 	q.enqueue("1")
-	assert.Equal(t, queue{"1"}, q)
+	assertEqualQueue(t, q, queue{"1"})
 
 	q.enqueue("2")
-	assert.Equal(t, queue{"1", "2"}, q)
+	assertEqualQueue(t, q, queue{"1", "2"})
 
 	q.enqueue("3")
-	assert.Equal(t, queue{"1", "2", "3"}, q)
+	assertEqualQueue(t, q, queue{"1", "2", "3"})
 
 	q.enqueue("4")
-	assert.Equal(t, queue{"1", "2", "3", "4"}, q)
+	assertEqualQueue(t, q, queue{"1", "2", "3", "4"})
 
 	item, found := q.dequeue()
-	assert.Equal(t, true, found)
-	assert.Equal(t, "1", item)
-	assert.Equal(t, queue{"2", "3", "4"}, q)
+	assert.Equal(t, found, true)
+	assert.Equal(t, item, "1")
+	assertEqualQueue(t, q, queue{"2", "3", "4"})
 
 	item, found = q.dequeue()
-	assert.Equal(t, true, found)
-	assert.Equal(t, "2", item)
-	assert.Equal(t, queue{"3", "4"}, q)
+	assert.Equal(t, found, true)
+	assert.Equal(t, item, "2")
+	assertEqualQueue(t, q, queue{"3", "4"})
 
 	q.enqueue("5")
-	assert.Equal(t, queue{"3", "4", "5"}, q)
+	assertEqualQueue(t, q, queue{"3", "4", "5"})
 
 	item, found = q.dequeue()
-	assert.Equal(t, true, found)
-	assert.Equal(t, "3", item)
-	assert.Equal(t, queue{"4", "5"}, q)
+	assert.Equal(t, found, true)
+	assert.Equal(t, item, "3")
+	assertEqualQueue(t, q, queue{"4", "5"})
 
 	item, found = q.dequeue()
 	assert.Equal(t, true, found)
 	assert.Equal(t, "4", item)
-	assert.Equal(t, queue{"5"}, q)
+	assertEqualQueue(t, queue{"5"}, q)
 
 	item, found = q.dequeue()
 	assert.Equal(t, true, found)
 	assert.Equal(t, "5", item)
-	assert.Equal(t, queue{}, q)
+	assertEqualQueue(t, queue{}, q)
 
 	item, found = q.dequeue()
 	assert.Equal(t, false, found)
 	assert.Equal(t, "", item)
-	assert.Equal(t, queue{}, q)
+	assertEqualQueue(t, queue{}, q)
 
 	item, found = q.dequeue()
 	assert.Equal(t, false, found)
 	assert.Equal(t, "", item)
-	assert.Equal(t, queue{}, q)
+	assertEqualQueue(t, queue{}, q)
 
 	q.enqueue("7")
-	assert.Equal(t, queue{"7"}, q)
+	assertEqualQueue(t, queue{"7"}, q)
+}
+
+func assertEqualQueue(t *testing.T, actual, expected queue) {
+	assert.EqualSlice(t, []string(actual), []string(expected))
 }

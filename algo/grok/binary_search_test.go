@@ -1,7 +1,7 @@
 package grok
 
 import (
-	"github.com/stretchr/testify/assert"
+	"algo/assert"
 	"testing"
 )
 
@@ -26,8 +26,8 @@ func Test_BinarySearch(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			index, found := BinarySearch(test.val, test.arr)
 
-			assert.Equal(t, test.expected.index, index)
-			assert.Equal(t, test.expected.found, found)
+			assert.Equal(t, index, test.expected.index)
+			assert.Equal(t, found, test.expected.found)
 		})
 	}
 }

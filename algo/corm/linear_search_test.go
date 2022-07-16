@@ -1,7 +1,7 @@
 package corm
 
 import (
-	"github.com/stretchr/testify/assert"
+	"algo/assert"
 	"testing"
 )
 
@@ -25,8 +25,8 @@ func Test_LinearSearch(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			found, index := LinearSearch(test.arr, test.val)
 
-			assert.Equal(t, test.expected.found, found, "found: "+test.name)
-			assert.Equal(t, test.expected.index, index, "index: "+test.name)
+			assert.Equal(t, found, test.expected.found)
+			assert.Equal(t, index, test.expected.index)
 		})
 	}
 }
