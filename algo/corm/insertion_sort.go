@@ -1,4 +1,5 @@
 package corm
+
 //2.1-1
 func InsertionSort(arr []int) {
 	for k := 1; k < len(arr); k++ {
@@ -11,6 +12,7 @@ func InsertionSort(arr []int) {
 		arr[p+1] = key
 	}
 }
+
 //2.1-2
 func InsertionSortReverse(arr []int) {
 	for k := 1; k < len(arr); k++ {
