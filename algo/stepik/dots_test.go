@@ -1,8 +1,8 @@
 package stepik
 
 import (
+	"algo/assert"
 	"bytes"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
 )
@@ -15,12 +15,11 @@ func TestReadIntervals(t *testing.T) {
 
 	intervals := readIntervals(input)
 
-	expected := []interval{
+	assert.EqualSlice(t, intervals, []interval{
 		{1, 2},
 		{3, 4},
 		{5, 6},
-	}
-	assert.Equal(t, expected, intervals)
+	})
 }
 
 func TestWritePoints(t *testing.T) {
@@ -31,7 +30,7 @@ func TestWritePoints(t *testing.T) {
 	expected :=
 		`3
 1 3 2`
-	assert.Equal(t, expected, output.String())
+	assert.Equal(t, output.String(), expected)
 }
 
 func TestPlaceDots1(t *testing.T) {
@@ -43,8 +42,7 @@ func TestPlaceDots1(t *testing.T) {
 
 	dots := placeDots(intervals)
 
-	expected := []int{3}
-	assert.Equal(t, expected, dots)
+	assert.EqualSlice(t, dots, []int{3})
 }
 
 func TestPlaceDots2(t *testing.T) {
@@ -56,8 +54,7 @@ func TestPlaceDots2(t *testing.T) {
 
 	dots := placeDots(intervals)
 
-	expected := []int{3, 6}
-	assert.Equal(t, expected, dots)
+	assert.EqualSlice(t, dots, []int{3, 6})
 }
 
 func TestPlaceDotsEmpty(t *testing.T) {
@@ -65,21 +62,21 @@ func TestPlaceDotsEmpty(t *testing.T) {
 
 	dots := placeDots(intervals)
 
-	assert.Empty(t, dots)
+	assert.Equal(t, len(dots), 0)
 }
 
 func TestInterval(t *testing.T) {
 	i := interval{from: 1, to: 10}
 
-	assert.True(t, i.contains(1))
-	assert.True(t, i.contains(2))
-	assert.True(t, i.contains(9))
-	assert.True(t, i.contains(10))
+	assert.Equal(t, i.contains(1), true)
+	assert.Equal(t, i.contains(2), true)
+	assert.Equal(t, i.contains(9), true)
+	assert.Equal(t, i.contains(10), true)
 
-	assert.False(t, i.contains(-10))
-	assert.False(t, i.contains(0))
-	assert.False(t, i.contains(11))
-	assert.False(t, i.contains(100))
+	assert.Equal(t, i.contains(-10), false)
+	assert.Equal(t, i.contains(0), false)
+	assert.Equal(t, i.contains(11), false)
+	assert.Equal(t, i.contains(100), false)
 }
 
 func TestProcess(t *testing.T) {
@@ -96,5 +93,5 @@ func TestProcess(t *testing.T) {
 		`3
 2 4 6`
 
-	assert.Equal(t, expected, output.String())
+	assert.Equal(t, output.String(), expected)
 }

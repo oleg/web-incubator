@@ -1,9 +1,9 @@
 package stepik
 
 import (
+	"algo/assert"
 	"bytes"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"strings"
 	"testing"
@@ -267,4 +267,3 @@ func TestChildren(t *testing.T) {
 		})
 	}
 }
-
